@@ -4,13 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Easy Data Transfer for pss students</title>
+<title> PSS Easy Data Transfer</title>
 
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
-
 *{
     box-sizing:border-box;
     margin:0;
@@ -75,10 +74,17 @@ button{
     cursor:pointer;
     font-weight:bold;
     margin:4px;
+    transition:.2s;
 }
 
 button:hover{
     transform:translateY(-1px);
+}
+
+button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+    transform:none;
 }
 
 .primary{
@@ -211,6 +217,7 @@ button:hover{
     width:55px;
     height:55px;
     border-radius:8px;
+    flex-shrink:0;
 }
 
 .file-thumb{
@@ -285,7 +292,7 @@ button:hover{
     display:flex;
     gap:8px;
     flex-wrap:wrap;
-    margin-bottom:20px;
+    margin-bottom:0;
 }
 
 .tab{
@@ -298,6 +305,28 @@ button:hover{
     color:#001b22;
 }
 
+.empty{
+    opacity:.7;
+    padding:10px 0;
+}
+
+@media(max-width:600px){
+    body{
+        padding:10px;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+    .topbar h1{
+        font-size:28px;
+    }
+
+    .friend{
+        align-items:flex-start;
+    }
+}
 </style>
 </head>
 
@@ -306,15 +335,9 @@ button:hover{
 <div class="container">
 
 <div class="topbar">
-
-<h1>⚡ Easy Data Transfer</h1>
-
-<p>
-Friends • File Transfer • Online Status
-</p>
-
+    <h1>⚡ Easy Data Transfer</h1>
+    <p>Friends • File Transfer • Online Status</p>
 </div>
-
 
 <!-- AUTH -->
 
@@ -418,18 +441,13 @@ onclick="logoutAccount()"
 
 <div class="card">
 
-<h2>
-👤 Welcome
-</h2>
+<h2>👤 Welcome</h2>
 
-<div id="welcomeName">
-</div>
+<div id="welcomeName"></div>
 
 <br>
 
-<strong>
-Your Transfer ID
-</strong>
+<strong>Your Transfer ID</strong>
 
 <div
 class="idbox"
@@ -459,9 +477,7 @@ Connecting...
 
 <div class="card">
 
-<h2>
-🔗 Connection
-</h2>
+<h2>🔗 Connection</h2>
 
 <div
 class="big-status"
@@ -484,9 +500,7 @@ class="hidden"
 
 <div class="card">
 
-<h2>
-➕ Add Friend
-</h2>
+<h2>➕ Add Friend</h2>
 
 <input
 id="friendIdInput"
@@ -503,7 +517,17 @@ Send Friend Request
 <div
 id="friendStatus"
 class="status"
->
+></div>
+
+</div>
+
+
+<div class="card">
+
+<h2>🔔 Friend Requests</h2>
+
+<div id="requestsList">
+<div class="empty">No requests.</div>
 </div>
 
 </div>
@@ -511,29 +535,10 @@ class="status"
 
 <div class="card">
 
-<h2>
-🔔 Friend Requests
-</h2>
+<h2>👥 My Friends</h2>
 
-<div
-id="requestsList"
->
-No requests.
-</div>
-
-</div>
-
-
-<div class="card">
-
-<h2>
-👥 My Friends
-</h2>
-
-<div
-id="friendsList"
->
-No friends yet.
+<div id="friendsList">
+<div class="empty">No friends yet.</div>
 </div>
 
 </div>
@@ -550,9 +555,7 @@ class="hidden"
 
 <div class="card">
 
-<h2>
-📄 Select Files
-</h2>
+<h2>📄 Select Files</h2>
 
 <label class="select-files">
 
@@ -568,9 +571,7 @@ multiple
 </label>
 
 <div class="note">
-
 Only the files you select will be transferred.
-
 </div>
 
 <div
@@ -578,23 +579,15 @@ id="fileSummary"
 class="summary hidden"
 >
 
-<strong>
-Selected:
-</strong>
+<strong>Selected:</strong>
 
-<span id="fileCount">
-0
-</span>
+<span id="fileCount">0</span>
 
 <br>
 
-<strong>
-Total:
-</strong>
+<strong>Total:</strong>
 
-<span id="totalSize">
-0 B
-</span>
+<span id="totalSize">0 B</span>
 
 </div>
 
@@ -606,9 +599,7 @@ id="senderPreview"
 class="card hidden"
 >
 
-<h2>
-👀 Selected Files
-</h2>
+<h2>👀 Selected Files</h2>
 
 <input
 id="previewSearch"
@@ -618,8 +609,7 @@ placeholder="Search files..."
 <div
 id="filePreviewList"
 class="file-list"
->
-</div>
+></div>
 
 <button
 class="primary"
@@ -646,8 +636,7 @@ Transfer
 <div
 id="progressBar"
 class="progress-bar"
->
-</div>
+></div>
 
 </div>
 
@@ -666,15 +655,12 @@ id="receiverPreview"
 class="card hidden"
 >
 
-<h2>
-📥 Received Files
-</h2>
+<h2>📥 Received Files</h2>
 
 <div
 id="receivedFileList"
 class="file-list"
->
-</div>
+></div>
 
 <button
 class="success"
@@ -708,8 +694,7 @@ Ready.
 
 import {
     initializeApp
-}
-from
+} from
 "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
 import {
@@ -718,8 +703,7 @@ import {
     signInWithEmailAndPassword,
     onAuthStateChanged,
     signOut
-}
-from
+} from
 "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
@@ -728,48 +712,48 @@ import {
     set,
     get,
     push,
-    update,
     onValue,
     onDisconnect,
     serverTimestamp
-}
-from
+} from
 "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
 
 // ==================================================
-// FIREBASE CONFIG
+// YOUR FIREBASE CONFIG
 // ==================================================
-//
-// REPLACE THIS WITH YOUR REAL FIREBASE CONFIG
-//
 
 const firebaseConfig = {
 
     apiKey:
-        "YOUR_API_KEY",
+        "AIzaSyCEFgHDRoDFZ6IZco7iWloLvNCsL3SYckw",
 
     authDomain:
-        "YOUR_PROJECT.firebaseapp.com",
+        "data-transfer-63111.firebaseapp.com",
 
     databaseURL:
-        "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+        "https://data-transfer-63111-default-rtdb.firebaseio.com",
 
     projectId:
-        "YOUR_PROJECT",
+        "data-transfer-63111",
 
     storageBucket:
-        "YOUR_PROJECT.firebasestorage.app",
+        "data-transfer-63111.firebasestorage.app",
 
     messagingSenderId:
-        "YOUR_MESSAGING_SENDER_ID",
+        "1031425742783",
 
     appId:
-        "YOUR_APP_ID"
+        "1:1031425742783:web:5e8ff2207836f47c2cb30a",
+
+    measurementId:
+        "G-TV0RRNXWPD"
 
 };
 
 
+// ==================================================
+// INITIALIZE FIREBASE
 // ==================================================
 
 const firebaseApp =
@@ -783,7 +767,7 @@ const db =
 
 
 // ==================================================
-// GLOBAL VARIABLES
+// VARIABLES
 // ==================================================
 
 let currentUser = null;
@@ -804,39 +788,39 @@ let incomingMeta = null;
 
 let receivedBlob = null;
 
-const CHUNK_SIZE =
-    16 * 1024;
+const CHUNK_SIZE = 16 * 1024;
 
 
 // ==================================================
 // AUTH
 // ==================================================
 
-window.createAccount =
-async function(){
+window.createAccount = async function(){
 
     const name =
-        document
-        .getElementById("authName")
-        .value
-        .trim();
+        document.getElementById("authName").value.trim();
 
     const email =
-        document
-        .getElementById("authEmail")
-        .value
-        .trim();
+        document.getElementById("authEmail").value.trim();
 
     const password =
-        document
-        .getElementById("authPassword")
-        .value;
+        document.getElementById("authPassword").value;
 
 
     if(!name || !email || !password){
 
         setAuthStatus(
             "Please fill in all fields."
+        );
+
+        return;
+    }
+
+
+    if(password.length < 6){
+
+        setAuthStatus(
+            "Password must be at least 6 characters."
         );
 
         return;
@@ -853,19 +837,14 @@ async function(){
             );
 
 
-        const uid =
-            result.user.uid;
-
+        const uid = result.user.uid;
 
         const transferId =
             generateTransferId(name);
 
 
         await set(
-            ref(
-                db,
-                "users/" + uid
-            ),
+            ref(db,"users/"+uid),
             {
 
                 name:name,
@@ -876,15 +855,14 @@ async function(){
 
                 online:true,
 
-                createdAt:
-                    serverTimestamp()
+                createdAt:serverTimestamp()
 
             }
         );
 
 
         setAuthStatus(
-            "Account created!"
+            "✅ Account created successfully!"
         );
 
 
@@ -901,19 +879,13 @@ async function(){
 
 // ==================================================
 
-window.loginAccount =
-async function(){
+window.loginAccount = async function(){
 
     const email =
-        document
-        .getElementById("authEmail")
-        .value
-        .trim();
+        document.getElementById("authEmail").value.trim();
 
     const password =
-        document
-        .getElementById("authPassword")
-        .value;
+        document.getElementById("authPassword").value;
 
 
     if(!email || !password){
@@ -948,32 +920,39 @@ async function(){
 
 // ==================================================
 
-window.logoutAccount =
-async function(){
+window.logoutAccount = async function(){
 
-    if(currentUser){
+    try{
 
-        await set(
-            ref(
-                db,
-                "users/" +
-                currentUser.uid +
-                "/online"
-            ),
-            false
-        );
+        if(currentUser){
+
+            await set(
+                ref(
+                    db,
+                    "users/" +
+                    currentUser.uid +
+                    "/online"
+                ),
+                false
+            );
+
+        }
+
+        if(peer){
+
+            peer.destroy();
+
+            peer = null;
+
+        }
+
+        await signOut(auth);
+
+    }catch(error){
+
+        console.error(error);
 
     }
-
-
-    if(peer){
-
-        peer.destroy();
-
-    }
-
-
-    await signOut(auth);
 
 };
 
@@ -993,15 +972,11 @@ onAuthStateChanged(
             await loadProfile();
 
             document
-                .getElementById(
-                    "authScreen"
-                )
+                .getElementById("authScreen")
                 .classList.add("hidden");
 
             document
-                .getElementById(
-                    "app"
-                )
+                .getElementById("app")
                 .classList.remove("hidden");
 
             setupOnlineStatus();
@@ -1016,16 +991,14 @@ onAuthStateChanged(
 
             currentUser = null;
 
+            currentProfile = null;
+
             document
-                .getElementById(
-                    "authScreen"
-                )
+                .getElementById("authScreen")
                 .classList.remove("hidden");
 
             document
-                .getElementById(
-                    "app"
-                )
+                .getElementById("app")
                 .classList.add("hidden");
 
         }
@@ -1057,8 +1030,7 @@ async function loadProfile(){
     }
 
 
-    currentProfile =
-        snapshot.val();
+    currentProfile = snapshot.val();
 
 
     document
@@ -1086,10 +1058,7 @@ function generateTransferId(name){
     let clean =
         name
         .toUpperCase()
-        .replace(
-            /[^A-Z0-9]/g,
-            ""
-        )
+        .replace(/[^A-Z0-9]/g,"")
         .substring(0,12);
 
 
@@ -1103,8 +1072,7 @@ function generateTransferId(name){
     const number =
         Math.floor(
             1000 +
-            Math.random() *
-            9000
+            Math.random() * 9000
         );
 
 
@@ -1128,20 +1096,13 @@ function setupOnlineStatus(){
         );
 
 
-    onDisconnect(statusRef)
-        .set(false);
+    onDisconnect(statusRef).set(false);
 
-
-    set(
-        statusRef,
-        true
-    );
+    set(statusRef,true);
 
 
     document
-        .getElementById(
-            "onlineStatus"
-        )
+        .getElementById("onlineStatus")
         .innerHTML =
         "🟢 Online";
 
@@ -1154,11 +1115,16 @@ function setupOnlineStatus(){
 
 function startPeer(){
 
-    if(
-        !currentProfile
-    ){
+    if(!currentProfile){
 
         return;
+
+    }
+
+
+    if(peer){
+
+        peer.destroy();
 
     }
 
@@ -1174,9 +1140,7 @@ function startPeer(){
         id => {
 
             document
-                .getElementById(
-                    "myId"
-                )
+                .getElementById("myId")
                 .textContent =
                 id;
 
@@ -1200,7 +1164,12 @@ function startPeer(){
         "error",
         error => {
 
-            console.log(error);
+            console.log("PeerJS error:",error);
+
+            setMainStatus(
+                "⚠️ Connection error: " +
+                error.type
+            );
 
         }
     );
@@ -1212,14 +1181,11 @@ function startPeer(){
 // FRIEND REQUEST
 // ==================================================
 
-window.sendFriendRequest =
-async function(){
+window.sendFriendRequest = async function(){
 
     const id =
         document
-        .getElementById(
-            "friendIdInput"
-        )
+        .getElementById("friendIdInput")
         .value
         .trim()
         .toUpperCase();
@@ -1230,6 +1196,15 @@ async function(){
         setFriendStatus(
             "Enter a Transfer ID."
         );
+
+        return;
+
+    }
+
+
+    if(
+        !currentProfile
+    ){
 
         return;
 
@@ -1250,98 +1225,107 @@ async function(){
     }
 
 
-    const usersSnapshot =
-        await get(
-            ref(db,"users")
-        );
+    try{
+
+        const usersSnapshot =
+            await get(
+                ref(db,"users")
+            );
 
 
-    let targetUid = null;
+        let targetUid = null;
 
-    let targetUser = null;
-
-
-    usersSnapshot.forEach(
-        child => {
-
-            const user =
-                child.val();
+        let targetUser = null;
 
 
-            if(
-                user.transferId === id
-            ){
+        usersSnapshot.forEach(
+            child => {
 
-                targetUid =
-                    child.key;
+                const user =
+                    child.val();
 
-                targetUser =
-                    user;
+
+                if(
+                    user.transferId === id
+                ){
+
+                    targetUid = child.key;
+
+                    targetUser = user;
+
+                }
 
             }
+        );
+
+
+        if(!targetUid){
+
+            setFriendStatus(
+                "❌ No account found with that Transfer ID."
+            );
+
+            return;
 
         }
-    );
 
 
-    if(!targetUid){
+        const requestRef =
+            push(
+                ref(
+                    db,
+                    "friendRequests/" +
+                    targetUid
+                )
+            );
+
+
+        await set(
+            requestRef,
+            {
+
+                fromUid:
+                    currentUser.uid,
+
+                fromName:
+                    currentProfile.name,
+
+                fromId:
+                    currentProfile.transferId,
+
+                createdAt:
+                    serverTimestamp()
+
+            }
+        );
+
 
         setFriendStatus(
-            "No account found with that Transfer ID."
+            "✅ Friend request sent to " +
+            targetUser.name
         );
 
-        return;
+
+        document
+            .getElementById("friendIdInput")
+            .value = "";
+
+
+    }catch(error){
+
+        console.error(error);
+
+        setFriendStatus(
+            "❌ " + error.message
+        );
 
     }
-
-
-    const requestRef =
-        push(
-            ref(
-                db,
-                "friendRequests/" +
-                targetUid
-            )
-        );
-
-
-    await set(
-        requestRef,
-        {
-
-            fromUid:
-                currentUser.uid,
-
-            fromName:
-                currentProfile.name,
-
-            fromId:
-                currentProfile.transferId,
-
-            createdAt:
-                serverTimestamp()
-
-        }
-    );
-
-
-    setFriendStatus(
-        "✅ Friend request sent to " +
-        targetUser.name
-    );
-
-
-    document
-        .getElementById(
-            "friendIdInput"
-        )
-        .value = "";
 
 };
 
 
 // ==================================================
-// FRIEND REQUEST LISTENER
+// REQUEST LISTENER
 // ==================================================
 
 function listenForRequests(){
@@ -1360,9 +1344,7 @@ function listenForRequests(){
 
             const list =
                 document
-                .getElementById(
-                    "requestsList"
-                );
+                .getElementById("requestsList");
 
 
             list.innerHTML = "";
@@ -1370,8 +1352,8 @@ function listenForRequests(){
 
             if(!snapshot.exists()){
 
-                list.textContent =
-                    "No friend requests.";
+                list.innerHTML =
+                    '<div class="empty">No friend requests.</div>';
 
                 return;
 
@@ -1386,14 +1368,10 @@ function listenForRequests(){
 
 
                     const box =
-                        document
-                        .createElement(
-                            "div"
-                        );
+                        document.createElement("div");
 
 
-                    box.className =
-                        "request";
+                    box.className = "request";
 
 
                     box.innerHTML = `
@@ -1444,63 +1422,78 @@ async function(
     friendUid
 ){
 
-    await set(
-        ref(
-            db,
-            "friends/" +
-            currentUser.uid +
-            "/" +
-            friendUid
-        ),
-        true
-    );
+    try{
+
+        await set(
+            ref(
+                db,
+                "friends/" +
+                currentUser.uid +
+                "/" +
+                friendUid
+            ),
+            true
+        );
 
 
-    await set(
-        ref(
-            db,
-            "friends/" +
-            friendUid +
-            "/" +
-            currentUser.uid
-        ),
-        true
-    );
+        await set(
+            ref(
+                db,
+                "friends/" +
+                friendUid +
+                "/" +
+                currentUser.uid
+            ),
+            true
+        );
 
 
-    await set(
-        ref(
-            db,
-            "friendRequests/" +
-            currentUser.uid +
-            "/" +
-            requestKey
-        ),
-        null
-    );
+        await set(
+            ref(
+                db,
+                "friendRequests/" +
+                currentUser.uid +
+                "/" +
+                requestKey
+            ),
+            null
+        );
+
+
+    }catch(error){
+
+        alert(error.message);
+
+    }
 
 };
 
 
 // ==================================================
-// DECLINE
+// DECLINE REQUEST
 // ==================================================
 
 window.declineRequest =
-async function(
-    requestKey
-){
+async function(requestKey){
 
-    await set(
-        ref(
-            db,
-            "friendRequests/" +
-            currentUser.uid +
-            "/" +
-            requestKey
-        ),
-        null
-    );
+    try{
+
+        await set(
+            ref(
+                db,
+                "friendRequests/" +
+                currentUser.uid +
+                "/" +
+                requestKey
+            ),
+            null
+        );
+
+    }catch(error){
+
+        alert(error.message);
+
+    }
 
 };
 
@@ -1525,9 +1518,7 @@ function listenForFriends(){
 
             const list =
                 document
-                .getElementById(
-                    "friendsList"
-                );
+                .getElementById("friendsList");
 
 
             list.innerHTML = "";
@@ -1535,8 +1526,8 @@ function listenForFriends(){
 
             if(!snapshot.exists()){
 
-                list.textContent =
-                    "No friends yet.";
+                list.innerHTML =
+                    '<div class="empty">No friends yet.</div>';
 
                 return;
 
@@ -1547,8 +1538,7 @@ function listenForFriends(){
                 const child of snapshot.children
             ){
 
-                const uid =
-                    child.key;
+                const uid = child.key;
 
 
                 const userSnapshot =
@@ -1561,9 +1551,7 @@ function listenForFriends(){
                     );
 
 
-                if(
-                    !userSnapshot.exists()
-                ){
+                if(!userSnapshot.exists()){
 
                     continue;
 
@@ -1575,14 +1563,10 @@ function listenForFriends(){
 
 
                 const box =
-                    document
-                    .createElement(
-                        "div"
-                    );
+                    document.createElement("div");
 
 
-                box.className =
-                    "friend";
+                box.className = "friend";
 
 
                 const onlineText =
@@ -1664,28 +1648,36 @@ async function(uid){
     }
 
 
-    await set(
-        ref(
-            db,
-            "friends/" +
-            currentUser.uid +
-            "/" +
-            uid
-        ),
-        null
-    );
+    try{
+
+        await set(
+            ref(
+                db,
+                "friends/" +
+                currentUser.uid +
+                "/" +
+                uid
+            ),
+            null
+        );
 
 
-    await set(
-        ref(
-            db,
-            "friends/" +
-            uid +
-            "/" +
-            currentUser.uid
-        ),
-        null
-    );
+        await set(
+            ref(
+                db,
+                "friends/" +
+                uid +
+                "/" +
+                currentUser.uid
+            ),
+            null
+        );
+
+    }catch(error){
+
+        alert(error.message);
+
+    }
 
 };
 
@@ -1699,6 +1691,7 @@ function(id){
 
     showSection("transfer");
 
+
     if(!peer){
 
         alert(
@@ -1710,6 +1703,11 @@ function(id){
     }
 
 
+    setMainStatus(
+        "🔄 Connecting to " + id + "..."
+    );
+
+
     connection =
         peer.connect(
             id,
@@ -1719,9 +1717,7 @@ function(id){
         );
 
 
-    setupConnection(
-        connection
-    );
+    setupConnection(connection);
 
 };
 
@@ -1740,9 +1736,7 @@ function setupConnection(conn){
         () => {
 
             document
-                .getElementById(
-                    "connectionStatus"
-                )
+                .getElementById("connectionStatus")
                 .innerHTML =
                 "🟢 Connected";
 
@@ -1770,11 +1764,28 @@ function setupConnection(conn){
         () => {
 
             document
-                .getElementById(
-                    "connectionStatus"
-                )
+                .getElementById("connectionStatus")
                 .innerHTML =
                 "⚪ Disconnected";
+
+
+            setMainStatus(
+                "Connection closed."
+            );
+
+        }
+    );
+
+
+    conn.on(
+        "error",
+        error => {
+
+            console.error(error);
+
+            setMainStatus(
+                "❌ Connection error."
+            );
 
         }
     );
@@ -1802,20 +1813,20 @@ document
 
         renderFiles();
 
-        document
-            .getElementById(
-                "fileSummary"
-            )
-            .classList.remove(
-                "hidden"
-            );
 
         document
-            .getElementById(
-                "senderPreview"
-            )
-            .classList.remove(
-                "hidden"
+            .getElementById("fileSummary")
+            .classList.toggle(
+                "hidden",
+                selectedFiles.length === 0
+            );
+
+
+        document
+            .getElementById("senderPreview")
+            .classList.toggle(
+                "hidden",
+                selectedFiles.length === 0
             );
 
     }
@@ -1825,15 +1836,15 @@ document
 // ==================================================
 
 document
-.getElementById(
-    "previewSearch"
-)
+.getElementById("previewSearch")
 .addEventListener(
     "input",
     renderFiles
 );
 
 
+// ==================================================
+// FILE SUMMARY
 // ==================================================
 
 function updateFileSummary(){
@@ -1851,17 +1862,13 @@ function updateFileSummary(){
 
 
     document
-        .getElementById(
-            "fileCount"
-        )
+        .getElementById("fileCount")
         .textContent =
         selectedFiles.length;
 
 
     document
-        .getElementById(
-            "totalSize"
-        )
+        .getElementById("totalSize")
         .textContent =
         formatBytes(total);
 
@@ -1869,26 +1876,30 @@ function updateFileSummary(){
 
 
 // ==================================================
-// RENDER FILES
+// FILE PREVIEW
 // ==================================================
 
 function renderFiles(){
 
     const list =
         document
-        .getElementById(
-            "filePreviewList"
-        );
+        .getElementById("filePreviewList");
 
 
     list.innerHTML = "";
 
 
+    previewObjectUrls.forEach(
+        url => URL.revokeObjectURL(url)
+    );
+
+
+    previewObjectUrls = [];
+
+
     const search =
         document
-        .getElementById(
-            "previewSearch"
-        )
+        .getElementById("previewSearch")
         .value
         .toLowerCase();
 
@@ -1908,10 +1919,7 @@ function renderFiles(){
 
 
             const item =
-                document
-                .createElement(
-                    "div"
-                );
+                document.createElement("div");
 
 
             item.className =
@@ -1919,15 +1927,11 @@ function renderFiles(){
 
 
             if(
-                file.type
-                .startsWith("image/")
+                file.type.startsWith("image/")
             ){
 
                 const img =
-                    document
-                    .createElement(
-                        "img"
-                    );
+                    document.createElement("img");
 
 
                 img.className =
@@ -1935,13 +1939,10 @@ function renderFiles(){
 
 
                 const url =
-                    URL.createObjectURL(
-                        file
-                    );
+                    URL.createObjectURL(file);
 
 
-                previewObjectUrls
-                    .push(url);
+                previewObjectUrls.push(url);
 
 
                 img.src = url;
@@ -1952,10 +1953,7 @@ function renderFiles(){
             }else{
 
                 const icon =
-                    document
-                    .createElement(
-                        "div"
-                    );
+                    document.createElement("div");
 
 
                 icon.className =
@@ -1963,9 +1961,7 @@ function renderFiles(){
 
 
                 icon.textContent =
-                    getFileIcon(
-                        file.name
-                    );
+                    getFileIcon(file.name);
 
 
                 item.appendChild(icon);
@@ -1974,10 +1970,7 @@ function renderFiles(){
 
 
             const info =
-                document
-                .createElement(
-                    "div"
-                );
+                document.createElement("div");
 
 
             info.className =
@@ -2001,10 +1994,7 @@ function renderFiles(){
 
 
             const remove =
-                document
-                .createElement(
-                    "button"
-                );
+                document.createElement("button");
 
 
             remove.className =
@@ -2018,12 +2008,27 @@ function renderFiles(){
             remove.onclick =
                 () => {
 
-                    selectedFiles
-                        .splice(index,1);
+                    selectedFiles.splice(index,1);
 
                     updateFileSummary();
 
                     renderFiles();
+
+
+                    document
+                        .getElementById("fileSummary")
+                        .classList.toggle(
+                            "hidden",
+                            selectedFiles.length === 0
+                        );
+
+
+                    document
+                        .getElementById("senderPreview")
+                        .classList.toggle(
+                            "hidden",
+                            selectedFiles.length === 0
+                        );
 
                 };
 
@@ -2074,22 +2079,15 @@ async function(){
 
 
     const button =
-        document
-        .getElementById(
-            "sendButton"
-        );
+        document.getElementById("sendButton");
 
 
     button.disabled = true;
 
 
     document
-        .getElementById(
-            "progressCard"
-        )
-        .classList.remove(
-            "hidden"
-        );
+        .getElementById("progressCard")
+        .classList.remove("hidden");
 
 
     try{
@@ -2109,6 +2107,7 @@ async function(){
                     file
                 );
 
+
                 totalSize +=
                     file.size;
 
@@ -2116,13 +2115,17 @@ async function(){
         );
 
 
+        setProgress(
+            0,
+            "Creating ZIP..."
+        );
+
+
         const blob =
-            await zip.generateAsync(
-                {
-                    type:"blob",
-                    compression:"STORE"
-                }
-            );
+            await zip.generateAsync({
+                type:"blob",
+                compression:"STORE"
+            });
 
 
         const buffer =
@@ -2159,23 +2162,18 @@ async function(){
         ){
 
             const start =
-                i *
-                CHUNK_SIZE;
+                i * CHUNK_SIZE;
 
 
             const end =
                 Math.min(
-                    start +
-                    CHUNK_SIZE,
+                    start + CHUNK_SIZE,
                     buffer.byteLength
                 );
 
 
             connection.send(
-                buffer.slice(
-                    start,
-                    end
-                )
+                buffer.slice(start,end)
             );
 
 
@@ -2199,9 +2197,7 @@ async function(){
 
 
         connection.send({
-
             type:"files-end"
-
         });
 
 
@@ -2221,7 +2217,8 @@ async function(){
         console.error(error);
 
         setMainStatus(
-            "❌ Transfer failed."
+            "❌ Transfer failed: " +
+            error.message
         );
 
     }
@@ -2244,24 +2241,23 @@ function handleIncomingData(data){
     ){
 
         if(
-            data.type ===
-            "files-start"
+            data.type === "files-start"
         ){
 
-            incomingMeta =
-                data;
+            incomingMeta = data;
 
-            incomingChunks =
-                [];
+            incomingChunks = [];
 
 
             document
-                .getElementById(
-                    "progressCard"
-                )
-                .classList.remove(
-                    "hidden"
-                );
+                .getElementById("progressCard")
+                .classList.remove("hidden");
+
+
+            setProgress(
+                0,
+                "Receiving files..."
+            );
 
 
             return;
@@ -2270,8 +2266,7 @@ function handleIncomingData(data){
 
 
         if(
-            data.type ===
-            "files-end"
+            data.type === "files-end"
         ){
 
             finishReceiving();
@@ -2287,8 +2282,7 @@ function handleIncomingData(data){
         data instanceof ArrayBuffer
     ){
 
-        incomingChunks
-            .push(data);
+        incomingChunks.push(data);
 
 
         if(incomingMeta){
@@ -2314,118 +2308,120 @@ function handleIncomingData(data){
 
 
 // ==================================================
+// FINISH RECEIVE
+// ==================================================
 
 async function finishReceiving(){
 
-    receivedBlob =
-        new Blob(
-            incomingChunks,
-            {
-                type:"application/zip"
-            }
-        );
+    try{
+
+        receivedBlob =
+            new Blob(
+                incomingChunks,
+                {
+                    type:"application/zip"
+                }
+            );
 
 
-    incomingChunks = [];
+        incomingChunks = [];
 
 
-    const zip =
-        await JSZip.loadAsync(
-            receivedBlob
-        );
+        const zip =
+            await JSZip.loadAsync(
+                receivedBlob
+            );
 
 
-    const list =
-        document
-        .getElementById(
-            "receivedFileList"
-        );
+        const list =
+            document
+            .getElementById("receivedFileList");
 
 
-    list.innerHTML = "";
+        list.innerHTML = "";
 
 
-    for(
-        const filename in zip.files
-    ){
-
-        if(
-            zip.files[filename].dir
+        for(
+            const filename in zip.files
         ){
 
-            continue;
+            if(zip.files[filename].dir){
+
+                continue;
+
+            }
+
+
+            const item =
+                document.createElement("div");
+
+
+            item.className =
+                "file-item";
+
+
+            const icon =
+                document.createElement("div");
+
+
+            icon.className =
+                "file-icon";
+
+
+            icon.textContent =
+                getFileIcon(filename);
+
+
+            item.appendChild(icon);
+
+
+            const info =
+                document.createElement("div");
+
+
+            info.className =
+                "file-info";
+
+
+            info.innerHTML =
+                `<div class="file-name">
+                    ${escapeHtml(filename)}
+                </div>`;
+
+
+            item.appendChild(info);
+
+
+            list.appendChild(item);
 
         }
 
 
-        const item =
-            document
-            .createElement(
-                "div"
-            );
+        document
+            .getElementById("receiverPreview")
+            .classList.remove("hidden");
 
 
-        item.className =
-            "file-item";
-
-
-        const icon =
-            document
-            .createElement(
-                "div"
-            );
-
-
-        icon.className =
-            "file-icon";
-
-
-        icon.textContent =
-            getFileIcon(
-                filename
-            );
-
-
-        item.appendChild(icon);
-
-
-        const info =
-            document
-            .createElement(
-                "div"
-            );
-
-
-        info.className =
-            "file-info";
-
-
-        info.innerHTML =
-            `<div class="file-name">
-                ${escapeHtml(filename)}
-            </div>`;
-
-
-        item.appendChild(info);
-
-
-        list.appendChild(item);
-
-    }
-
-
-    document
-        .getElementById(
-            "receiverPreview"
-        )
-        .classList.remove(
-            "hidden"
+        setProgress(
+            100,
+            "Files received!"
         );
 
 
-    setMainStatus(
-        "✅ Files received!"
-    );
+        setMainStatus(
+            "✅ Files received successfully!"
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        setMainStatus(
+            "❌ Could not open received files."
+        );
+
+    }
 
 }
 
@@ -2439,21 +2435,19 @@ function(){
 
     if(!receivedBlob){
 
+        alert("No received files.");
+
         return;
 
     }
 
 
     const url =
-        URL.createObjectURL(
-            receivedBlob
-        );
+        URL.createObjectURL(receivedBlob);
 
 
     const a =
-        document.createElement(
-            "a"
-        );
+        document.createElement("a");
 
 
     a.href = url;
@@ -2462,7 +2456,11 @@ function(){
         "received-files.zip";
 
 
+    document.body.appendChild(a);
+
     a.click();
+
+    a.remove();
 
 
     setTimeout(
@@ -2482,41 +2480,25 @@ window.showSection =
 function(section){
 
     document
-        .getElementById(
-            "homeSection"
-        )
-        .classList.add(
-            "hidden"
-        );
+        .getElementById("homeSection")
+        .classList.add("hidden");
 
 
     document
-        .getElementById(
-            "friendsSection"
-        )
-        .classList.add(
-            "hidden"
-        );
+        .getElementById("friendsSection")
+        .classList.add("hidden");
 
 
     document
-        .getElementById(
-            "transferSection"
-        )
-        .classList.add(
-            "hidden"
-        );
+        .getElementById("transferSection")
+        .classList.add("hidden");
 
 
     if(section === "home"){
 
         document
-            .getElementById(
-                "homeSection"
-            )
-            .classList.remove(
-                "hidden"
-            );
+            .getElementById("homeSection")
+            .classList.remove("hidden");
 
     }
 
@@ -2524,12 +2506,8 @@ function(section){
     if(section === "friends"){
 
         document
-            .getElementById(
-                "friendsSection"
-            )
-            .classList.remove(
-                "hidden"
-            );
+            .getElementById("friendsSection")
+            .classList.remove("hidden");
 
     }
 
@@ -2537,12 +2515,8 @@ function(section){
     if(section === "transfer"){
 
         document
-            .getElementById(
-                "transferSection"
-            )
-            .classList.remove(
-                "hidden"
-            );
+            .getElementById("transferSection")
+            .classList.remove("hidden");
 
     }
 
@@ -2556,11 +2530,8 @@ function(section){
 function setAuthStatus(text){
 
     document
-        .getElementById(
-            "authStatus"
-        )
-        .textContent =
-        text;
+        .getElementById("authStatus")
+        .textContent = text;
 
 }
 
@@ -2568,11 +2539,8 @@ function setAuthStatus(text){
 function setFriendStatus(text){
 
     document
-        .getElementById(
-            "friendStatus"
-        )
-        .textContent =
-        text;
+        .getElementById("friendStatus")
+        .textContent = text;
 
 }
 
@@ -2580,40 +2548,28 @@ function setFriendStatus(text){
 function setMainStatus(text){
 
     document
-        .getElementById(
-            "mainStatus"
-        )
-        .textContent =
-        text;
+        .getElementById("mainStatus")
+        .textContent = text;
 
 }
 
 
-function setProgress(
-    percent,
-    text
-){
+function setProgress(percent,text){
 
     document
-        .getElementById(
-            "progressBar"
-        )
+        .getElementById("progressBar")
         .style.width =
         percent + "%";
 
 
     document
-        .getElementById(
-            "progressText"
-        )
+        .getElementById("progressText")
         .textContent =
         percent + "%";
 
 
     document
-        .getElementById(
-            "progressTitle"
-        )
+        .getElementById("progressTitle")
         .textContent =
         text;
 
@@ -2625,17 +2581,33 @@ function setProgress(
 // ==================================================
 
 window.copyMyId =
-function(){
+async function(){
 
-    navigator.clipboard
-        .writeText(
+    if(!currentProfile){
+
+        return;
+
+    }
+
+
+    try{
+
+        await navigator.clipboard.writeText(
             currentProfile.transferId
         );
 
 
-    alert(
-        "Transfer ID copied!"
-    );
+        alert(
+            "Transfer ID copied!"
+        );
+
+    }catch(error){
+
+        alert(
+            "Could not copy ID."
+        );
+
+    }
 
 };
 
@@ -2688,10 +2660,7 @@ function sleep(ms){
 
     return new Promise(
         resolve =>
-        setTimeout(
-            resolve,
-            ms
-        )
+        setTimeout(resolve,ms)
     );
 
 }
@@ -2700,14 +2669,10 @@ function sleep(ms){
 function escapeHtml(text){
 
     const div =
-        document
-        .createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
-    div.textContent =
-        text;
+    div.textContent = text;
 
 
     return div.innerHTML;
@@ -2731,10 +2696,12 @@ function getFileIcon(filename){
         png:"🖼️",
         gif:"🖼️",
         webp:"🖼️",
+        svg:"🖼️",
 
         mp4:"🎬",
         mov:"🎬",
         avi:"🎬",
+        mkv:"🎬",
 
         mp3:"🎵",
         wav:"🎵",
@@ -2751,12 +2718,15 @@ function getFileIcon(filename){
         pptx:"📊",
 
         zip:"🗜️",
+        rar:"🗜️",
 
         txt:"📝",
 
         html:"🌐",
         css:"🎨",
-        js:"💻"
+        js:"💻",
+
+        apk:"📱"
 
     };
 
@@ -2765,6 +2735,10 @@ function getFileIcon(filename){
 
 }
 
+
+// ==================================================
+// FIREBASE ERRORS
+// ==================================================
 
 function firebaseError(error){
 
@@ -2781,6 +2755,12 @@ function firebaseError(error){
 
         case "auth/invalid-credential":
             return "Email or password is incorrect.";
+
+        case "auth/network-request-failed":
+            return "Network error. Check your internet connection.";
+
+        case "auth/too-many-requests":
+            return "Too many attempts. Try again later.";
 
         default:
             return error.message;
