@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy Data Transfer</title>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#f8fafc);
+    color:#172033;
+}
+
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+.topbar{
+    background:#111827;
+    color:white;
+    padding:18px 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 4px 18px #0002;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:800;
+}
+
+.logo span{
+    color:#8b5cf6;
+}
+
+.container{
+    width:min(1050px,94%);
+    margin:28px auto 60px;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:0 8px 30px #11182712;
+    border:1px solid #e5e7eb;
+}
+
+.card h2{
+    margin:0 0 8px;
+    font-size:20px;
+}
+
+.muted{
+    color:#667085;
+    font-size:14px;
+}
+
+/* NAME SCREEN */
+
+.name-screen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:linear-gradient(135deg,#111827,#312e81,#7c3aed);
+}
+
+.name-card{
+    width:min(440px,100%);
+    background:white;
+    border-radius:24px;
+    padding:35px;
+    text-align:center;
+    box-shadow:0 25px 70px #0005;
+}
+
+.name-card h1{
+    margin-top:0;
+}
+
+.name-card input{
+    width:100%;
+    padding:14px;
+    border:1px solid #d0d5dd;
+    border-radius:12px;
+    margin:14px 0;
+    outline:none;
+}
+
+.name-card input:focus{
+    border-color:#7c3aed;
+}
+
+/* BUTTONS */
+
+.primary{
+    border:0;
+    background:#7c3aed;
+    color:white;
+    padding:13px 18px;
+    border-radius:11px;
+    font-weight:700;
+}
+
+.primary:hover{
+    background:#6d28d9;
+}
+
+.secondary{
+    border:1px solid #d0d5dd;
+    background:white;
+    padding:11px 15px;
+    border-radius:10px;
+    font-weight:600;
+}
+
+.danger{
+    border:0;
+    background:#fee2e2;
+    color:#b91c1c;
+    padding:8px 11px;
+    border-radius:9px;
+    font-weight:700;
+}
+
+/* ID */
+
+.id-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:14px;
+}
+
+.id-value{
+    flex:1;
+    background:#f3f4f6;
+    padding:13px;
+    border-radius:10px;
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:1px;
+    color:#4f46e5;
+    word-break:break-all;
+}
+
+/* CONNECT */
+
+.connect-row{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:10px;
+    margin-top:14px;
+}
+
+.connect-row input{
+    padding:13px;
+    border:1px solid #d0d5dd;
+    border-radius:10px;
+    outline:none;
+}
+
+.status{
+    padding:13px 15px;
+    background:#f3f4f6;
+    border-radius:11px;
+    margin-top:15px;
+    font-size:14px;
+}
+
+.status.good{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status.bad{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* FOLDER */
+
+.dropzone{
+    border:2px dashed #a78bfa;
+    border-radius:16px;
+    padding:28px;
+    text-align:center;
+    background:#faf9ff;
+    margin-top:15px;
+}
+
+.dropzone input{
+    display:none;
+}
+
+.choose{
+    display:inline-block;
+    background:#7c3aed;
+    color:white;
+    padding:13px 20px;
+    border-radius:11px;
+    font-weight:700;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+.folder-summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:18px;
+}
+
+.stat{
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+    padding:14px;
+    border-radius:12px;
+}
+
+.stat strong{
+    display:block;
+    font-size:18px;
+    margin-bottom:4px;
+}
+
+.stat span{
+    font-size:12px;
+    color:#667085;
+}
+
+/* PREVIEW */
+
+.preview-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.search{
+    width:100%;
+    margin:15px 0 10px;
+    padding:12px;
+    border:1px solid #d0d5dd;
+    border-radius:10px;
+    outline:none;
+}
+
+.file-list{
+    max-height:430px;
+    overflow:auto;
+    border:1px solid #e5e7eb;
+    border-radius:13px;
+}
+
+.file-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 12px;
+    border-bottom:1px solid #eef0f3;
+}
+
+.file-row:last-child{
+    border-bottom:0;
+}
+
+.thumb,
+.file-icon{
+    width:48px;
+    height:48px;
+    border-radius:10px;
+    flex:0 0 48px;
+}
+
+.thumb{
+    object-fit:cover;
+    background:#f3f4f6;
+}
+
+.file-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f3f4f6;
+    font-size:24px;
+}
+
+.file-info{
+    min-width:0;
+    flex:1;
+}
+
+.file-name{
+    font-weight:700;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.file-path{
+    color:#667085;
+    font-size:12px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    margin-top:3px;
+}
+
+.file-size{
+    font-size:12px;
+    color:#667085;
+    white-space:nowrap;
+}
+
+.preview-note{
+    color:#667085;
+    font-size:13px;
+    margin-top:10px;
+}
+
+/* ACTIONS */
+
+.actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:15px;
+}
+
+.actions button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+/* PROGRESS */
+
+.progress-wrap{
+    margin-top:18px;
+}
+
+.progress{
+    height:13px;
+    background:#e5e7eb;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#7c3aed,#2563eb);
+    transition:width .15s;
+}
+
+.progress-text{
+    text-align:center;
+    margin-top:8px;
+    font-size:13px;
+    color:#667085;
+}
+
+/* RECEIVER */
+
+.receive-list{
+    max-height:360px;
+    overflow:auto;
+    border:1px solid #e5e7eb;
+    border-radius:13px;
+    margin-top:15px;
+}
+
+.received-item{
+    padding:9px 12px;
+    border-bottom:1px solid #eef0f3;
+    font-size:14px;
+}
+
+.received-item:last-child{
+    border-bottom:0;
+}
+
+.footer-note{
+    text-align:center;
+    color:#667085;
+    font-size:12px;
+    margin-top:20px;
+}
+
+@media(max-width:650px){
+
+    .connect-row{
+        grid-template-columns:1fr;
+    }
+
+    .folder-summary{
+        grid-template-columns:1fr;
+    }
+
+    .file-size{
+        display:none;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAME SCREEN -->
+
+<div id="nameScreen" class="name-screen">
+
+    <div class="name-card">
+
+        <h1>📂 Easy Data Transfer</h1>
+
+        <p>
+            Create your personal transfer ID.
+        </p>
+
+        <input
+            id="userName"
+            type="text"
+            maxlength="20"
+            placeholder="Enter your name"
+            autocomplete="off"
+        >
+
+        <button
+            class="primary"
+            style="width:100%"
+            onclick="startApp()"
+        >
+            Continue →
+        </button>
+
+        <p style="font-size:12px;margin-bottom:0">
+            Example: AHMED-4821
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- MAIN APP -->
+
+<div id="app" class="hidden">
+
+<header class="topbar">
+
+    <div class="logo">
+        📂 Easy <span>Data Transfer</span>
+    </div>
+
+    <div id="connectionBadge">
+        ⚪ Offline
+    </div>
+
+</header>
+
+
+<main class="container">
+
+<!-- YOUR ID -->
+
+<section class="card">
+
+    <h2>🪪 Your Transfer ID</h2>
+
+    <div class="muted">
+        Give this ID to the person you want to transfer data with.
+    </div>
+
+    <div class="id-box">
+
+        <div id="myId" class="id-value">
+            Creating...
+        </div>
+
+        <button class="secondary" onclick="copyId()">
+            Copy
+        </button>
+
+    </div>
+
+    <div id="myStatus" class="status">
+        Creating your unique ID...
+    </div>
+
+</section>
+
+
+<!-- CONNECT -->
+
+<section class="card">
+
+    <h2>🔗 Connect</h2>
+
+    <div class="muted">
+        Enter the other person's Transfer ID.
+    </div>
+
+    <div class="connect-row">
+
+        <input
+            id="remoteId"
+            placeholder="Example: ALI-2158"
+            autocomplete="off"
+        >
+
+        <button
+            class="primary"
+            onclick="connectToPerson()"
+        >
+            Connect
+        </button>
+
+    </div>
+
+    <div id="connectionStatus" class="status">
+        Not connected yet.
+    </div>
+
+</section>
+
+
+<!-- SELECT FOLDER -->
+
+<section class="card">
+
+    <h2>📤 Send Whole Folder</h2>
+
+    <div class="muted">
+        Select a folder and preview its contents before sending.
+    </div>
+
+
+    <div class="dropzone">
+
+        <div style="font-size:45px">
+            📁
+        </div>
+
+        <strong>
+            Select a folder
+        </strong>
+
+        <div class="muted">
+            Your files will NOT be sent until you press Send Folder.
+        </div>
+
+        <label class="choose">
+
+            Choose Folder
+
+            <input
+                id="folderInput"
+                type="file"
+                webkitdirectory
+                directory
+                multiple
+            >
+
+        </label>
+
+    </div>
+
+
+    <div id="folderSummary" class="folder-summary hidden">
+
+        <div class="stat">
+            <strong id="folderName">-</strong>
+            <span>Folder</span>
+        </div>
+
+        <div class="stat">
+            <strong id="fileCount">0</strong>
+            <span>Files</span>
+        </div>
+
+        <div class="stat">
+            <strong id="totalSize">0 B</strong>
+            <span>Total Size</span>
+        </div>
+
+    </div>
+
+
+    <div class="actions">
+
+        <button
+            id="sendButton"
+            class="primary"
+            onclick="sendFolder()"
+            disabled
+        >
+            📤 Send Folder
+        </button>
+
+        <button
+            class="secondary"
+            onclick="clearFolder()"
+        >
+            🗑️ Clear
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- REAL SENDER PREVIEW -->
+
+<section
+    id="senderPreview"
+    class="card hidden"
+>
+
+    <div class="preview-head">
+
+        <div>
+
+            <h2>👁️ Folder Preview</h2>
+
+            <div class="muted">
+                Review the files before sending them.
+            </div>
+
+        </div>
+
+        <strong id="previewTitle">
+            0 files
+        </strong>
+
+    </div>
+
+
+    <input
+        id="previewSearch"
+        class="search"
+        placeholder="🔎 Search files..."
+        oninput="renderPreview()"
+    >
+
+
+    <div
+        id="filePreviewList"
+        class="file-list"
+    ></div>
+
+
+    <div class="preview-note">
+        🖼️ Images show real thumbnails.
+        You can remove individual files before sending.
+    </div>
+
+</section>
+
+
+<!-- PROGRESS -->
+
+<section
+    id="progressCard"
+    class="card hidden"
+>
+
+    <h2 id="progressTitle">
+        Transfer
+    </h2>
+
+    <div class="progress-wrap">
+
+        <div class="progress">
+
+            <div
+                id="progressBar"
+                class="progress-bar"
+            ></div>
+
+        </div>
+
+        <div
+            id="progressText"
+            class="progress-text"
+        >
+            0%
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- RECEIVED PREVIEW -->
+
+<section
+    id="receiverPreview"
+    class="card hidden"
+>
+
+    <div class="preview-head">
+
+        <div>
+
+            <h2>👁️ Received Folder Preview</h2>
+
+            <div class="muted">
+                Check the received files before downloading.
+            </div>
+
+        </div>
+
+        <strong id="receivedTitle">
+            0 files
+        </strong>
+
+    </div>
+
+
+    <div class="folder-summary">
+
+        <div class="stat">
+
+            <strong id="receivedFolderName">
+                -
+            </strong>
+
+            <span>Folder</span>
+
+        </div>
+
+        <div class="stat">
+
+            <strong id="receivedFileCount">
+                0
+            </strong>
+
+            <span>Files</span>
+
+        </div>
+
+        <div class="stat">
+
+            <strong id="receivedSize">
+                0 B
+            </strong>
+
+            <span>ZIP Size</span>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="receivedFileList"
+        class="receive-list"
+    ></div>
+
+
+    <div class="actions">
+
+        <button
+            class="primary"
+            onclick="downloadReceivedZip()"
+        >
+            📥 Download ZIP
+        </button>
+
+    </div>
+
+</section>
+
+
+<div
+    id="mainStatus"
+    class="status"
+>
+    Select a folder to see its preview.
+</div>
+
+
+<div class="footer-note">
+    🔒 The browser only gets access to the folder you explicitly select.
+</div>
+
+</main>
+</div>
+
+
+<script>
+
+let peer = null;
+let connection = null;
+
+let myTransferId = "";
+
+let selectedFiles = [];
+let folderName = "";
+
+let previewObjectUrls = [];
+
+let incomingMeta = null;
+let incomingChunks = [];
+
+let receivedBlob = null;
+
+const CHUNK_SIZE = 16 * 1024;
+
+
+// ===============================
+// START
+// ===============================
+
+function startApp(){
+
+    const name =
+        document.getElementById("userName")
+        .value
+        .trim();
+
+    if(!name){
+
+        alert("Please enter your name.");
+
+        return;
+    }
+
+    document
+        .getElementById("nameScreen")
+        .classList
+        .add("hidden");
+
+    document
+        .getElementById("app")
+        .classList
+        .remove("hidden");
+
+    createUniqueTransferId(name);
+}
+
+
+// ===============================
+// ID
+// ===============================
+
+function generateId(name){
+
+    let cleanName =
+        name
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g,"")
+        .substring(0,12);
+
+    if(!cleanName){
+        cleanName = "USER";
+    }
+
+    const number =
+        Math.floor(
+            1000 + Math.random() * 9000
+        );
+
+    return cleanName + "-" + number;
+}
+
+
+function createUniqueTransferId(name){
+
+    myTransferId =
+        generateId(name);
+
+    peer =
+        new Peer(myTransferId);
+
+
+    peer.on("open",id=>{
+
+        myTransferId = id;
+
+        document
+            .getElementById("myId")
+            .textContent = id;
+
+        document
+            .getElementById("myStatus")
+            .textContent =
+            "✅ Your Transfer ID is ready.";
+
+        setConnectionBadge("🟢 Ready");
+
+    });
+
+
+    peer.on("connection",conn=>{
+
+        connection = conn;
+
+        setupConnection(conn);
+
+    });
+
+
+    peer.on("error",error=>{
+
+        if(error.type === "unavailable-id"){
+
+            if(peer){
+                peer.destroy();
+            }
+
+            createUniqueTransferId(name);
+
+            return;
+        }
+
+        document
+            .getElementById("myStatus")
+            .textContent =
+            "ID error: " + error.type;
+
+        setConnectionBadge("🔴 Error");
+
+    });
+
+
+    peer.on("disconnected",()=>{
+
+        setConnectionBadge("🟠 Disconnected");
+
+    });
+
+}
+
+
+// ===============================
+// CONNECT
+// ===============================
+
+function connectToPerson(){
+
+    const remoteId =
+        document
+        .getElementById("remoteId")
+        .value
+        .trim()
+        .toUpperCase();
+
+
+    if(!remoteId){
+
+        alert("Enter the other person's Transfer ID.");
+
+        return;
+    }
+
+
+    if(remoteId === myTransferId){
+
+        alert("You cannot connect to yourself.");
+
+        return;
+    }
+
+
+    if(!peer){
+
+        alert("Your ID is not ready.");
+
+        return;
+    }
+
+
+    document
+        .getElementById("connectionStatus")
+        .textContent =
+        "Connecting to " + remoteId + "...";
+
+
+    try{
+
+        const conn =
+            peer.connect(
+                remoteId,
+                {reliable:true}
+            );
+
+        connection = conn;
+
+        setupConnection(conn);
+
+    }catch(error){
+
+        document
+            .getElementById("connectionStatus")
+            .textContent =
+            "Could not connect.";
+
+    }
+
+}
+
+
+function setupConnection(conn){
+
+    conn.on("open",()=>{
+
+        document
+            .getElementById("connectionStatus")
+            .textContent =
+            "🟢 Connected to " + conn.peer;
+
+        document
+            .getElementById("connectionStatus")
+            .className =
+            "status good";
+
+        setConnectionBadge("🟢 Connected");
+
+        updateSendButton();
+
+    });
+
+
+    conn.on("data",handleIncomingData);
+
+
+    conn.on("close",()=>{
+
+        document
+            .getElementById("connectionStatus")
+            .textContent =
+            "Connection closed.";
+
+        document
+            .getElementById("connectionStatus")
+            .className =
+            "status";
+
+        setConnectionBadge("⚪ Offline");
+
+        updateSendButton();
+
+    });
+
+
+    conn.on("error",error=>{
+
+        document
+            .getElementById("connectionStatus")
+            .textContent =
+            "Connection error.";
+
+        document
+            .getElementById("connectionStatus")
+            .className =
+            "status bad";
+
+    });
+
+}
+
+
+// ===============================
+// FOLDER SELECTION
+// ===============================
+
+document
+.getElementById("folderInput")
+.addEventListener("change",function(){
+
+    selectedFiles =
+        Array.from(this.files);
+
+
+    if(!selectedFiles.length){
+
+        clearFolder();
+
+        return;
+    }
+
+
+    const firstPath =
+        selectedFiles[0]
+        .webkitRelativePath ||
+        "";
+
+
+    folderName =
+        firstPath.split("/")[0] ||
+        "Selected Folder";
+
+
+    updateFolderSummary();
+
+
+    document
+        .getElementById("senderPreview")
+        .classList
+        .remove("hidden");
+
+
+    document
+        .getElementById("previewSearch")
+        .value = "";
+
+
+    renderPreview();
+
+    updateSendButton();
+
+
+    setMainStatus(
+        "👁️ Preview ready. Review your files before sending."
+    );
+
+});
+
+
+function updateFolderSummary(){
+
+    const total =
+        selectedFiles.reduce(
+            (sum,file)=>sum + file.size,
+            0
+        );
+
+
+    document
+        .getElementById("folderSummary")
+        .classList
+        .remove("hidden");
+
+
+    document
+        .getElementById("folderName")
+        .textContent =
+        folderName;
+
+
+    document
+        .getElementById("fileCount")
+        .textContent =
+        selectedFiles.length;
+
+
+    document
+        .getElementById("totalSize")
+        .textContent =
+        formatBytes(total);
+
+
+    document
+        .getElementById("previewTitle")
+        .textContent =
+        selectedFiles.length +
+        " file" +
+        (selectedFiles.length === 1 ? "" : "s");
+
+}
+
+
+function clearFolder(){
+
+    selectedFiles = [];
+
+    folderName = "";
+
+
+    previewObjectUrls.forEach(
+        url=>URL.revokeObjectURL(url)
+    );
+
+    previewObjectUrls = [];
+
+
+    document
+        .getElementById("folderInput")
+        .value = "";
+
+
+    document
+        .getElementById("folderSummary")
+        .classList
+        .add("hidden");
+
+
+    document
+        .getElementById("senderPreview")
+        .classList
+        .add("hidden");
+
+
+    document
+        .getElementById("filePreviewList")
+        .innerHTML = "";
+
+
+    updateSendButton();
+
+
+    setMainStatus(
+        "Select a folder to see its preview."
+    );
+
+}
+
+
+// ===============================
+// SENDER PREVIEW
+// ===============================
+
+function renderPreview(){
+
+    const list =
+        document.getElementById(
+            "filePreviewList"
+        );
+
+
+    previewObjectUrls.forEach(
+        url=>URL.revokeObjectURL(url)
+    );
+
+    previewObjectUrls = [];
+
+
+    const query =
+        document
+        .getElementById("previewSearch")
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    const files =
+        selectedFiles.filter(file=>{
+
+            const path =
+                file.webkitRelativePath ||
+                file.name;
+
+            return path
+                .toLowerCase()
+                .includes(query);
+
+        });
+
+
+    list.innerHTML = "";
+
+
+    if(!files.length){
+
+        list.innerHTML =
+            '<div style="padding:25px;text-align:center;color:#667085">' +
+            'No matching files found.</div>';
+
+        return;
+    }
+
+
+    files.slice(0,500).forEach(file=>{
+
+        const row =
+            document.createElement("div");
+
+        row.className = "file-row";
+
+
+        const visual =
+            document.createElement("div");
+
+
+        if(file.type.startsWith("image/")){
+
+            const img =
+                document.createElement("img");
+
+            img.className = "thumb";
+
+
+            const url =
+                URL.createObjectURL(file);
+
+            previewObjectUrls.push(url);
+
+            img.src = url;
+
+            img.alt = file.name;
+
+            visual.appendChild(img);
+
+        }else{
+
+            visual.className =
+                "file-icon";
+
+            visual.textContent =
+                getFileIcon(file.name);
+
+        }
+
+
+        const info =
+            document.createElement("div");
+
+        info.className =
+            "file-info";
+
+
+        const name =
+            document.createElement("div");
+
+        name.className =
+            "file-name";
+
+        name.textContent =
+            file.name;
+
+
+        const path =
+            document.createElement("div");
+
+        path.className =
+            "file-path";
+
+        path.textContent =
+            file.webkitRelativePath ||
+            file.name;
+
+
+        info.appendChild(name);
+
+        info.appendChild(path);
+
+
+        const size =
+            document.createElement("div");
+
+        size.className =
+            "file-size";
+
+        size.textContent =
+            formatBytes(file.size);
+
+
+        const remove =
+            document.createElement("button");
+
+        remove.className =
+            "danger";
+
+        remove.textContent =
+            "Remove";
+
+
+        remove.onclick = ()=>{
+
+            const index =
+                selectedFiles.indexOf(file);
+
+
+            if(index !== -1){
+
+                selectedFiles.splice(
+                    index,
+                    1
+                );
+
+            }
+
+
+            if(!selectedFiles.length){
+
+                clearFolder();
+
+                return;
+            }
+
+
+            updateFolderSummary();
+
+            renderPreview();
+
+            updateSendButton();
+
+        };
+
+
+        row.appendChild(visual);
+
+        row.appendChild(info);
+
+        row.appendChild(size);
+
+        row.appendChild(remove);
+
+
+        list.appendChild(row);
+
+    });
+
+
+    if(files.length > 500){
+
+        const note =
+            document.createElement("div");
+
+        note.style.padding = "12px";
+
+        note.style.textAlign = "center";
+
+        note.style.color = "#667085";
+
+        note.textContent =
+            "Showing first 500 matching files.";
+
+        list.appendChild(note);
+
+    }
+
+}
+
+
+// ===============================
+// FILE ICONS
+// ===============================
+
+function getFileIcon(name){
+
+    const ext =
+        name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+
+    if([
+        "mp4","mkv","avi",
+        "mov","webm"
+    ].includes(ext))
+        return "🎬";
+
+
+    if([
+        "mp3","wav","ogg",
+        "m4a","flac"
+    ].includes(ext))
+        return "🎵";
+
+
+    if(ext === "pdf")
+        return "📕";
+
+
+    if([
+        "doc","docx","txt","rtf"
+    ].includes(ext))
+        return "📄";
+
+
+    if([
+        "xls","xlsx","csv"
+    ].includes(ext))
+        return "📊";
+
+
+    if([
+        "ppt","pptx"
+    ].includes(ext))
+        return "📽️";
+
+
+    if([
+        "zip","rar","7z"
+    ].includes(ext))
+        return "🗜️";
+
+
+    if([
+        "js","html","css",
+        "json","py","java",
+        "cpp","c"
+    ].includes(ext))
+        return "💻";
+
+
+    if([
+        "apk","exe","msi"
+    ].includes(ext))
+        return "⚙️";
+
+
+    return "📄";
+}
+
+
+// ===============================
+// SEND FOLDER
+// ===============================
+
+async function sendFolder(){
+
+    if(!connection || !connection.open){
+
+        alert("Connect to another person first.");
+
+        return;
+    }
+
+
+    if(!selectedFiles.length){
+
+        alert("Choose a folder first.");
+
+        return;
+    }
+
+
+    document
+        .getElementById("progressCard")
+        .classList
+        .remove("hidden");
+
+
+    document
+        .getElementById("progressTitle")
+        .textContent =
+        "📦 Preparing folder...";
+
+
+    try{
+
+        const zip =
+            new JSZip();
+
+
+        for(
+            let i=0;
+            i<selectedFiles.length;
+            i++
+        ){
+
+            const file =
+                selectedFiles[i];
+
+
+            const path =
+                file.webkitRelativePath ||
+                (
+                    folderName +
+                    "/" +
+                    file.name
+                );
+
+
+            zip.file(
+                path,
+                file
+            );
+
+
+            updateProgress(
+                Math.round(
+                    ((i+1) /
+                    selectedFiles.length) *
+                    35
+                )
+            );
+
+        }
+
+
+        const blob =
+            await zip.generateAsync(
+                {
+                    type:"blob",
+                    compression:"STORE"
+                },
+                metadata=>{
+
+                    const percent =
+                        35 +
+                        Math.round(
+                            metadata.percent *
+                            0.25
+                        );
+
+                    updateProgress(percent);
+
+                }
+            );
+
+
+        const totalChunks =
+            Math.ceil(
+                blob.size /
+                CHUNK_SIZE
+            );
+
+
+        connection.send({
+
+            type:"folder-start",
+
+            folderName:folderName,
+
+            zipSize:blob.size,
+
+            fileCount:selectedFiles.length,
+
+            totalChunks:totalChunks
+
+        });
+
+
+        let sent = 0;
+
+
+        for(
+            let offset=0;
+            offset<blob.size;
+            offset+=CHUNK_SIZE
+        ){
+
+            const chunk =
+                await blob
+                .slice(
+                    offset,
+                    Math.min(
+                        offset + CHUNK_SIZE,
+                        blob.size
+                    )
+                )
+                .arrayBuffer();
+
+
+            connection.send(chunk);
+
+
+            sent++;
+
+
+            updateProgress(
+                60 +
+                Math.round(
+                    (sent /
+                    totalChunks) *
+                    40
+                )
+            );
+
+
+            document
+                .getElementById(
+                    "progressTitle"
+                )
+                .textContent =
+                "📤 Sending folder...";
+
+
+            await sleep(0);
+
+        }
+
+
+        connection.send({
+            type:"folder-end"
+        });
+
+
+        updateProgress(100);
+
+
+        document
+            .getElementById(
+                "progressTitle"
+            )
+            .textContent =
+            "✅ Folder sent successfully";
+
+
+        setMainStatus(
+            "✅ Your folder has been sent successfully."
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        document
+            .getElementById(
+                "progressTitle"
+            )
+            .textContent =
+            "❌ Transfer failed";
+
+
+        setMainStatus(
+            "❌ Transfer failed: " +
+            error.message,
+            true
+        );
+
+    }
+
+}
+
+
+// ===============================
+// RECEIVE
+// ===============================
+
+function handleIncomingData(data){
+
+    if(
+        data &&
+        data.type === "folder-start"
+    ){
+
+        incomingMeta = data;
+
+        incomingChunks = [];
+
+        receivedBlob = null;
+
+
+        document
+            .getElementById(
+                "receiverPreview"
+            )
+            .classList
+            .add("hidden");
+
+
+        document
+            .getElementById(
+                "progressCard"
+            )
+            .classList
+            .remove("hidden");
+
+
+        document
+            .getElementById(
+                "progressTitle"
+            )
+            .textContent =
+            "📥 Receiving " +
+            data.folderName +
+            "...";
+
+
+        updateProgress(0);
+
+
+        return;
+    }
+
+
+    if(
+        data &&
+        data.type === "folder-end"
+    ){
+
+        finishReceiving();
+
+        return;
+    }
+
+
+    if(data instanceof ArrayBuffer){
+
+        incomingChunks.push(data);
+
+
+        if(
+            incomingMeta &&
+            incomingMeta.totalChunks
+        ){
+
+            updateProgress(
+                Math.round(
+                    incomingChunks.length /
+                    incomingMeta.totalChunks *
+                    100
+                )
+            );
+
+        }
+
+    }
+
+}
+
+
+// ===============================
+// FINISH RECEIVE
+// ===============================
+
+async function finishReceiving(){
+
+    try{
+
+        receivedBlob =
+            new Blob(
+                incomingChunks,
+                {
+                    type:"application/zip"
+                }
+            );
+
+
+        document
+            .getElementById(
+                "progressTitle"
+            )
+            .textContent =
+            "🔎 Creating preview...";
+
+
+        updateProgress(100);
+
+
+        await showReceivedPreview(
+            receivedBlob
+        );
+
+
+        document
+            .getElementById(
+                "progressTitle"
+            )
+            .textContent =
+            "✅ Transfer complete";
+
+
+        setMainStatus(
+            "✅ Folder received. Check the preview and download it."
+        );
+
+
+        incomingChunks = [];
+
+    }catch(error){
+
+        console.error(error);
+
+        setMainStatus(
+            "❌ Could not create preview: " +
+            error.message,
+            true
+        );
+
+    }
+
+}
+
+
+// ===============================
+// RECEIVED PREVIEW
+// ===============================
+
+async function showReceivedPreview(blob){
+
+    const zip =
+        await JSZip.loadAsync(blob);
+
+
+    const entries = [];
+
+
+    zip.forEach(
+        (path,entry)=>{
+
+            if(!entry.dir){
+
+                entries.push(path);
+
+            }
+
+        }
+    );
+
+
+    document
+        .getElementById(
+            "receiverPreview"
+        )
+        .classList
+        .remove("hidden");
+
+
+    document
+        .getElementById(
+            "receivedFolderName"
+        )
+        .textContent =
+        incomingMeta
+        ? incomingMeta.folderName
+        : "Received Folder";
+
+
+    document
+        .getElementById(
+            "receivedFileCount"
+        )
+        .textContent =
+        entries.length;
+
+
+    document
+        .getElementById(
+            "receivedTitle"
+        )
+        .textContent =
+        entries.length +
+        " file" +
+        (entries.length === 1
+            ? ""
+            : "s");
+
+
+    document
+        .getElementById(
+            "receivedSize"
+        )
+        .textContent =
+        formatBytes(blob.size);
+
+
+    const list =
+        document
+        .getElementById(
+            "receivedFileList"
+        );
+
+
+    list.innerHTML = "";
+
+
+    entries
+        .slice(0,1000)
+        .forEach(path=>{
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "received-item";
+
+            row.textContent =
+                getFileIcon(path) +
+                "  " +
+                path;
+
+            list.appendChild(row);
+
+        });
+
+
+    if(entries.length > 1000){
+
+        const note =
+            document.createElement(
+                "div"
+            );
+
+        note.style.padding = "12px";
+
+        note.style.color = "#667085";
+
+        note.textContent =
+            "Showing first 1000 files. " +
+            "The ZIP contains all " +
+            entries.length +
+            " files.";
+
+        list.appendChild(note);
+
+    }
+
+}
+
+
+// ===============================
+// DOWNLOAD
+// ===============================
+
+function downloadReceivedZip(){
+
+    if(!receivedBlob){
+
+        alert(
+            "No received folder is ready."
+        );
+
+        return;
+    }
+
+
+    const safeName =
+        incomingMeta &&
+        incomingMeta.folderName
+        ? incomingMeta.folderName
+        : "received-folder";
+
+
+    const url =
+        URL.createObjectURL(
+            receivedBlob
+        );
+
+
+    const a =
+        document.createElement("a");
+
+
+    a.href = url;
+
+    a.download =
+        safeName + ".zip";
+
+
+    document
+        .body
+        .appendChild(a);
+
+
+    a.click();
+
+    a.remove();
+
+
+    setTimeout(
+        ()=>{
+            URL.revokeObjectURL(url);
+        },
+        3000
+    );
+
+
+    setMainStatus(
+        "📥 Download started."
+    );
+
+}
+
+
+// ===============================
+// UTILITIES
+// ===============================
+
+function copyId(){
+
+    navigator.clipboard
+        .writeText(myTransferId)
+        .then(()=>{
+
+            document
+                .getElementById(
+                    "myStatus"
+                )
+                .textContent =
+                "✅ Transfer ID copied.";
+
+        })
+        .catch(()=>{
+
+            alert(
+                "Your ID is: " +
+                myTransferId
+            );
+
+        });
+
+}
+
+
+function updateSendButton(){
+
+    document
+        .getElementById(
+            "sendButton"
+        )
+        .disabled =
+        !(
+            connection &&
+            connection.open &&
+            selectedFiles.length
+        );
+
+}
+
+
+function updateProgress(percent){
+
+    percent =
+        Math.max(
+            0,
+            Math.min(100,percent)
+        );
+
+
+    document
+        .getElementById(
+            "progressBar"
+        )
+        .style
+        .width =
+        percent + "%";
+
+
+    document
+        .getElementById(
+            "progressText"
+        )
+        .textContent =
+        percent + "%";
+
+}
+
+
+function setMainStatus(
+    text,
+    bad=false
+){
+
+    const el =
+        document
+        .getElementById(
+            "mainStatus"
+        );
+
+
+    el.textContent = text;
+
+    el.className =
+        bad
+        ? "status bad"
+        : "status";
+
+}
+
+
+function setConnectionBadge(text){
+
+    document
+        .getElementById(
+            "connectionBadge"
+        )
+        .textContent = text;
+
+}
+
+
+function formatBytes(bytes){
+
+    if(bytes === 0)
+        return "0 B";
+
+
+    const units =
+        [
+            "B",
+            "KB",
+            "MB",
+            "GB",
+            "TB"
+        ];
+
+
+    const i =
+        Math.floor(
+            Math.log(bytes) /
+            Math.log(1024)
+        );
+
+
+    return (
+        bytes /
+        Math.pow(1024,i)
+    ).toFixed(
+        i === 0 ? 0 : 2
+    )
+    + " " +
+    units[i];
+
+}
+
+
+function sleep(ms){
+
+    return new Promise(
+        resolve =>
+        setTimeout(
+            resolve,
+            ms
+        )
+    );
+
+}
+
+</script>
+
+</body>
+</html>
