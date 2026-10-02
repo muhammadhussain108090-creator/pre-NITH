@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Easy Data Transfer</title>
 
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -16,15 +18,15 @@
 }
 
 body{
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
     background:linear-gradient(135deg,#141e30,#243b55);
     min-height:100vh;
-    color:#fff;
+    color:white;
     padding:20px;
 }
 
 .container{
-    max-width:950px;
+    max-width:1000px;
     margin:auto;
 }
 
@@ -34,16 +36,16 @@ body{
 }
 
 .topbar h1{
-    font-size:35px;
+    font-size:36px;
     margin-bottom:8px;
 }
 
 .topbar p{
-    opacity:.8;
+    opacity:.75;
 }
 
 .card{
-    background:rgba(255,255,255,.10);
+    background:rgba(255,255,255,.1);
     backdrop-filter:blur(15px);
     border:1px solid rgba(255,255,255,.15);
     border-radius:20px;
@@ -56,25 +58,22 @@ h2{
     margin-bottom:15px;
 }
 
-input[type="text"]{
+input{
     width:100%;
     padding:13px;
     border-radius:10px;
     border:none;
     outline:none;
-    margin-bottom:12px;
+    margin-bottom:10px;
     font-size:16px;
 }
 
 button{
     border:none;
     border-radius:10px;
-    padding:12px 18px;
+    padding:11px 17px;
     cursor:pointer;
     font-weight:bold;
-    font-size:15px;
-    background:#fff;
-    color:#182848;
     margin:4px;
 }
 
@@ -82,19 +81,9 @@ button:hover{
     transform:translateY(-1px);
 }
 
-button:disabled{
-    opacity:.5;
-    cursor:not-allowed;
-}
-
 .primary{
     background:#00e5ff;
     color:#001b22;
-}
-
-.danger{
-    background:#ff4d6d;
-    color:white;
 }
 
 .success{
@@ -102,25 +91,82 @@ button:disabled{
     color:#052015;
 }
 
-.idbox{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    flex-wrap:wrap;
+.danger{
+    background:#ff4d6d;
+    color:white;
 }
 
-.id{
-    background:rgba(0,0,0,.3);
-    padding:12px 15px;
-    border-radius:10px;
+.secondary{
+    background:white;
+    color:#182848;
+}
+
+.hidden{
+    display:none!important;
+}
+
+.idbox{
+    background:rgba(0,0,0,.25);
+    padding:14px;
+    border-radius:12px;
     font-weight:bold;
     letter-spacing:1px;
+    display:inline-block;
+    margin-bottom:10px;
 }
 
 .status{
-    margin-top:10px;
-    font-size:14px;
-    opacity:.9;
+    margin-top:8px;
+    opacity:.8;
+}
+
+.friend{
+    background:rgba(0,0,0,.2);
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.friend-info{
+    flex:1;
+}
+
+.friend-name{
+    font-weight:bold;
+    font-size:17px;
+}
+
+.friend-id{
+    font-size:13px;
+    opacity:.65;
+    margin-top:4px;
+}
+
+.online{
+    color:#48e08a;
+    font-weight:bold;
+}
+
+.offline{
+    color:#aaa;
+    font-weight:bold;
+}
+
+.request{
+    background:rgba(0,0,0,.2);
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+.request-name{
+    font-weight:bold;
+    margin-bottom:5px;
 }
 
 .file-input{
@@ -138,23 +184,15 @@ button:disabled{
 }
 
 .summary{
-    margin-top:15px;
-    padding:15px;
     background:rgba(0,0,0,.2);
+    padding:15px;
     border-radius:12px;
-}
-
-.preview{
-    margin-top:20px;
-}
-
-.search{
-    margin-top:10px;
+    margin-top:15px;
 }
 
 .file-list{
     max-height:400px;
-    overflow-y:auto;
+    overflow:auto;
     margin-top:15px;
 }
 
@@ -168,23 +206,23 @@ button:disabled{
     border-radius:10px;
 }
 
-.file-thumb{
-    width:55px;
-    height:55px;
-    border-radius:8px;
-    object-fit:cover;
-    background:rgba(0,0,0,.3);
-}
-
+.file-thumb,
 .file-icon{
     width:55px;
     height:55px;
+    border-radius:8px;
+}
+
+.file-thumb{
+    object-fit:cover;
+}
+
+.file-icon{
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:28px;
     background:rgba(0,0,0,.25);
-    border-radius:8px;
 }
 
 .file-info{
@@ -208,7 +246,6 @@ button:disabled{
 .remove{
     background:#ff4d6d;
     color:white;
-    padding:8px 12px;
 }
 
 .progress{
@@ -231,37 +268,36 @@ button:disabled{
     margin-top:8px;
 }
 
-.hidden{
-    display:none;
+.big-status{
+    padding:15px;
+    background:rgba(0,0,0,.2);
+    border-radius:12px;
 }
 
 .note{
-    font-size:13px;
     opacity:.7;
+    font-size:13px;
     line-height:1.5;
-    margin-top:12px;
+    margin-top:10px;
 }
 
-.big-status{
-    padding:15px;
-    border-radius:12px;
-    background:rgba(0,0,0,.2);
-    margin-top:15px;
+.tabs{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
 }
 
-@media(max-width:600px){
-    body{
-        padding:10px;
-    }
-
-    .card{
-        padding:18px;
-    }
-
-    .topbar h1{
-        font-size:28px;
-    }
+.tab{
+    background:rgba(255,255,255,.1);
+    color:white;
 }
+
+.tab.active{
+    background:#00e5ff;
+    color:#001b22;
+}
+
 </style>
 </head>
 
@@ -270,733 +306,1793 @@ button:disabled{
 <div class="container">
 
 <div class="topbar">
-    <h1>⚡ Easy Data Transfer</h1>
-    <p>Transfer only the files you choose</p>
-</div>
 
-<!-- NAME -->
-<div class="card" id="nameScreen">
-    <h2>👤 Enter Your Name</h2>
+<h1>⚡ Easy Data Transfer</h1>
 
-    <input
-        type="text"
-        id="userName"
-        placeholder="Enter your name"
-        maxlength="20"
-    >
+<p>
+Friends • File Transfer • Online Status
+</p>
 
-    <button class="primary" onclick="startApp()">
-        Continue
-    </button>
 </div>
 
 
-<!-- APP -->
-<div id="app" class="hidden">
+<!-- AUTH -->
 
-    <!-- MY ID -->
-    <div class="card">
+<div id="authScreen">
 
-        <h2>🆔 Your Transfer ID</h2>
+<div class="card">
 
-        <div class="idbox">
-            <div class="id" id="myId">Connecting...</div>
+<h2>🔐 Account</h2>
 
-            <button onclick="copyId()">
-                Copy ID
-            </button>
-        </div>
+<input
+id="authName"
+type="text"
+placeholder="Your name"
+>
 
-        <div class="status" id="myStatus">
-            Connecting to transfer network...
-        </div>
+<input
+id="authEmail"
+type="email"
+placeholder="Email"
+>
 
-    </div>
+<input
+id="authPassword"
+type="password"
+placeholder="Password"
+>
 
+<button
+class="primary"
+onclick="createAccount()"
+>
+Create Account
+</button>
 
-    <!-- CONNECT -->
-    <div class="card">
+<button
+class="secondary"
+onclick="loginAccount()"
+>
+Login
+</button>
 
-        <h2>🔗 Connect to Another Person</h2>
-
-        <input
-            type="text"
-            id="remoteId"
-            placeholder="Enter their Transfer ID"
-        >
-
-        <button class="primary" onclick="connectToPeer()">
-            Connect
-        </button>
-
-        <div class="big-status" id="connectionStatus">
-            Not connected
-        </div>
-
-    </div>
-
-
-    <!-- SELECT FILES -->
-    <div class="card">
-
-        <h2>📁 Select Files</h2>
-
-        <label class="select-files">
-            📄 Choose Files
-            <input
-                class="file-input"
-                type="file"
-                id="fileInput"
-                multiple
-            >
-        </label>
-
-        <div class="note">
-            You can select multiple individual files at once.
-            Only the files you select will be transferred.
-        </div>
-
-        <div class="summary hidden" id="folderSummary">
-
-            <strong>Selected files:</strong>
-            <span id="fileCount">0</span>
-
-            <br>
-
-            <strong>Total size:</strong>
-            <span id="totalSize">0 B</span>
-
-        </div>
-
-    </div>
-
-
-    <!-- SENDER PREVIEW -->
-    <div class="card hidden" id="senderPreview">
-
-        <h2>👀 Files You Selected</h2>
-
-        <input
-            class="search"
-            type="text"
-            id="previewSearch"
-            placeholder="Search selected files..."
-        >
-
-        <div class="file-list" id="filePreviewList"></div>
-
-        <button
-            class="primary"
-            id="sendButton"
-            onclick="sendFiles()"
-        >
-            🚀 Send Selected Files
-        </button>
-
-    </div>
-
-
-    <!-- PROGRESS -->
-    <div class="card hidden" id="progressCard">
-
-        <h2 id="progressTitle">
-            Sending...
-        </h2>
-
-        <div class="progress">
-            <div
-                class="progress-bar"
-                id="progressBar"
-            ></div>
-        </div>
-
-        <div
-            class="progress-text"
-            id="progressText"
-        >
-            0%
-        </div>
-
-    </div>
-
-
-    <!-- RECEIVER PREVIEW -->
-    <div class="card hidden" id="receiverPreview">
-
-        <h2>📥 Received Files</h2>
-
-        <div class="summary">
-
-            <strong>Files:</strong>
-            <span id="receivedFileCount">0</span>
-
-            <br>
-
-            <strong>Total size:</strong>
-            <span id="receivedSize">0 B</span>
-
-        </div>
-
-        <div
-            class="file-list"
-            id="receivedFileList"
-        ></div>
-
-        <button
-            class="success"
-            onclick="downloadReceivedZip()"
-        >
-            ⬇️ Download Files
-        </button>
-
-    </div>
-
-
-    <!-- MAIN STATUS -->
-    <div class="card">
-
-        <div
-            class="big-status"
-            id="mainStatus"
-        >
-            Ready.
-        </div>
-
-    </div>
+<div
+class="big-status"
+id="authStatus"
+>
+Create an account or login.
+</div>
 
 </div>
 
 </div>
 
 
-<script>
+<!-- MAIN APP -->
 
-let peer;
-let connection;
+<div
+id="app"
+class="hidden"
+>
 
-let myTransferId = "";
+<div class="card">
+
+<div class="tabs">
+
+<button
+class="tab active"
+onclick="showSection('home')"
+>
+🏠 Home
+</button>
+
+<button
+class="tab"
+onclick="showSection('friends')"
+>
+👥 Friends
+</button>
+
+<button
+class="tab"
+onclick="showSection('transfer')"
+>
+📤 Transfer
+</button>
+
+<button
+class="tab"
+onclick="logoutAccount()"
+>
+🚪 Logout
+</button>
+
+</div>
+
+</div>
+
+
+<!-- HOME -->
+
+<div id="homeSection">
+
+<div class="card">
+
+<h2>
+👤 Welcome
+</h2>
+
+<div id="welcomeName">
+</div>
+
+<br>
+
+<strong>
+Your Transfer ID
+</strong>
+
+<div
+class="idbox"
+id="myId"
+>
+Loading...
+</div>
+
+<br>
+
+<button
+class="secondary"
+onclick="copyMyId()"
+>
+Copy ID
+</button>
+
+<div
+class="status"
+id="onlineStatus"
+>
+Connecting...
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>
+🔗 Connection
+</h2>
+
+<div
+class="big-status"
+id="connectionStatus"
+>
+Not connected
+</div>
+
+</div>
+
+</div>
+
+
+<!-- FRIENDS -->
+
+<div
+id="friendsSection"
+class="hidden"
+>
+
+<div class="card">
+
+<h2>
+➕ Add Friend
+</h2>
+
+<input
+id="friendIdInput"
+placeholder="Enter friend's Transfer ID"
+>
+
+<button
+class="primary"
+onclick="sendFriendRequest()"
+>
+Send Friend Request
+</button>
+
+<div
+id="friendStatus"
+class="status"
+>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>
+🔔 Friend Requests
+</h2>
+
+<div
+id="requestsList"
+>
+No requests.
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>
+👥 My Friends
+</h2>
+
+<div
+id="friendsList"
+>
+No friends yet.
+</div>
+
+</div>
+
+</div>
+
+
+<!-- TRANSFER -->
+
+<div
+id="transferSection"
+class="hidden"
+>
+
+<div class="card">
+
+<h2>
+📄 Select Files
+</h2>
+
+<label class="select-files">
+
+Choose Files
+
+<input
+id="fileInput"
+class="file-input"
+type="file"
+multiple
+>
+
+</label>
+
+<div class="note">
+
+Only the files you select will be transferred.
+
+</div>
+
+<div
+id="fileSummary"
+class="summary hidden"
+>
+
+<strong>
+Selected:
+</strong>
+
+<span id="fileCount">
+0
+</span>
+
+<br>
+
+<strong>
+Total:
+</strong>
+
+<span id="totalSize">
+0 B
+</span>
+
+</div>
+
+</div>
+
+
+<div
+id="senderPreview"
+class="card hidden"
+>
+
+<h2>
+👀 Selected Files
+</h2>
+
+<input
+id="previewSearch"
+placeholder="Search files..."
+>
+
+<div
+id="filePreviewList"
+class="file-list"
+>
+</div>
+
+<button
+class="primary"
+onclick="sendFiles()"
+id="sendButton"
+>
+🚀 Send Files
+</button>
+
+</div>
+
+
+<div
+id="progressCard"
+class="card hidden"
+>
+
+<h2 id="progressTitle">
+Transfer
+</h2>
+
+<div class="progress">
+
+<div
+id="progressBar"
+class="progress-bar"
+>
+</div>
+
+</div>
+
+<div
+id="progressText"
+class="progress-text"
+>
+0%
+</div>
+
+</div>
+
+
+<div
+id="receiverPreview"
+class="card hidden"
+>
+
+<h2>
+📥 Received Files
+</h2>
+
+<div
+id="receivedFileList"
+class="file-list"
+>
+</div>
+
+<button
+class="success"
+onclick="downloadReceivedZip()"
+>
+⬇️ Download Files
+</button>
+
+</div>
+
+
+<div class="card">
+
+<div
+id="mainStatus"
+class="big-status"
+>
+Ready.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script type="module">
+
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+}
+from
+"https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+import {
+    getDatabase,
+    ref,
+    set,
+    get,
+    push,
+    update,
+    onValue,
+    onDisconnect,
+    serverTimestamp
+}
+from
+"https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+
+// ==================================================
+// FIREBASE CONFIG
+// ==================================================
+//
+// REPLACE THIS WITH YOUR REAL FIREBASE CONFIG
+//
+
+const firebaseConfig = {
+
+    apiKey:
+        "YOUR_API_KEY",
+
+    authDomain:
+        "YOUR_PROJECT.firebaseapp.com",
+
+    databaseURL:
+        "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+
+    projectId:
+        "YOUR_PROJECT",
+
+    storageBucket:
+        "YOUR_PROJECT.firebasestorage.app",
+
+    messagingSenderId:
+        "YOUR_MESSAGING_SENDER_ID",
+
+    appId:
+        "YOUR_APP_ID"
+
+};
+
+
+// ==================================================
+
+const firebaseApp =
+    initializeApp(firebaseConfig);
+
+const auth =
+    getAuth(firebaseApp);
+
+const db =
+    getDatabase(firebaseApp);
+
+
+// ==================================================
+// GLOBAL VARIABLES
+// ==================================================
+
+let currentUser = null;
+
+let currentProfile = null;
+
+let peer = null;
+
+let connection = null;
 
 let selectedFiles = [];
 
-let incomingChunks = [];
-let incomingMeta = null;
-let receivedBlob = null;
-
-const CHUNK_SIZE = 16 * 1024;
-
 let previewObjectUrls = [];
 
+let incomingChunks = [];
 
-// ================================
-// START APP
-// ================================
+let incomingMeta = null;
 
-function startApp(){
+let receivedBlob = null;
+
+const CHUNK_SIZE =
+    16 * 1024;
+
+
+// ==================================================
+// AUTH
+// ==================================================
+
+window.createAccount =
+async function(){
 
     const name =
-        document.getElementById("userName")
+        document
+        .getElementById("authName")
         .value
         .trim();
 
-    if(!name){
+    const email =
+        document
+        .getElementById("authEmail")
+        .value
+        .trim();
 
-        alert("Please enter your name.");
+    const password =
+        document
+        .getElementById("authPassword")
+        .value;
+
+
+    if(!name || !email || !password){
+
+        setAuthStatus(
+            "Please fill in all fields."
+        );
 
         return;
     }
 
-    document.getElementById("nameScreen")
-        .classList.add("hidden");
 
-    document.getElementById("app")
-        .classList.remove("hidden");
+    try{
 
-    createPeer(name);
+        const result =
+            await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+
+        const uid =
+            result.user.uid;
+
+
+        const transferId =
+            generateTransferId(name);
+
+
+        await set(
+            ref(
+                db,
+                "users/" + uid
+            ),
+            {
+
+                name:name,
+
+                email:email,
+
+                transferId:transferId,
+
+                online:true,
+
+                createdAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        setAuthStatus(
+            "Account created!"
+        );
+
+
+    }catch(error){
+
+        setAuthStatus(
+            firebaseError(error)
+        );
+
+    }
+
+};
+
+
+// ==================================================
+
+window.loginAccount =
+async function(){
+
+    const email =
+        document
+        .getElementById("authEmail")
+        .value
+        .trim();
+
+    const password =
+        document
+        .getElementById("authPassword")
+        .value;
+
+
+    if(!email || !password){
+
+        setAuthStatus(
+            "Enter your email and password."
+        );
+
+        return;
+    }
+
+
+    try{
+
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+
+    }catch(error){
+
+        setAuthStatus(
+            firebaseError(error)
+        );
+
+    }
+
+};
+
+
+// ==================================================
+
+window.logoutAccount =
+async function(){
+
+    if(currentUser){
+
+        await set(
+            ref(
+                db,
+                "users/" +
+                currentUser.uid +
+                "/online"
+            ),
+            false
+        );
+
+    }
+
+
+    if(peer){
+
+        peer.destroy();
+
+    }
+
+
+    await signOut(auth);
+
+};
+
+
+// ==================================================
+// AUTH STATE
+// ==================================================
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        if(user){
+
+            currentUser = user;
+
+            await loadProfile();
+
+            document
+                .getElementById(
+                    "authScreen"
+                )
+                .classList.add("hidden");
+
+            document
+                .getElementById(
+                    "app"
+                )
+                .classList.remove("hidden");
+
+            setupOnlineStatus();
+
+            startPeer();
+
+            listenForRequests();
+
+            listenForFriends();
+
+        }else{
+
+            currentUser = null;
+
+            document
+                .getElementById(
+                    "authScreen"
+                )
+                .classList.remove("hidden");
+
+            document
+                .getElementById(
+                    "app"
+                )
+                .classList.add("hidden");
+
+        }
+
+    }
+);
+
+
+// ==================================================
+// PROFILE
+// ==================================================
+
+async function loadProfile(){
+
+    const snapshot =
+        await get(
+            ref(
+                db,
+                "users/" +
+                currentUser.uid
+            )
+        );
+
+
+    if(!snapshot.exists()){
+
+        return;
+
+    }
+
+
+    currentProfile =
+        snapshot.val();
+
+
+    document
+        .getElementById("welcomeName")
+        .textContent =
+        "Hello, " +
+        currentProfile.name +
+        "!";
+
+
+    document
+        .getElementById("myId")
+        .textContent =
+        currentProfile.transferId;
+
 }
 
 
-// ================================
-// CREATE UNIQUE ID
-// ================================
+// ==================================================
+// TRANSFER ID
+// ==================================================
 
-function generateId(name){
+function generateTransferId(name){
 
-    let cleanName =
+    let clean =
         name
         .toUpperCase()
-        .replace(/[^A-Z0-9]/g,"")
+        .replace(
+            /[^A-Z0-9]/g,
+            ""
+        )
         .substring(0,12);
 
-    if(!cleanName){
 
-        cleanName = "USER";
+    if(!clean){
+
+        clean = "USER";
+
     }
+
 
     const number =
         Math.floor(
             1000 +
-            Math.random() * 9000
+            Math.random() *
+            9000
         );
 
-    return cleanName + "-" + number;
+
+    return clean + "-" + number;
+
 }
 
 
-// ================================
-// PEER
-// ================================
+// ==================================================
+// ONLINE STATUS
+// ==================================================
 
-function createPeer(name){
+function setupOnlineStatus(){
 
-    myTransferId =
-        generateId(name);
+    const statusRef =
+        ref(
+            db,
+            "users/" +
+            currentUser.uid +
+            "/online"
+        );
+
+
+    onDisconnect(statusRef)
+        .set(false);
+
+
+    set(
+        statusRef,
+        true
+    );
+
+
+    document
+        .getElementById(
+            "onlineStatus"
+        )
+        .innerHTML =
+        "🟢 Online";
+
+}
+
+
+// ==================================================
+// PEERJS
+// ==================================================
+
+function startPeer(){
+
+    if(
+        !currentProfile
+    ){
+
+        return;
+
+    }
+
 
     peer =
-        new Peer(myTransferId);
-
-    peer.on("open", id => {
-
-        myTransferId = id;
-
-        document.getElementById("myId")
-            .textContent = id;
-
-        document.getElementById("myStatus")
-            .textContent =
-            "Online — ready to transfer.";
-
-        setMainStatus(
-            "Your Transfer ID is ready."
+        new Peer(
+            currentProfile.transferId
         );
 
-    });
 
+    peer.on(
+        "open",
+        id => {
 
-    peer.on("connection", conn => {
-
-        connection = conn;
-
-        setupConnection(conn);
-
-        setConnectionStatus(
-            "Someone is connecting..."
-        );
-
-    });
-
-
-    peer.on("error", error => {
-
-        console.log(error);
-
-        if(
-            error.type === "unavailable-id"
-        ){
-
-            peer.destroy();
-
-            setTimeout(() => {
-
-                createPeer(name);
-
-            },500);
-
-        }else{
-
-            setMainStatus(
-                "Connection error: " +
-                error.type
-            );
+            document
+                .getElementById(
+                    "myId"
+                )
+                .textContent =
+                id;
 
         }
+    );
 
-    });
+
+    peer.on(
+        "connection",
+        conn => {
+
+            connection = conn;
+
+            setupConnection(conn);
+
+        }
+    );
+
+
+    peer.on(
+        "error",
+        error => {
+
+            console.log(error);
+
+        }
+    );
 
 }
 
 
-// ================================
-// CONNECT
-// ================================
+// ==================================================
+// FRIEND REQUEST
+// ==================================================
 
-function connectToPeer(){
+window.sendFriendRequest =
+async function(){
 
-    const remoteId =
-        document.getElementById("remoteId")
+    const id =
+        document
+        .getElementById(
+            "friendIdInput"
+        )
         .value
         .trim()
         .toUpperCase();
 
-    if(!remoteId){
 
-        alert(
-            "Enter the other person's Transfer ID."
+    if(!id){
+
+        setFriendStatus(
+            "Enter a Transfer ID."
         );
 
         return;
+
     }
+
+
+    if(
+        id ===
+        currentProfile.transferId
+    ){
+
+        setFriendStatus(
+            "You cannot add yourself."
+        );
+
+        return;
+
+    }
+
+
+    const usersSnapshot =
+        await get(
+            ref(db,"users")
+        );
+
+
+    let targetUid = null;
+
+    let targetUser = null;
+
+
+    usersSnapshot.forEach(
+        child => {
+
+            const user =
+                child.val();
+
+
+            if(
+                user.transferId === id
+            ){
+
+                targetUid =
+                    child.key;
+
+                targetUser =
+                    user;
+
+            }
+
+        }
+    );
+
+
+    if(!targetUid){
+
+        setFriendStatus(
+            "No account found with that Transfer ID."
+        );
+
+        return;
+
+    }
+
+
+    const requestRef =
+        push(
+            ref(
+                db,
+                "friendRequests/" +
+                targetUid
+            )
+        );
+
+
+    await set(
+        requestRef,
+        {
+
+            fromUid:
+                currentUser.uid,
+
+            fromName:
+                currentProfile.name,
+
+            fromId:
+                currentProfile.transferId,
+
+            createdAt:
+                serverTimestamp()
+
+        }
+    );
+
+
+    setFriendStatus(
+        "✅ Friend request sent to " +
+        targetUser.name
+    );
+
+
+    document
+        .getElementById(
+            "friendIdInput"
+        )
+        .value = "";
+
+};
+
+
+// ==================================================
+// FRIEND REQUEST LISTENER
+// ==================================================
+
+function listenForRequests(){
+
+    const requestRef =
+        ref(
+            db,
+            "friendRequests/" +
+            currentUser.uid
+        );
+
+
+    onValue(
+        requestRef,
+        snapshot => {
+
+            const list =
+                document
+                .getElementById(
+                    "requestsList"
+                );
+
+
+            list.innerHTML = "";
+
+
+            if(!snapshot.exists()){
+
+                list.textContent =
+                    "No friend requests.";
+
+                return;
+
+            }
+
+
+            snapshot.forEach(
+                child => {
+
+                    const request =
+                        child.val();
+
+
+                    const box =
+                        document
+                        .createElement(
+                            "div"
+                        );
+
+
+                    box.className =
+                        "request";
+
+
+                    box.innerHTML = `
+
+                        <div class="request-name">
+                            👤 ${escapeHtml(request.fromName)}
+                        </div>
+
+                        <div>
+                            ${escapeHtml(request.fromId)}
+                        </div>
+
+                        <button
+                            class="success"
+                            onclick="acceptRequest('${child.key}','${request.fromUid}')"
+                        >
+                            Accept
+                        </button>
+
+                        <button
+                            class="danger"
+                            onclick="declineRequest('${child.key}')"
+                        >
+                            Decline
+                        </button>
+
+                    `;
+
+
+                    list.appendChild(box);
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// ==================================================
+// ACCEPT REQUEST
+// ==================================================
+
+window.acceptRequest =
+async function(
+    requestKey,
+    friendUid
+){
+
+    await set(
+        ref(
+            db,
+            "friends/" +
+            currentUser.uid +
+            "/" +
+            friendUid
+        ),
+        true
+    );
+
+
+    await set(
+        ref(
+            db,
+            "friends/" +
+            friendUid +
+            "/" +
+            currentUser.uid
+        ),
+        true
+    );
+
+
+    await set(
+        ref(
+            db,
+            "friendRequests/" +
+            currentUser.uid +
+            "/" +
+            requestKey
+        ),
+        null
+    );
+
+};
+
+
+// ==================================================
+// DECLINE
+// ==================================================
+
+window.declineRequest =
+async function(
+    requestKey
+){
+
+    await set(
+        ref(
+            db,
+            "friendRequests/" +
+            currentUser.uid +
+            "/" +
+            requestKey
+        ),
+        null
+    );
+
+};
+
+
+// ==================================================
+// FRIENDS
+// ==================================================
+
+function listenForFriends(){
+
+    const friendsRef =
+        ref(
+            db,
+            "friends/" +
+            currentUser.uid
+        );
+
+
+    onValue(
+        friendsRef,
+        async snapshot => {
+
+            const list =
+                document
+                .getElementById(
+                    "friendsList"
+                );
+
+
+            list.innerHTML = "";
+
+
+            if(!snapshot.exists()){
+
+                list.textContent =
+                    "No friends yet.";
+
+                return;
+
+            }
+
+
+            for(
+                const child of snapshot.children
+            ){
+
+                const uid =
+                    child.key;
+
+
+                const userSnapshot =
+                    await get(
+                        ref(
+                            db,
+                            "users/" +
+                            uid
+                        )
+                    );
+
+
+                if(
+                    !userSnapshot.exists()
+                ){
+
+                    continue;
+
+                }
+
+
+                const friend =
+                    userSnapshot.val();
+
+
+                const box =
+                    document
+                    .createElement(
+                        "div"
+                    );
+
+
+                box.className =
+                    "friend";
+
+
+                const onlineText =
+                    friend.online
+                    ? "🟢 Online"
+                    : "⚪ Offline";
+
+
+                const onlineClass =
+                    friend.online
+                    ? "online"
+                    : "offline";
+
+
+                box.innerHTML = `
+
+                    <div class="friend-info">
+
+                        <div class="friend-name">
+                            ${escapeHtml(friend.name)}
+                        </div>
+
+                        <div class="friend-id">
+                            ${escapeHtml(friend.transferId)}
+                        </div>
+
+                        <div class="${onlineClass}">
+                            ${onlineText}
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <button
+                            class="primary"
+                            onclick="connectToFriend('${escapeHtml(friend.transferId)}')"
+                        >
+                            🔗 Connect
+                        </button>
+
+                        <button
+                            class="danger"
+                            onclick="removeFriend('${uid}')"
+                        >
+                            Remove
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                list.appendChild(box);
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==================================================
+// REMOVE FRIEND
+// ==================================================
+
+window.removeFriend =
+async function(uid){
+
+    if(
+        !confirm(
+            "Remove this friend?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    await set(
+        ref(
+            db,
+            "friends/" +
+            currentUser.uid +
+            "/" +
+            uid
+        ),
+        null
+    );
+
+
+    await set(
+        ref(
+            db,
+            "friends/" +
+            uid +
+            "/" +
+            currentUser.uid
+        ),
+        null
+    );
+
+};
+
+
+// ==================================================
+// CONNECT
+// ==================================================
+
+window.connectToFriend =
+function(id){
+
+    showSection("transfer");
 
     if(!peer){
 
-        alert("Your connection is not ready yet.");
+        alert(
+            "Your connection system is still starting."
+        );
 
         return;
+
     }
 
-    setConnectionStatus(
-        "Connecting..."
-    );
 
     connection =
-        peer.connect(remoteId,{
-            reliable:true
-        });
+        peer.connect(
+            id,
+            {
+                reliable:true
+            }
+        );
 
-    setupConnection(connection);
-}
+
+    setupConnection(
+        connection
+    );
+
+};
 
 
-// ================================
-// CONNECTION SETUP
-// ================================
+// ==================================================
+// CONNECTION
+// ==================================================
 
 function setupConnection(conn){
 
-    conn.on("open", () => {
-
-        setConnectionStatus(
-            "🟢 Connected"
-        );
-
-        setMainStatus(
-            "Connected successfully. You can now transfer files."
-        );
-
-    });
+    connection = conn;
 
 
-    conn.on("data", data => {
+    conn.on(
+        "open",
+        () => {
 
-        handleIncomingData(data);
-
-    });
-
-
-    conn.on("close", () => {
-
-        setConnectionStatus(
-            "🔴 Disconnected"
-        );
-
-        setMainStatus(
-            "The connection was closed."
-        );
-
-    });
+            document
+                .getElementById(
+                    "connectionStatus"
+                )
+                .innerHTML =
+                "🟢 Connected";
 
 
-    conn.on("error", error => {
+            setMainStatus(
+                "Connected. Select files to send."
+            );
 
-        console.log(error);
+        }
+    );
 
-        setConnectionStatus(
-            "Connection error"
-        );
 
-    });
+    conn.on(
+        "data",
+        data => {
+
+            handleIncomingData(data);
+
+        }
+    );
+
+
+    conn.on(
+        "close",
+        () => {
+
+            document
+                .getElementById(
+                    "connectionStatus"
+                )
+                .innerHTML =
+                "⚪ Disconnected";
+
+        }
+    );
 
 }
 
 
-// ================================
-// FILE SELECTOR
-// ================================
+// ==================================================
+// FILE SELECT
+// ==================================================
 
 document
 .getElementById("fileInput")
 .addEventListener(
     "change",
-    handleFileSelection
+    event => {
+
+        selectedFiles =
+            Array.from(
+                event.target.files
+            );
+
+
+        updateFileSummary();
+
+        renderFiles();
+
+        document
+            .getElementById(
+                "fileSummary"
+            )
+            .classList.remove(
+                "hidden"
+            );
+
+        document
+            .getElementById(
+                "senderPreview"
+            )
+            .classList.remove(
+                "hidden"
+            );
+
+    }
 );
 
 
-function handleFileSelection(event){
+// ==================================================
 
-    selectedFiles =
-        Array.from(event.target.files);
-
-    if(selectedFiles.length === 0){
-
-        return;
-    }
-
-    updateSummary();
-
-    renderFilePreview();
-
-    document
-        .getElementById("folderSummary")
-        .classList.remove("hidden");
-
-    document
-        .getElementById("senderPreview")
-        .classList.remove("hidden");
-
-    setMainStatus(
-        selectedFiles.length +
-        " file(s) selected."
-    );
-}
+document
+.getElementById(
+    "previewSearch"
+)
+.addEventListener(
+    "input",
+    renderFiles
+);
 
 
-// ================================
-// SUMMARY
-// ================================
+// ==================================================
 
-function updateSummary(){
+function updateFileSummary(){
 
     let total = 0;
 
-    selectedFiles.forEach(file => {
 
-        total += file.size;
+    selectedFiles.forEach(
+        file => {
 
-    });
+            total += file.size;
+
+        }
+    );
+
 
     document
-        .getElementById("fileCount")
+        .getElementById(
+            "fileCount"
+        )
         .textContent =
         selectedFiles.length;
 
+
     document
-        .getElementById("totalSize")
+        .getElementById(
+            "totalSize"
+        )
         .textContent =
         formatBytes(total);
 
 }
 
 
-// ================================
-// FILE PREVIEW
-// ================================
+// ==================================================
+// RENDER FILES
+// ==================================================
 
-document
-.getElementById("previewSearch")
-.addEventListener(
-    "input",
-    renderFilePreview
-);
-
-
-function renderFilePreview(){
+function renderFiles(){
 
     const list =
-        document.getElementById(
+        document
+        .getElementById(
             "filePreviewList"
         );
 
+
     list.innerHTML = "";
 
-    previewObjectUrls.forEach(url => {
-
-        URL.revokeObjectURL(url);
-
-    });
-
-    previewObjectUrls = [];
 
     const search =
         document
-        .getElementById("previewSearch")
+        .getElementById(
+            "previewSearch"
+        )
         .value
         .toLowerCase();
+
 
     selectedFiles.forEach(
         (file,index) => {
 
-        if(
-            !file.name
-            .toLowerCase()
-            .includes(search)
-        ){
+            if(
+                !file.name
+                .toLowerCase()
+                .includes(search)
+            ){
 
-            return;
+                return;
+
+            }
+
+
+            const item =
+                document
+                .createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "file-item";
+
+
+            if(
+                file.type
+                .startsWith("image/")
+            ){
+
+                const img =
+                    document
+                    .createElement(
+                        "img"
+                    );
+
+
+                img.className =
+                    "file-thumb";
+
+
+                const url =
+                    URL.createObjectURL(
+                        file
+                    );
+
+
+                previewObjectUrls
+                    .push(url);
+
+
+                img.src = url;
+
+
+                item.appendChild(img);
+
+            }else{
+
+                const icon =
+                    document
+                    .createElement(
+                        "div"
+                    );
+
+
+                icon.className =
+                    "file-icon";
+
+
+                icon.textContent =
+                    getFileIcon(
+                        file.name
+                    );
+
+
+                item.appendChild(icon);
+
+            }
+
+
+            const info =
+                document
+                .createElement(
+                    "div"
+                );
+
+
+            info.className =
+                "file-info";
+
+
+            info.innerHTML = `
+
+                <div class="file-name">
+                    ${escapeHtml(file.name)}
+                </div>
+
+                <div class="file-size">
+                    ${formatBytes(file.size)}
+                </div>
+
+            `;
+
+
+            item.appendChild(info);
+
+
+            const remove =
+                document
+                .createElement(
+                    "button"
+                );
+
+
+            remove.className =
+                "remove";
+
+
+            remove.textContent =
+                "Remove";
+
+
+            remove.onclick =
+                () => {
+
+                    selectedFiles
+                        .splice(index,1);
+
+                    updateFileSummary();
+
+                    renderFiles();
+
+                };
+
+
+            item.appendChild(remove);
+
+
+            list.appendChild(item);
+
         }
-
-        const item =
-            document.createElement("div");
-
-        item.className = "file-item";
-
-
-        // IMAGE PREVIEW
-
-        if(
-            file.type.startsWith("image/")
-        ){
-
-            const img =
-                document.createElement("img");
-
-            img.className = "file-thumb";
-
-            const url =
-                URL.createObjectURL(file);
-
-            previewObjectUrls.push(url);
-
-            img.src = url;
-
-            item.appendChild(img);
-
-        }else{
-
-            const icon =
-                document.createElement("div");
-
-            icon.className = "file-icon";
-
-            icon.textContent =
-                getFileIcon(file.name);
-
-            item.appendChild(icon);
-
-        }
-
-
-        const info =
-            document.createElement("div");
-
-        info.className = "file-info";
-
-        info.innerHTML = `
-
-            <div class="file-name">
-                ${escapeHtml(file.name)}
-            </div>
-
-            <div class="file-size">
-                ${formatBytes(file.size)}
-            </div>
-
-        `;
-
-        item.appendChild(info);
-
-
-        const remove =
-            document.createElement("button");
-
-        remove.className = "remove";
-
-        remove.textContent = "Remove";
-
-        remove.onclick = () => {
-
-            removeFile(index);
-
-        };
-
-        item.appendChild(remove);
-
-        list.appendChild(item);
-
-    });
+    );
 
 }
 
 
-// ================================
-// REMOVE FILE
-// ================================
-
-function removeFile(index){
-
-    selectedFiles.splice(index,1);
-
-    updateSummary();
-
-    renderFilePreview();
-
-    if(selectedFiles.length === 0){
-
-        document
-            .getElementById("senderPreview")
-            .classList.add("hidden");
-
-        document
-            .getElementById("folderSummary")
-            .classList.add("hidden");
-
-        setMainStatus(
-            "No files selected."
-        );
-
-    }
-
-}
-
-
-// ================================
+// ==================================================
 // SEND FILES
-// ================================
+// ==================================================
 
-async function sendFiles(){
-
-    if(!connection){
-
-        alert(
-            "Connect to another person first."
-        );
-
-        return;
-    }
+window.sendFiles =
+async function(){
 
     if(
+        !connection ||
         !connection.open
     ){
 
         alert(
-            "The connection is not ready."
+            "Connect to a friend first."
         );
 
         return;
+
     }
+
 
     if(
         selectedFiles.length === 0
     ){
 
         alert(
-            "Please select at least one file."
+            "Select files first."
         );
 
         return;
+
     }
 
 
-    const sendButton =
-        document.getElementById(
+    const button =
+        document
+        .getElementById(
             "sendButton"
         );
 
-    sendButton.disabled = true;
+
+    button.disabled = true;
 
 
     document
-        .getElementById("progressCard")
-        .classList.remove("hidden");
+        .getElementById(
+            "progressCard"
+        )
+        .classList.remove(
+            "hidden"
+        );
 
 
     try{
-
-        // CREATE ZIP
-
-        setProgress(
-            0,
-            "Preparing files..."
-        );
-
 
         const zip =
             new JSZip();
@@ -1008,28 +2104,29 @@ async function sendFiles(){
         selectedFiles.forEach(
             file => {
 
-            zip.file(
-                file.name,
-                file
+                zip.file(
+                    file.name,
+                    file
+                );
+
+                totalSize +=
+                    file.size;
+
+            }
+        );
+
+
+        const blob =
+            await zip.generateAsync(
+                {
+                    type:"blob",
+                    compression:"STORE"
+                }
             );
-
-            totalSize += file.size;
-
-        });
-
-
-        const zipBlob =
-            await zip.generateAsync({
-
-                type:"blob",
-
-                compression:"STORE"
-
-            });
 
 
         const buffer =
-            await zipBlob.arrayBuffer();
+            await blob.arrayBuffer();
 
 
         const totalChunks =
@@ -1038,8 +2135,6 @@ async function sendFiles(){
                 CHUNK_SIZE
             );
 
-
-        // SEND METADATA
 
         connection.send({
 
@@ -1051,46 +2146,44 @@ async function sendFiles(){
             totalSize:
                 totalSize,
 
-            zipSize:
-                buffer.byteLength,
-
             totalChunks:
                 totalChunks
 
         });
 
 
-        // SEND CHUNKS
-
         for(
-            let i = 0;
-            i < totalChunks;
+            let i=0;
+            i<totalChunks;
             i++
         ){
 
             const start =
-                i * CHUNK_SIZE;
+                i *
+                CHUNK_SIZE;
+
 
             const end =
                 Math.min(
-                    start + CHUNK_SIZE,
+                    start +
+                    CHUNK_SIZE,
                     buffer.byteLength
                 );
 
-            const chunk =
+
+            connection.send(
                 buffer.slice(
                     start,
                     end
-                );
-
-
-            connection.send(chunk);
+                )
+            );
 
 
             const percent =
                 Math.round(
-                    ((i + 1) /
-                    totalChunks) * 100
+                    ((i+1) /
+                    totalChunks) *
+                    100
                 );
 
 
@@ -1100,7 +2193,6 @@ async function sendFiles(){
             );
 
 
-            // Small pause to avoid flooding
             await sleep(2);
 
         }
@@ -1132,21 +2224,17 @@ async function sendFiles(){
             "❌ Transfer failed."
         );
 
-        alert(
-            "There was a problem sending the files."
-        );
-
     }
 
 
-    sendButton.disabled = false;
+    button.disabled = false;
 
-}
+};
 
 
-// ================================
-// RECEIVE DATA
-// ================================
+// ==================================================
+// RECEIVE
+// ==================================================
 
 function handleIncomingData(data){
 
@@ -1156,43 +2244,40 @@ function handleIncomingData(data){
     ){
 
         if(
-            data.type === "files-start"
+            data.type ===
+            "files-start"
         ){
 
-            incomingMeta = data;
+            incomingMeta =
+                data;
 
-            incomingChunks = [];
+            incomingChunks =
+                [];
+
 
             document
                 .getElementById(
                     "progressCard"
                 )
-                .classList.remove("hidden");
+                .classList.remove(
+                    "hidden"
+                );
 
-
-            setProgress(
-                0,
-                "Receiving files..."
-            );
-
-
-            setMainStatus(
-                "Receiving " +
-                data.fileCount +
-                " file(s)..."
-            );
 
             return;
+
         }
 
 
         if(
-            data.type === "files-end"
+            data.type ===
+            "files-end"
         ){
 
             finishReceiving();
 
             return;
+
         }
 
     }
@@ -1202,20 +2287,19 @@ function handleIncomingData(data){
         data instanceof ArrayBuffer
     ){
 
-        incomingChunks.push(data);
+        incomingChunks
+            .push(data);
+
 
         if(incomingMeta){
 
-            const current =
-                incomingChunks.length;
-
-            const total =
-                incomingMeta.totalChunks;
-
             const percent =
                 Math.round(
-                    (current / total) * 100
+                    incomingChunks.length /
+                    incomingMeta.totalChunks *
+                    100
                 );
+
 
             setProgress(
                 percent,
@@ -1229,140 +2313,101 @@ function handleIncomingData(data){
 }
 
 
-// ================================
-// FINISH RECEIVING
-// ================================
+// ==================================================
 
 async function finishReceiving(){
 
-    try{
-
-        setProgress(
-            100,
-            "Preparing received files..."
+    receivedBlob =
+        new Blob(
+            incomingChunks,
+            {
+                type:"application/zip"
+            }
         );
 
 
-        const blob =
-            new Blob(
-                incomingChunks,
-                {
-                    type:"application/zip"
-                }
-            );
+    incomingChunks = [];
 
-
-        receivedBlob = blob;
-
-
-        incomingChunks = [];
-
-
-        await showReceivedPreview(
-            blob
-        );
-
-
-        setProgress(
-            100,
-            "Transfer complete!"
-        );
-
-
-        setMainStatus(
-            "✅ Files received successfully."
-        );
-
-
-    }catch(error){
-
-        console.error(error);
-
-        setMainStatus(
-            "❌ Could not process received files."
-        );
-
-    }
-
-}
-
-
-// ================================
-// RECEIVED PREVIEW
-// ================================
-
-async function showReceivedPreview(blob){
 
     const zip =
-        await JSZip.loadAsync(blob);
+        await JSZip.loadAsync(
+            receivedBlob
+        );
+
 
     const list =
-        document.getElementById(
+        document
+        .getElementById(
             "receivedFileList"
         );
 
+
     list.innerHTML = "";
-
-
-    let count = 0;
-
-    let totalSize = 0;
 
 
     for(
         const filename in zip.files
     ){
 
-        const entry =
-            zip.files[filename];
-
-
-        if(entry.dir){
+        if(
+            zip.files[filename].dir
+        ){
 
             continue;
+
         }
 
 
-        count++;
-
-
         const item =
-            document.createElement("div");
+            document
+            .createElement(
+                "div"
+            );
+
 
         item.className =
             "file-item";
 
 
         const icon =
-            document.createElement("div");
+            document
+            .createElement(
+                "div"
+            );
+
 
         icon.className =
             "file-icon";
 
+
         icon.textContent =
-            getFileIcon(filename);
+            getFileIcon(
+                filename
+            );
 
 
         item.appendChild(icon);
 
 
         const info =
-            document.createElement("div");
+            document
+            .createElement(
+                "div"
+            );
+
 
         info.className =
             "file-info";
 
 
-        info.innerHTML = `
-
-            <div class="file-name">
+        info.innerHTML =
+            `<div class="file-name">
                 ${escapeHtml(filename)}
-            </div>
-
-        `;
+            </div>`;
 
 
         item.appendChild(info);
+
 
         list.appendChild(item);
 
@@ -1371,50 +2416,31 @@ async function showReceivedPreview(blob){
 
     document
         .getElementById(
-            "receivedFileCount"
+            "receiverPreview"
         )
-        .textContent =
-        incomingMeta
-        ? incomingMeta.fileCount
-        : count;
-
-
-    document
-        .getElementById(
-            "receivedSize"
-        )
-        .textContent =
-        incomingMeta
-        ? formatBytes(
-            incomingMeta.totalSize
-        )
-        : formatBytes(
-            blob.size
+        .classList.remove(
+            "hidden"
         );
 
 
-    document
-        .getElementById(
-            "receiverPreview"
-        )
-        .classList.remove("hidden");
+    setMainStatus(
+        "✅ Files received!"
+    );
 
 }
 
 
-// ================================
+// ==================================================
 // DOWNLOAD
-// ================================
+// ==================================================
 
-function downloadReceivedZip(){
+window.downloadReceivedZip =
+function(){
 
     if(!receivedBlob){
 
-        alert(
-            "There are no received files yet."
-        );
-
         return;
+
     }
 
 
@@ -1425,7 +2451,9 @@ function downloadReceivedZip(){
 
 
     const a =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
 
     a.href = url;
@@ -1434,25 +2462,132 @@ function downloadReceivedZip(){
         "received-files.zip";
 
 
-    document.body.appendChild(a);
-
     a.click();
 
-    a.remove();
+
+    setTimeout(
+        () =>
+        URL.revokeObjectURL(url),
+        1000
+    );
+
+};
 
 
-    setTimeout(() => {
+// ==================================================
+// NAVIGATION
+// ==================================================
 
-        URL.revokeObjectURL(url);
+window.showSection =
+function(section){
 
-    },1000);
+    document
+        .getElementById(
+            "homeSection"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "friendsSection"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "transferSection"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+    if(section === "home"){
+
+        document
+            .getElementById(
+                "homeSection"
+            )
+            .classList.remove(
+                "hidden"
+            );
+
+    }
+
+
+    if(section === "friends"){
+
+        document
+            .getElementById(
+                "friendsSection"
+            )
+            .classList.remove(
+                "hidden"
+            );
+
+    }
+
+
+    if(section === "transfer"){
+
+        document
+            .getElementById(
+                "transferSection"
+            )
+            .classList.remove(
+                "hidden"
+            );
+
+    }
+
+};
+
+
+// ==================================================
+// UI
+// ==================================================
+
+function setAuthStatus(text){
+
+    document
+        .getElementById(
+            "authStatus"
+        )
+        .textContent =
+        text;
 
 }
 
 
-// ================================
-// PROGRESS
-// ================================
+function setFriendStatus(text){
+
+    document
+        .getElementById(
+            "friendStatus"
+        )
+        .textContent =
+        text;
+
+}
+
+
+function setMainStatus(text){
+
+    document
+        .getElementById(
+            "mainStatus"
+        )
+        .textContent =
+        text;
+
+}
+
 
 function setProgress(
     percent,
@@ -1460,76 +2595,62 @@ function setProgress(
 ){
 
     document
-        .getElementById("progressBar")
+        .getElementById(
+            "progressBar"
+        )
         .style.width =
         percent + "%";
 
 
     document
-        .getElementById("progressText")
+        .getElementById(
+            "progressText"
+        )
         .textContent =
         percent + "%";
 
 
     document
-        .getElementById("progressTitle")
+        .getElementById(
+            "progressTitle"
+        )
         .textContent =
         text;
 
 }
 
 
-// ================================
-// STATUS
-// ================================
-
-function setMainStatus(text){
-
-    document
-        .getElementById("mainStatus")
-        .textContent = text;
-
-}
-
-
-function setConnectionStatus(text){
-
-    document
-        .getElementById(
-            "connectionStatus"
-        )
-        .textContent = text;
-
-}
-
-
-// ================================
+// ==================================================
 // COPY ID
-// ================================
+// ==================================================
 
-function copyId(){
+window.copyMyId =
+function(){
 
     navigator.clipboard
-        .writeText(myTransferId)
-        .then(() => {
-
-            alert(
-                "Transfer ID copied!"
-            );
-
-        });
-
-}
+        .writeText(
+            currentProfile.transferId
+        );
 
 
-// ================================
+    alert(
+        "Transfer ID copied!"
+    );
+
+};
+
+
+// ==================================================
 // UTILITIES
-// ================================
+// ==================================================
 
 function formatBytes(bytes){
 
-    if(bytes === 0)
+    if(bytes === 0){
+
         return "0 B";
+
+    }
 
 
     const units =
@@ -1551,9 +2672,10 @@ function formatBytes(bytes){
 
     return (
         parseFloat(
-            (bytes /
-            Math.pow(1024,i))
-            .toFixed(2)
+            (
+                bytes /
+                Math.pow(1024,i)
+            ).toFixed(2)
         )
         + " "
         + units[i]
@@ -1566,7 +2688,10 @@ function sleep(ms){
 
     return new Promise(
         resolve =>
-        setTimeout(resolve,ms)
+        setTimeout(
+            resolve,
+            ms
+        )
     );
 
 }
@@ -1575,9 +2700,15 @@ function sleep(ms){
 function escapeHtml(text){
 
     const div =
-        document.createElement("div");
+        document
+        .createElement(
+            "div"
+        );
 
-    div.textContent = text;
+
+    div.textContent =
+        text;
+
 
     return div.innerHTML;
 
@@ -1604,7 +2735,6 @@ function getFileIcon(filename){
         mp4:"🎬",
         mov:"🎬",
         avi:"🎬",
-        mkv:"🎬",
 
         mp3:"🎵",
         wav:"🎵",
@@ -1621,7 +2751,6 @@ function getFileIcon(filename){
         pptx:"📊",
 
         zip:"🗜️",
-        rar:"🗜️",
 
         txt:"📝",
 
@@ -1633,6 +2762,30 @@ function getFileIcon(filename){
 
 
     return icons[ext] || "📄";
+
+}
+
+
+function firebaseError(error){
+
+    switch(error.code){
+
+        case "auth/email-already-in-use":
+            return "That email is already registered.";
+
+        case "auth/invalid-email":
+            return "That email address is invalid.";
+
+        case "auth/weak-password":
+            return "Password is too weak.";
+
+        case "auth/invalid-credential":
+            return "Email or password is incorrect.";
+
+        default:
+            return error.message;
+
+    }
 
 }
 
