@@ -1,658 +1,443 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Easy Data Transfer</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top left, #1f2937, transparent 40%),
-        radial-gradient(circle at bottom right, #312e81, transparent 40%),
-        #080b14;
-      color: white;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* AUTH */
-
-    #authScreen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .auth-box {
-      width: 100%;
-      max-width: 430px;
-      padding: 35px;
-      border-radius: 25px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(20px);
-      box-shadow: 0 20px 70px rgba(0,0,0,0.4);
-    }
-
-    .logo {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .logo-icon {
-      font-size: 55px;
-    }
-
-    .logo h1 {
-      font-size: 30px;
-      margin-top: 8px;
-    }
-
-    .logo p {
-      color: #aab2c5;
-      margin-top: 7px;
-    }
-
-    .auth-box input,
-    .transfer-input,
-    .profile-input {
-      width: 100%;
-      padding: 14px 15px;
-      margin-bottom: 13px;
-      border: 1px solid rgba(255,255,255,0.13);
-      border-radius: 13px;
-      background: rgba(0,0,0,0.25);
-      color: white;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #6366f1;
-    }
-
-    .primary-btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 13px;
-      color: white;
-      background: linear-gradient(135deg,#6366f1,#8b5cf6);
-      font-weight: bold;
-      transition: 0.2s;
-    }
-
-    .primary-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(99,102,241,0.3);
-    }
-
-    .secondary-btn {
-      padding: 11px 16px;
-      border-radius: 11px;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.07);
-      color: white;
-    }
-
-    .secondary-btn:hover {
-      background: rgba(255,255,255,0.12);
-    }
-
-    .auth-switch {
-      text-align: center;
-      margin-top: 18px;
-      color: #aab2c5;
-      font-size: 14px;
-    }
-
-    .auth-switch span {
-      color: #818cf8;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    #authMessage {
-      margin-top: 14px;
-      text-align: center;
-      font-size: 14px;
-      color: #fca5a5;
-    }
-
-    /* APP */
-
-    #app {
-      min-height: 100vh;
-    }
-
-    header {
-      height: 75px;
-      padding: 0 25px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: rgba(5,7,15,0.7);
-      backdrop-filter: blur(15px);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .header-logo {
-      font-weight: bold;
-      font-size: 21px;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .user-pill {
-      padding: 8px 12px;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.07);
-      color: #c7d2fe;
-      font-size: 14px;
-    }
-
-    .logout-btn {
-      border: none;
-      background: #ef4444;
-      color: white;
-      border-radius: 9px;
-      padding: 9px 13px;
-    }
-
-    .layout {
-      display: flex;
-      min-height: calc(100vh - 75px);
-    }
-
-    /* SIDEBAR */
-
-    .sidebar {
-      width: 230px;
-      padding: 20px 12px;
-      border-right: 1px solid rgba(255,255,255,0.08);
-      background: rgba(5,7,15,0.4);
-    }
-
-    .nav-btn {
-      width: 100%;
-      padding: 13px;
-      margin-bottom: 8px;
-      border: none;
-      border-radius: 12px;
-      text-align: left;
-      color: #aab2c5;
-      background: transparent;
-      transition: 0.2s;
-    }
-
-    .nav-btn:hover,
-    .nav-btn.active {
-      background: rgba(99,102,241,0.18);
-      color: white;
-    }
-
-    /* MAIN */
-
-    .main {
-      flex: 1;
-      padding: 30px;
-      max-width: 1200px;
-      margin: auto;
-      width: 100%;
-    }
-
-    .tab {
-      display: none;
-    }
-
-    .tab.active {
-      display: block;
-    }
-
-    .page-title {
-      font-size: 30px;
-      margin-bottom: 7px;
-    }
-
-    .page-subtitle {
-      color: #9ca3af;
-      margin-bottom: 25px;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 20px;
-      padding: 23px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(15px);
-    }
-
-    .card h2 {
-      font-size: 19px;
-      margin-bottom: 8px;
-    }
-
-    .card-description {
-      color: #9ca3af;
-      font-size: 14px;
-      margin-bottom: 18px;
-    }
-
-    /* TRANSFER */
-
-    .transfer-id-box {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .transfer-id-box input {
-      flex: 1;
-      margin: 0;
-    }
-
-    .connect-btn {
-      padding: 13px 20px;
-      border: none;
-      border-radius: 12px;
-      background: #10b981;
-      color: white;
-      font-weight: bold;
-    }
-
-    .connect-btn:hover {
-      background: #059669;
-    }
-
-    .connection-status {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.05);
-      color: #aab2c5;
-      font-size: 14px;
-    }
-
-    .connection-status.connected {
-      color: #86efac;
-      background: rgba(34,197,94,0.1);
-    }
-
-    .connection-status.error {
-      color: #fca5a5;
-      background: rgba(239,68,68,0.1);
-    }
-
-    .file-input-wrapper {
-      border: 2px dashed rgba(255,255,255,0.15);
-      padding: 30px;
-      border-radius: 15px;
-      text-align: center;
-      margin-top: 15px;
-    }
-
-    .file-input-wrapper input {
-      display: none;
-    }
-
-    .choose-btn {
-      display: inline-block;
-      padding: 12px 18px;
-      background: #4f46e5;
-      border-radius: 11px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .selected-files {
-      margin-top: 15px;
-    }
-
-    .file-item {
-      padding: 12px;
-      margin-bottom: 8px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.06);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .file-info {
-      overflow: hidden;
-    }
-
-    .file-name {
-      font-weight: bold;
-      word-break: break-word;
-    }
-
-    .file-size {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-top: 3px;
-    }
-
-    .remove-file {
-      background: #ef4444;
-      border: none;
-      color: white;
-      border-radius: 7px;
-      padding: 6px 9px;
-    }
-
-    .send-btn {
-      margin-top: 17px;
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg,#10b981,#059669);
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .send-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .progress-container {
-      margin-top: 18px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 13px;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.08);
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg,#6366f1,#a855f7);
-      transition: width 0.15s;
-    }
-
-    .progress-text {
-      text-align: center;
-      color: #9ca3af;
-      font-size: 13px;
-      margin-top: 7px;
-    }
-
-    /* FRIENDS */
-
-    .add-friend {
-      display: flex;
-      gap: 10px;
-    }
-
-    .add-friend input {
-      flex: 1;
-      margin: 0;
-    }
-
-    .request-item,
-    .friend-item,
-    .received-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 14px;
-      border-radius: 13px;
-      background: rgba(255,255,255,0.05);
-      margin-top: 10px;
-    }
-
-    .person-name {
-      font-weight: bold;
-    }
-
-    .person-id {
-      color: #9ca3af;
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .friend-actions {
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-    }
-
-    .accept-btn {
-      border: none;
-      background: #10b981;
-      color: white;
-      padding: 8px 11px;
-      border-radius: 8px;
-    }
-
-    .reject-btn {
-      border: none;
-      background: #ef4444;
-      color: white;
-      padding: 8px 11px;
-      border-radius: 8px;
-    }
-
-    .send-to-btn {
-      border: none;
-      background: #6366f1;
-      color: white;
-      padding: 8px 11px;
-      border-radius: 8px;
-    }
-
-    .online-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background: #22c55e;
-      border-radius: 50%;
-      margin-right: 5px;
-    }
-
-    .offline-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background: #6b7280;
-      border-radius: 50%;
-      margin-right: 5px;
-    }
-
-    /* PROFILE */
-
-    .profile-id {
-      padding: 16px;
-      background: rgba(99,102,241,0.1);
-      border-radius: 13px;
-      margin-top: 10px;
-    }
-
-    .profile-id strong {
-      display: block;
-      color: #9ca3af;
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-
-    .profile-id span {
-      font-size: 20px;
-      color: #a5b4fc;
-      word-break: break-all;
-    }
-
-    /* RECEIVED */
-
-    .received-empty {
-      color: #9ca3af;
-      padding: 15px 0;
-    }
-
-    /* RESPONSIVE */
-
-    @media(max-width: 750px) {
-      header {
-        padding: 0 12px;
-      }
-
-      .header-logo {
-        font-size: 17px;
-      }
-
-      .user-pill {
-        display: none;
-      }
-
-      .layout {
-        flex-direction: column;
-      }
-
-      .sidebar {
-        width: 100%;
-        display: flex;
-        overflow-x: auto;
-        padding: 10px;
-        border-right: none;
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-      }
-
-      .nav-btn {
-        min-width: 120px;
-        margin: 0 5px 0 0;
-        text-align: center;
-      }
-
-      .main {
-        padding: 18px;
-      }
-
-      .transfer-id-box,
-      .add-friend {
-        flex-direction: column;
-      }
-
-      .connect-btn {
-        width: 100%;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy Data Transfer</title>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #111827, #1e1b4b, #312e81);
+  color: white;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* AUTH */
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 430px;
+  padding: 35px;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.09);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+.logo {
+  text-align: center;
+  font-size: 34px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #c7d2fe;
+  margin-bottom: 30px;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  background: rgba(0,0,0,0.25);
+  color: white;
+  outline: none;
+}
+
+.auth-box input::placeholder {
+  color: #a5b4fc;
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: #6366f1;
+  color: white;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.primary-btn:hover {
+  background: #4f46e5;
+}
+
+.secondary-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+.secondary-btn:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.message {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.success {
+  background: rgba(34,197,94,0.2);
+  color: #86efac;
+}
+
+.error {
+  background: rgba(239,68,68,0.2);
+  color: #fca5a5;
+}
+
+/* APP */
+
+#app {
+  min-height: 100vh;
+}
+
+header {
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+header h1 {
+  font-size: 24px;
+}
+
+.logout-btn {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #ef4444;
+  color: white;
+}
+
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px;
+  flex-wrap: wrap;
+}
+
+.nav button {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+.nav button.active {
+  background: #6366f1;
+}
+
+.container {
+  width: 92%;
+  max-width: 1100px;
+  margin: auto;
+  padding-bottom: 50px;
+}
+
+.card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(15px);
+}
+
+.card h2 {
+  margin-bottom: 15px;
+}
+
+.welcome {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.transfer-id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.transfer-id code {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.3);
+  color: #a5b4fc;
+}
+
+.small-btn {
+  padding: 8px 13px;
+  border: none;
+  border-radius: 9px;
+  background: #4f46e5;
+  color: white;
+}
+
+.status {
+  margin-top: 15px;
+  color: #86efac;
+}
+
+.connection {
+  margin-top: 8px;
+  color: #93c5fd;
+}
+
+/* FRIENDS */
+
+.friend-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.friend-form input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.25);
+  color: white;
+}
+
+.friend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.2);
+  flex-wrap: wrap;
+}
+
+.friend-name {
+  font-weight: bold;
+}
+
+.friend-id {
+  font-size: 12px;
+  color: #a5b4fc;
+}
+
+.online-dot {
+  color: #4ade80;
+}
+
+/* TRANSFER */
+
+.file-input {
+  width: 100%;
+  padding: 20px;
+  border: 2px dashed rgba(255,255,255,0.2);
+  border-radius: 15px;
+  background: rgba(0,0,0,0.15);
+  color: white;
+}
+
+.selected-files {
+  margin-top: 20px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.2);
+}
+
+.file-info {
+  overflow: hidden;
+}
+
+.file-name {
+  font-weight: bold;
+  word-break: break-all;
+}
+
+.file-size {
+  color: #a5b4fc;
+  font-size: 12px;
+}
+
+.remove-file {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 7px 10px;
+  border-radius: 8px;
+}
+
+.progress-container {
+  margin-top: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 18px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #6366f1;
+  transition: width 0.2s;
+}
+
+.progress-text {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.received-item {
+  padding: 12px;
+  margin-top: 8px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+.received-item button {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #16a34a;
+  color: white;
+}
+
+/* PREVIEW */
+
+.preview {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.preview img {
+  max-width: 250px;
+  max-height: 200px;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+/* MOBILE */
+
+@media(max-width:600px) {
+  header {
+    padding: 15px;
+  }
+
+  header h1 {
+    font-size: 19px;
+  }
+
+  .container {
+    width: 94%;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .welcome {
+    font-size: 24px;
+  }
+
+  .friend-item {
+    align-items: flex-start;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <!-- ================= AUTH SCREEN ================= -->
 
-<div id="authScreen">
+<div id="authScreen" class="auth-container">
 
   <div class="auth-box">
 
-    <div class="logo">
-      <div class="logo-icon">📤</div>
-      <h1>Easy Data Transfer</h1>
-      <p>Fast. Simple. Direct.</p>
+    <div class="logo">Easy Data Transfer</div>
+
+    <div class="subtitle">
+      Transfer files easily between friends.
     </div>
 
-    <!-- LOGIN -->
+    <input id="nameInput" type="text" placeholder="Your name">
 
-    <div id="loginForm">
+    <input id="emailInput" type="email" placeholder="Email address">
 
-      <input
-        type="email"
-        id="loginEmail"
-        placeholder="Email"
-      >
+    <input id="passwordInput" type="password" placeholder="Password">
 
-      <input
-        type="password"
-        id="loginPassword"
-        placeholder="Password"
-      >
+    <button id="createBtn" class="primary-btn">
+      Create Account
+    </button>
 
-      <button class="primary-btn" id="loginBtn">
-        Login
-      </button>
-
-      <div class="auth-switch">
-        Don't have an account?
-        <span id="showSignup">Create account</span>
-      </div>
-
-    </div>
-
-    <!-- SIGNUP -->
-
-    <div id="signupForm" class="hidden">
-
-      <input
-        type="text"
-        id="signupName"
-        placeholder="Your name"
-      >
-
-      <input
-        type="email"
-        id="signupEmail"
-        placeholder="Email"
-      >
-
-      <input
-        type="password"
-        id="signupPassword"
-        placeholder="Password"
-      >
-
-      <button class="primary-btn" id="signupBtn">
-        Create Account
-      </button>
-
-      <div class="auth-switch">
-        Already have an account?
-        <span id="showLogin">Login</span>
-      </div>
-
-    </div>
+    <button id="loginBtn" class="secondary-btn">
+      Login
+    </button>
 
     <div id="authMessage"></div>
 
@@ -667,845 +452,640 @@
 
   <header>
 
-    <div class="header-logo">
-      📤 Easy Data Transfer
-    </div>
+    <h1>Easy Data Transfer</h1>
 
-    <div class="header-right">
-
-      <div class="user-pill" id="headerUser">
-        User
-      </div>
-
-      <button class="logout-btn" id="logoutBtn">
-        Logout
-      </button>
-
-    </div>
+    <button id="logoutBtn" class="logout-btn">
+      Logout
+    </button>
 
   </header>
 
 
-  <div class="layout">
-
-    <!-- SIDEBAR -->
-
-    <aside class="sidebar">
-
-      <button class="nav-btn active" data-tab="transferTab">
-        📤 Transfer
-      </button>
-
-      <button class="nav-btn" data-tab="friendsTab">
-        👥 Friends
-      </button>
-
-      <button class="nav-btn" data-tab="receivedTab">
-        📥 Received
-      </button>
-
-      <button class="nav-btn" data-tab="profileTab">
-        👤 Profile
-      </button>
-
-    </aside>
-
-
-    <!-- MAIN -->
-
-    <main class="main">
-
-
-      <!-- ================= TRANSFER TAB ================= -->
-
-      <section id="transferTab" class="tab active">
-
-        <h1 class="page-title">
-          Send Files
-        </h1>
-
-        <p class="page-subtitle">
-          Send files directly to anyone using their Transfer ID.
-        </p>
-
-
-        <!-- CONNECT TO ANYONE -->
-
-        <div class="card">
-
-          <h2>🔗 Connect to anyone</h2>
-
-          <p class="card-description">
-            You do NOT need to be friends with the person.
-            Just enter their Transfer ID.
-          </p>
-
-          <div class="transfer-id-box">
-
-            <input
-              type="text"
-              id="transferIdInput"
-              placeholder="Enter Transfer ID"
-            >
-
-            <button
-              class="connect-btn"
-              id="connectBtn"
-            >
-              Connect
-            </button>
-
-          </div>
-
-          <div
-            class="connection-status"
-            id="connectionStatus"
-          >
-            ⚪ Not connected
-          </div>
-
-        </div>
-
-
-        <!-- FILE SELECTION -->
-
-        <div class="card">
-
-          <h2>📁 Choose files</h2>
-
-          <p class="card-description">
-            Select one or multiple files to send.
-          </p>
-
-          <div class="file-input-wrapper">
-
-            <label
-              for="fileInput"
-              class="choose-btn"
-            >
-              Choose Files
-            </label>
-
-            <input
-              type="file"
-              id="fileInput"
-              multiple
-            >
-
-            <p
-              style="margin-top:12px;color:#9ca3af;font-size:13px;"
-            >
-              You can select multiple files.
-            </p>
-
-          </div>
-
-          <div
-            class="selected-files"
-            id="selectedFiles"
-          >
-          </div>
-
-          <button
-            class="send-btn"
-            id="sendBtn"
-            disabled
-          >
-            🚀 Send Files
-          </button>
-
-          <div class="progress-container">
-
-            <div class="progress-bar">
-              <div
-                class="progress-fill"
-                id="progressFill"
-              ></div>
-            </div>
-
-            <div
-              class="progress-text"
-              id="progressText"
-            >
-              Waiting for files...
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= FRIENDS TAB ================= -->
-
-      <section id="friendsTab" class="tab">
-
-        <h1 class="page-title">
-          Friends
-        </h1>
-
-        <p class="page-subtitle">
-          Add people for easier future connections.
-        </p>
-
-
-        <div class="card">
-
-          <h2>➕ Add Friend</h2>
-
-          <p class="card-description">
-            Enter someone's Transfer ID to send them a friend request.
-          </p>
-
-          <div class="add-friend">
-
-            <input
-              type="text"
-              id="friendIdInput"
-              placeholder="Transfer ID"
-              class="transfer-input"
-            >
-
-            <button
-              class="connect-btn"
-              id="addFriendBtn"
-            >
-              Send Request
-            </button>
-
-          </div>
-
-          <div
-            id="friendMessage"
-            style="margin-top:12px;color:#aab2c5;font-size:13px;"
-          ></div>
-
-        </div>
-
-
-        <div class="card">
-
-          <h2>📨 Friend Requests</h2>
-
-          <div id="requestsList">
-            <div class="received-empty">
-              No friend requests.
-            </div>
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <h2>👥 My Friends</h2>
-
-          <div id="friendsList">
-            <div class="received-empty">
-              No friends yet.
-            </div>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= RECEIVED TAB ================= -->
-
-      <section id="receivedTab" class="tab">
-
-        <h1 class="page-title">
-          Received Files
-        </h1>
-
-        <p class="page-subtitle">
-          Files received during this session.
-        </p>
-
-        <div class="card">
-
-          <button
-            class="primary-btn"
-            id="downloadZipBtn"
-            style="margin-bottom:15px;"
-          >
-            📦 Download All as ZIP
-          </button>
-
-          <div id="receivedList">
-
-            <div class="received-empty">
-              No files received yet.
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= PROFILE TAB ================= -->
-
-      <section id="profileTab" class="tab">
-
-        <h1 class="page-title">
-          Profile
-        </h1>
-
-        <p class="page-subtitle">
-          Your Easy Data Transfer identity.
-        </p>
-
-
-        <div class="card">
-
-          <h2>👤 Your Profile</h2>
-
-          <input
-            class="profile-input"
-            id="profileNameInput"
-            type="text"
-            placeholder="Your name"
-          >
-
-          <button
-            class="primary-btn"
-            id="saveProfileBtn"
-          >
-            Save Profile
-          </button>
-
-
-          <div class="profile-id">
-
-            <strong>
-              YOUR TRANSFER ID
-            </strong>
-
-            <span id="myTransferId">
-              Loading...
-            </span>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-    </main>
+  <div class="nav">
+
+    <button id="homeTab" class="active">
+      Home
+    </button>
+
+    <button id="friendsTab">
+      Friends
+    </button>
+
+    <button id="transferTab">
+      Transfer
+    </button>
 
   </div>
+
+
+  <main class="container">
+
+    <!-- HOME -->
+
+    <section id="homeSection">
+
+      <div class="card">
+
+        <div class="welcome">
+          Hello, <span id="welcomeName">User</span>!
+        </div>
+
+        <p>
+          Welcome to Easy Data Transfer.
+        </p>
+
+        <div class="transfer-id">
+
+          <strong>Your Transfer ID:</strong>
+
+          <code id="myTransferId">Loading...</code>
+
+          <button id="copyIdBtn" class="small-btn">
+            Copy ID
+          </button>
+
+        </div>
+
+        <div id="onlineStatus" class="status">
+          ● Online
+        </div>
+
+        <div id="connectionStatus" class="connection">
+          Peer connection starting...
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- FRIENDS -->
+
+    <section id="friendsSection" class="hidden">
+
+      <div class="card">
+
+        <h2>Add Friend</h2>
+
+        <div class="friend-form">
+
+          <input
+            id="friendIdInput"
+            type="text"
+            placeholder="Enter friend's Transfer ID"
+          >
+
+          <button id="addFriendBtn" class="primary-btn" style="width:auto;">
+            Add Friend
+          </button>
+
+        </div>
+
+        <div id="friendMessage"></div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>Friend Requests</h2>
+
+        <div id="requestsList">
+          <p>No friend requests.</p>
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>My Friends</h2>
+
+        <div id="friendsList">
+          <p>No friends yet.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- TRANSFER -->
+
+    <section id="transferSection" class="hidden">
+
+      <div class="card">
+
+        <h2>Send Files</h2>
+
+        <p style="color:#c7d2fe;margin-bottom:15px;">
+          Select one or more files to send.
+        </p>
+
+        <input
+          id="fileInput"
+          class="file-input"
+          type="file"
+          multiple
+        >
+
+        <div id="selectedFiles" class="selected-files"></div>
+
+        <div class="preview" id="preview"></div>
+
+        <button
+          id="sendBtn"
+          class="primary-btn"
+          disabled
+        >
+          Send Files
+        </button>
+
+        <div class="progress-container">
+
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+
+          <div id="progressText" class="progress-text">
+            0%
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>Received Files</h2>
+
+        <div id="receivedFiles">
+          <p>No received files yet.</p>
+        </div>
+
+        <button
+          id="downloadZipBtn"
+          class="primary-btn"
+          style="display:none;"
+        >
+          Download ZIP
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
 
 </div>
 
 
-<!-- ================= FIREBASE ================= -->
-
 <script type="module">
 
-  import {
-    initializeApp
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+/* =====================================================
+   FIREBASE
+===================================================== */
 
-  import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-  import {
-    getDatabase,
-    ref,
-    set,
-    get,
-    update,
-    onValue,
-    push,
-    remove
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from
+"https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  push,
+  onValue,
+  onDisconnect,
+  serverTimestamp
+} from
+"https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
-  /* =========================================================
-     FIREBASE CONFIG
-     ========================================================= */
 
-  const firebaseConfig = {
+/* =====================================================
+   YOUR NEW FIREBASE CONFIG
+===================================================== */
 
-    apiKey: "AIzaSyCEFgHDRoDFZ6IZco7iWloLvNCsL3S4",
-    authDomain: "data-transfer-63111.firebaseapp.com",
-    databaseURL: "https://data-transfer-63111-default-rtdb.firebaseio.com",
-    projectId: "data-transfer-63111",
-    storageBucket: "data-transfer-63111.firebasestorage.app",
-    messagingSenderId: "1031425742783",
-    appId: "1:1031425742783:web:b6d7753fa2e2fa212cb30a",
-    measurementId: "G-DNXM9KZKGM"
+const firebaseConfig = {
 
-  };
+  apiKey:
+    "AIzaSyCEFgHDRoDFZ6IZco7iWloLvNCsL3SYckw",
 
+  authDomain:
+    "data-transfer-63111.firebaseapp.com",
 
-  const app = initializeApp(firebaseConfig);
+  databaseURL:
+    "https://data-transfer-63111-default-rtdb.firebaseio.com",
 
-  const auth = getAuth(app);
+  projectId:
+    "data-transfer-63111",
 
-  const db = getDatabase(app);
+  storageBucket:
+    "data-transfer-63111.firebasestorage.app",
 
+  messagingSenderId:
+    "1031425742783",
 
-  /* =========================================================
-     VARIABLES
-     ========================================================= */
+  appId:
+    "1:1031425742783:web:b6d7753fa2e2fa212cb30a",
 
-  let currentUser = null;
+  measurementId:
+    "G-DNXM9KZKGM"
+};
 
-  let currentProfile = null;
 
-  let peer = null;
+/* =====================================================
+   INITIALIZE FIREBASE
+===================================================== */
 
-  let activeConnection = null;
+const app = initializeApp(firebaseConfig);
 
-  let selectedFiles = [];
+const auth = getAuth(app);
 
-  let receivedFiles = [];
+const db = getDatabase(app);
 
-  let incomingTransfers = {};
 
-  const CHUNK_SIZE = 16 * 1024;
+/* =====================================================
+   ELEMENTS
+===================================================== */
 
+const authScreen = document.getElementById("authScreen");
+const appScreen = document.getElementById("app");
 
-  /* =========================================================
-     DOM
-     ========================================================= */
+const nameInput = document.getElementById("nameInput");
+const emailInput = document.getElementById("emailInput");
+const passwordInput = document.getElementById("passwordInput");
 
-  const authScreen =
-    document.getElementById("authScreen");
+const createBtn = document.getElementById("createBtn");
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 
-  const appScreen =
-    document.getElementById("app");
+const authMessage = document.getElementById("authMessage");
 
-  const loginForm =
-    document.getElementById("loginForm");
+const welcomeName = document.getElementById("welcomeName");
+const myTransferId = document.getElementById("myTransferId");
 
-  const signupForm =
-    document.getElementById("signupForm");
+const copyIdBtn = document.getElementById("copyIdBtn");
 
-  const authMessage =
-    document.getElementById("authMessage");
+const onlineStatus = document.getElementById("onlineStatus");
+const connectionStatus =
+  document.getElementById("connectionStatus");
 
-  const headerUser =
-    document.getElementById("headerUser");
+const friendIdInput =
+  document.getElementById("friendIdInput");
 
-  const connectionStatus =
-    document.getElementById("connectionStatus");
+const addFriendBtn =
+  document.getElementById("addFriendBtn");
 
-  const sendBtn =
-    document.getElementById("sendBtn");
+const friendMessage =
+  document.getElementById("friendMessage");
 
-  const progressFill =
-    document.getElementById("progressFill");
+const requestsList =
+  document.getElementById("requestsList");
 
-  const progressText =
-    document.getElementById("progressText");
+const friendsList =
+  document.getElementById("friendsList");
 
+const fileInput =
+  document.getElementById("fileInput");
 
-  /* =========================================================
-     AUTH UI
-     ========================================================= */
+const selectedFiles =
+  document.getElementById("selectedFiles");
 
-  document
-    .getElementById("showSignup")
-    .addEventListener("click", () => {
+const preview =
+  document.getElementById("preview");
 
-      loginForm.classList.add("hidden");
+const sendBtn =
+  document.getElementById("sendBtn");
 
-      signupForm.classList.remove("hidden");
+const progressFill =
+  document.getElementById("progressFill");
 
-      authMessage.textContent = "";
+const progressText =
+  document.getElementById("progressText");
 
-    });
+const receivedFiles =
+  document.getElementById("receivedFiles");
 
+const downloadZipBtn =
+  document.getElementById("downloadZipBtn");
 
-  document
-    .getElementById("showLogin")
-    .addEventListener("click", () => {
 
-      signupForm.classList.add("hidden");
+/* =====================================================
+   VARIABLES
+===================================================== */
 
-      loginForm.classList.remove("hidden");
+let currentUser = null;
+let currentProfile = null;
 
-      authMessage.textContent = "";
+let peer = null;
 
-    });
+let selectedFileArray = [];
 
+let connectedPeerId = null;
 
-  /* =========================================================
-     SIGNUP
-     ========================================================= */
+let receivedFileArray = [];
 
-  document
-    .getElementById("signupBtn")
-    .addEventListener("click", async () => {
+const CHUNK_SIZE = 16 * 1024;
 
-      const name =
-        document
-          .getElementById("signupName")
-          .value
-          .trim();
 
-      const email =
-        document
-          .getElementById("signupEmail")
-          .value
-          .trim();
+/* =====================================================
+   HELPERS
+===================================================== */
 
-      const password =
-        document
-          .getElementById("signupPassword")
-          .value;
+function showMessage(element, message, type = "success") {
 
+  element.textContent = message;
 
-      if (!name || !email || !password) {
+  element.className =
+    "message " + type;
 
-        authMessage.textContent =
-          "Please fill in all fields.";
+}
 
-        return;
 
-      }
+function clearMessage(element) {
 
+  element.textContent = "";
 
-      if (password.length < 6) {
+  element.className = "";
 
-        authMessage.textContent =
-          "Password must be at least 6 characters.";
+}
 
-        return;
 
-      }
+function generateTransferId(name) {
 
+  const cleanName =
+    name
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 8)
+      .toUpperCase();
 
-      try {
+  const number =
+    Math.floor(1000 + Math.random() * 9000);
 
-        authMessage.textContent =
-          "Creating account...";
+  return cleanName + "-" + number;
 
+}
 
-        const result =
-          await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
 
+function formatFileSize(bytes) {
 
-        const transferId =
-          generateTransferId(name);
+  if (bytes < 1024)
+    return bytes + " B";
 
+  if (bytes < 1024 * 1024)
+    return (bytes / 1024).toFixed(1) + " KB";
 
-        await set(
-          ref(db, "users/" + result.user.uid),
-          {
+  if (bytes < 1024 * 1024 * 1024)
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
 
-            name: name,
+  return (bytes / (1024 * 1024 * 1024)).toFixed(1) + " GB";
+}
 
-            email: email,
 
-            transferId: transferId,
+function escapeHtml(text) {
 
-            online: true,
+  const div = document.createElement("div");
 
-            createdAt: Date.now()
+  div.textContent = text;
 
-          }
-        );
+  return div.innerHTML;
+}
 
 
-        authMessage.textContent =
-          "Account created successfully!";
+/* =====================================================
+   AUTH MESSAGE ERROR
+===================================================== */
 
+function firebaseError(error) {
 
-      } catch (error) {
+  console.error(error);
 
-        console.error(error);
+  switch (error.code) {
 
-        authMessage.textContent =
-          getFirebaseError(error);
+    case "auth/email-already-in-use":
+      return "This email is already registered.";
 
-      }
+    case "auth/invalid-email":
+      return "Please enter a valid email.";
 
-    });
+    case "auth/weak-password":
+      return "Password must be at least 6 characters.";
 
+    case "auth/invalid-credential":
+      return "Incorrect email or password.";
 
-  /* =========================================================
-     LOGIN
-     ========================================================= */
+    case "auth/user-not-found":
+      return "No account exists with this email.";
 
-  document
-    .getElementById("loginBtn")
-    .addEventListener("click", async () => {
+    case "auth/wrong-password":
+      return "Incorrect password.";
 
-      const email =
-        document
-          .getElementById("loginEmail")
-          .value
-          .trim();
+    case "auth/api-key-not-valid":
+      return "Firebase API key is invalid. Check your Firebase configuration.";
 
-      const password =
-        document
-          .getElementById("loginPassword")
-          .value;
+    case "auth/network-request-failed":
+      return "Network error. Check your internet connection.";
 
-
-      if (!email || !password) {
-
-        authMessage.textContent =
-          "Enter your email and password.";
-
-        return;
-
-      }
-
-
-      try {
-
-        authMessage.textContent =
-          "Logging in...";
-
-
-        await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-
-      } catch (error) {
-
-        console.error(error);
-
-        authMessage.textContent =
-          getFirebaseError(error);
-
-      }
-
-    });
-
-
-  /* =========================================================
-     LOGOUT
-     ========================================================= */
-
-  document
-    .getElementById("logoutBtn")
-    .addEventListener("click", async () => {
-
-      if (currentUser) {
-
-        try {
-
-          await update(
-            ref(db, "users/" + currentUser.uid),
-            {
-              online: false
-            }
-          );
-
-        } catch (e) {
-
-          console.error(e);
-
-        }
-
-      }
-
-
-      if (peer) {
-
-        peer.destroy();
-
-        peer = null;
-
-      }
-
-
-      activeConnection = null;
-
-
-      await signOut(auth);
-
-    });
-
-
-  /* =========================================================
-     AUTH STATE
-     ========================================================= */
-
-  onAuthStateChanged(
-    auth,
-    async (user) => {
-
-      if (user) {
-
-        currentUser = user;
-
-        authScreen.classList.add("hidden");
-
-        appScreen.classList.remove("hidden");
-
-        await loadProfile();
-
-        initializePeer();
-
-        listenForFriendRequests();
-
-        listenForFriends();
-
-      } else {
-
-        currentUser = null;
-
-        currentProfile = null;
-
-        authScreen.classList.remove("hidden");
-
-        appScreen.classList.add("hidden");
-
-      }
-
-    }
-  );
-
-
-  /* =========================================================
-     TRANSFER ID
-     ========================================================= */
-
-  function generateTransferId(name) {
-
-    const cleanName =
-      name
-        .replace(/[^a-zA-Z0-9]/g, "")
-        .toLowerCase()
-        .slice(0, 15);
-
-
-    const random =
-      Math.floor(
-        1000 + Math.random() * 9000
-      );
-
-
-    return cleanName + random;
-
+    default:
+      return error.message || "Something went wrong.";
   }
 
-
-  /* =========================================================
-     LOAD PROFILE
-     ========================================================= */
-
-  async function loadProfile() {
-
-    const snapshot =
-      await get(
-        ref(
-          db,
-          "users/" + currentUser.uid
-        )
-      );
+}
 
 
-    if (!snapshot.exists()) {
+/* =====================================================
+   CREATE ACCOUNT
+===================================================== */
 
-      const name =
-        currentUser.email
-          .split("@")[0];
+createBtn.addEventListener("click", async () => {
 
+  const name =
+    nameInput.value.trim();
 
-      const transferId =
-        generateTransferId(name);
+  const email =
+    emailInput.value.trim();
 
+  const password =
+    passwordInput.value;
 
-      currentProfile = {
+  if (!name) {
 
-        name: name,
-
-        email: currentUser.email,
-
-        transferId: transferId,
-
-        online: true
-
-      };
-
-
-      await set(
-        ref(
-          db,
-          "users/" + currentUser.uid
-        ),
-        currentProfile
-      );
-
-    } else {
-
-      currentProfile =
-        snapshot.val();
-
-    }
-
-
-    await update(
-      ref(
-        db,
-        "users/" + currentUser.uid
-      ),
-      {
-        online: true
-      }
+    showMessage(
+      authMessage,
+      "Please enter your name.",
+      "error"
     );
 
+    return;
+  }
 
-    updateProfileUI();
+  if (!email) {
+
+    showMessage(
+      authMessage,
+      "Please enter your email.",
+      "error"
+    );
+
+    return;
+  }
+
+  if (password.length < 6) {
+
+    showMessage(
+      authMessage,
+      "Password must be at least 6 characters.",
+      "error"
+    );
+
+    return;
+  }
+
+  createBtn.disabled = true;
+
+  createBtn.textContent =
+    "Creating account...";
+
+  try {
+
+    const result =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+    const uid =
+      result.user.uid;
+
+    const transferId =
+      generateTransferId(name);
+
+    const profile = {
+
+      name: name,
+
+      email: email,
+
+      transferId: transferId,
+
+      createdAt: serverTimestamp(),
+
+      online: true
+    };
+
+    await set(
+      ref(db, "users/" + uid),
+      profile
+    );
+
+    showMessage(
+      authMessage,
+      "Account created successfully!",
+      "success"
+    );
+
+  } catch (error) {
+
+    showMessage(
+      authMessage,
+      firebaseError(error),
+      "error"
+    );
 
   }
 
+  createBtn.disabled = false;
 
-  function updateProfileUI() {
+  createBtn.textContent =
+    "Create Account";
 
-    if (!currentProfile) return;
-
-
-    headerUser.textContent =
-      currentProfile.name;
+});
 
 
-    document
-      .getElementById("profileNameInput")
-      .value =
-      currentProfile.name || "";
+/* =====================================================
+   LOGIN
+===================================================== */
 
+loginBtn.addEventListener("click", async () => {
 
-    document
-      .getElementById("myTransferId")
-      .textContent =
-      currentProfile.transferId || "";
+  const email =
+    emailInput.value.trim();
+
+  const password =
+    passwordInput.value;
+
+  if (!email || !password) {
+
+    showMessage(
+      authMessage,
+      "Enter your email and password.",
+      "error"
+    );
+
+    return;
+  }
+
+  loginBtn.disabled = true;
+
+  loginBtn.textContent =
+    "Logging in...";
+
+  try {
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    clearMessage(authMessage);
+
+  } catch (error) {
+
+    showMessage(
+      authMessage,
+      firebaseError(error),
+      "error"
+    );
 
   }
 
+  loginBtn.disabled = false;
 
-  /* =========================================================
-     PEERJS
-     ========================================================= */
+  loginBtn.textContent =
+    "Login";
 
-  function initializePeer() {
+});
 
-    if (!currentProfile) return;
 
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+logoutBtn.addEventListener("click", async () => {
+
+  try {
+
+    if (currentUser) {
+
+      await set(
+        ref(db, "users/" + currentUser.uid + "/online"),
+        false
+      );
+
+    }
 
     if (peer) {
 
@@ -1515,1388 +1095,501 @@
 
     }
 
+    await signOut(auth);
 
-    const peerId =
-      cleanTransferId(
-        currentProfile.transferId
-      );
+  } catch (error) {
 
+    console.error(error);
 
-    connectionStatus.textContent =
-      "🟡 Starting connection service...";
+  }
 
-
-    peer =
-      new Peer(
-        peerId,
-        {
-
-          host: "0.peerjs.com",
-
-          port: 443,
-
-          path: "/",
-
-          secure: true,
-
-          debug: 2
-
-        }
-      );
+});
 
 
-    peer.on(
-      "open",
-      (id) => {
+/* =====================================================
+   AUTH STATE
+===================================================== */
 
-        console.log(
-          "Peer connected:",
-          id
-        );
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) {
+
+    currentUser = null;
+
+    authScreen.classList.remove("hidden");
+
+    appScreen.classList.add("hidden");
+
+    return;
+  }
+
+  currentUser = user;
+
+  authScreen.classList.add("hidden");
+
+  appScreen.classList.remove("hidden");
+
+  await loadProfile();
+
+});
 
 
-        connectionStatus.textContent =
-          "🟢 Ready. Enter someone's Transfer ID to connect.";
+/* =====================================================
+   LOAD PROFILE
+===================================================== */
 
-        connectionStatus.className =
-          "connection-status";
+async function loadProfile() {
 
+  if (!currentUser)
+    return;
 
-        updateSendButton();
-
-      }
+  const snapshot =
+    await get(
+      ref(db, "users/" + currentUser.uid)
     );
 
+  if (!snapshot.exists()) {
 
-    peer.on(
-      "connection",
-      (connection) => {
-
-        console.log(
-          "Incoming connection:",
-          connection.peer
-        );
-
-
-        activeConnection =
-          connection;
-
-
-        setupConnection(
-          connection,
-          true
-        );
-
-      }
+    console.error(
+      "Profile does not exist."
     );
 
+    return;
+  }
 
-    peer.on(
-      "error",
-      (error) => {
+  currentProfile =
+    snapshot.val();
 
-        console.error(
-          "PeerJS error:",
-          error
-        );
+  welcomeName.textContent =
+    currentProfile.name;
+
+  myTransferId.textContent =
+    currentProfile.transferId;
+
+  await set(
+    ref(db, "users/" + currentUser.uid + "/online"),
+    true
+  );
+
+  onDisconnect(
+    ref(db, "users/" + currentUser.uid + "/online")
+  ).set(false);
+
+  startPeer();
+
+  loadFriendRequests();
+
+  loadFriends();
+
+}
 
 
-        connectionStatus.textContent =
-          "🔴 Connection error: " +
-          error.type;
+/* =====================================================
+   COPY TRANSFER ID
+===================================================== */
 
-        connectionStatus.className =
-          "connection-status error";
+copyIdBtn.addEventListener("click", async () => {
 
+  if (!currentProfile)
+    return;
 
-        updateSendButton();
+  try {
 
-      }
+    await navigator.clipboard.writeText(
+      currentProfile.transferId
     );
 
+    copyIdBtn.textContent =
+      "Copied!";
 
-    peer.on(
-      "disconnected",
-      () => {
+    setTimeout(() => {
 
-        connectionStatus.textContent =
-          "🟡 Peer service disconnected. Reconnecting...";
+      copyIdBtn.textContent =
+        "Copy ID";
 
+    }, 1500);
 
-        if (peer && !peer.destroyed) {
+  } catch (error) {
 
-          peer.reconnect();
-
-        }
-
-      }
-    );
-
-
-    peer.on(
-      "close",
-      () => {
-
-        console.log(
-          "Peer closed."
-        );
-
-      }
+    alert(
+      "Your Transfer ID is: " +
+      currentProfile.transferId
     );
 
   }
 
+});
 
-  /* =========================================================
-     CLEAN TRANSFER ID
-     ========================================================= */
 
-  function cleanTransferId(id) {
+/* =====================================================
+   PEERJS
+===================================================== */
 
-    return String(id || "")
-      .replace(
-        /[^a-zA-Z0-9-]/g,
-        ""
-      )
+function startPeer() {
+
+  if (!currentProfile)
+    return;
+
+  if (peer) {
+
+    try {
+      peer.destroy();
+    } catch (e) {}
+
+  }
+
+  /*
+    PeerJS IDs cannot contain spaces or unusual
+    characters, so create a safe ID.
+  */
+
+  const peerId =
+    currentProfile.transferId
+      .replace(/[^a-zA-Z0-9-]/g, "")
       .toLowerCase();
 
-  }
+  peer =
+    new Peer(peerId, {
+      debug: 1
+    });
 
 
-  /* =========================================================
-     CONNECT TO ANYONE
-     ========================================================= */
+  peer.on("open", (id) => {
 
-  document
-    .getElementById("connectBtn")
-    .addEventListener(
-      "click",
-      connectToAnyone
+    console.log(
+      "Peer opened:",
+      id
     );
-
-
-  document
-    .getElementById("transferIdInput")
-    .addEventListener(
-      "keydown",
-      (event) => {
-
-        if (event.key === "Enter") {
-
-          connectToAnyone();
-
-        }
-
-      }
-    );
-
-
-  function connectToAnyone() {
-
-    const enteredId =
-      document
-        .getElementById("transferIdInput")
-        .value
-        .trim();
-
-
-    if (!enteredId) {
-
-      alert(
-        "Enter a Transfer ID first."
-      );
-
-      return;
-
-    }
-
-
-    if (!peer) {
-
-      alert(
-        "Your connection service is not ready yet. Wait a few seconds and try again."
-      );
-
-      return;
-
-    }
-
-
-    if (peer.destroyed) {
-
-      alert(
-        "Your PeerJS connection has closed. Refresh the page."
-      );
-
-      return;
-
-    }
-
-
-    const peerId =
-      cleanTransferId(
-        enteredId
-      );
-
-
-    if (!peerId) {
-
-      alert(
-        "Invalid Transfer ID."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      peerId ===
-      cleanTransferId(
-        currentProfile.transferId
-      )
-    ) {
-
-      alert(
-        "You cannot connect to yourself."
-      );
-
-      return;
-
-    }
-
-
-    if (
-      activeConnection &&
-      activeConnection.open
-    ) {
-
-      try {
-
-        activeConnection.close();
-
-      } catch (e) {
-
-        console.error(e);
-
-      }
-
-    }
-
 
     connectionStatus.textContent =
-      "🟡 Connecting to " +
-      enteredId +
-      "...";
+      "Peer connection ready.";
 
-    connectionStatus.className =
-      "connection-status";
+  });
 
 
-    const connection =
-      peer.connect(
-        peerId,
-        {
-          reliable: true,
-          serialization: "json"
-        }
-      );
+  peer.on("error", (error) => {
 
-
-    activeConnection =
-      connection;
-
-
-    setupConnection(
-      connection,
-      false
+    console.error(
+      "PeerJS error:",
+      error
     );
 
-  }
+    connectionStatus.textContent =
+      "Peer connection error.";
+
+  });
 
 
-  /* =========================================================
-     CONNECTION SETUP
-     ========================================================= */
+  peer.on("connection", (connection) => {
 
-  function setupConnection(
-    connection,
-    incoming
-  ) {
-
-    connection.on(
-      "open",
-      () => {
-
-        console.log(
-          "Connection opened:",
-          connection.peer
-        );
-
-
-        activeConnection =
-          connection;
-
-
-        connectionStatus.textContent =
-          "🟢 Connected! You can send files now.";
-
-        connectionStatus.className =
-          "connection-status connected";
-
-
-        updateSendButton();
-
-      }
+    console.log(
+      "Incoming connection:",
+      connection.peer
     );
 
+    connection.on("open", () => {
 
-    connection.on(
-      "close",
-      () => {
+      connectionStatus.textContent =
+        "Friend connected.";
 
-        console.log(
-          "Connection closed."
-        );
+    });
 
+    setupIncomingConnection(connection);
 
-        if (
-          activeConnection ===
-          connection
-        ) {
+  });
 
-          activeConnection =
-            null;
-
-        }
+}
 
 
-        connectionStatus.textContent =
-          "⚪ Connection closed.";
+/* =====================================================
+   INCOMING FILE TRANSFER
+===================================================== */
 
-        connectionStatus.className =
-          "connection-status";
+function setupIncomingConnection(connection) {
 
+  let incoming = null;
 
-        updateSendButton();
+  connection.on("data", (data) => {
 
-      }
-    );
+    try {
 
-
-    connection.on(
-      "error",
-      (error) => {
-
-        console.error(
-          "Data connection error:",
-          error
-        );
-
-
-        if (
-          activeConnection ===
-          connection
-        ) {
-
-          activeConnection =
-            null;
-
-        }
-
-
-        connectionStatus.textContent =
-          "🔴 Connection failed.";
-
-        connectionStatus.className =
-          "connection-status error";
-
-
-        updateSendButton();
-
-      }
-    );
-
-
-    connection.on(
-      "data",
-      (data) => {
-
-        handleIncomingData(
-          data
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =========================================================
-     SEND BUTTON STATE
-     ========================================================= */
-
-  function updateSendButton() {
-
-    const connected =
-      activeConnection &&
-      activeConnection.open === true;
-
-
-    sendBtn.disabled =
-      !connected ||
-      selectedFiles.length === 0;
-
-
-    if (!connected) {
+      /*
+        First message contains file metadata.
+      */
 
       if (
-        selectedFiles.length > 0
+        data &&
+        data.type === "file-start"
       ) {
 
-        progressText.textContent =
-          "Connect to someone before sending.";
+        incoming = {
 
-      }
+          name: data.name,
 
-    } else {
+          size: data.size,
 
-      if (
-        selectedFiles.length > 0
-      ) {
+          type: data.fileType,
 
-        progressText.textContent =
-          "Ready to send.";
+          chunks: [],
 
-      }
+          received: 0
 
-    }
-
-  }
-
-
-  /* =========================================================
-     FILE SELECTION
-     ========================================================= */
-
-  document
-    .getElementById("fileInput")
-    .addEventListener(
-      "change",
-      (event) => {
-
-        selectedFiles =
-          Array.from(
-            event.target.files
-          );
-
-
-        renderSelectedFiles();
-
-        updateSendButton();
-
-      }
-    );
-
-
-  function renderSelectedFiles() {
-
-    const container =
-      document.getElementById(
-        "selectedFiles"
-      );
-
-
-    container.innerHTML = "";
-
-
-    if (
-      selectedFiles.length === 0
-    ) {
-
-      container.innerHTML =
-        `
-        <div class="received-empty">
-          No files selected.
-        </div>
-        `;
-
-      return;
-
-    }
-
-
-    selectedFiles.forEach(
-      (file, index) => {
-
-        const item =
-          document.createElement(
-            "div"
-          );
-
-
-        item.className =
-          "file-item";
-
-
-        item.innerHTML =
-          `
-          <div class="file-info">
-
-            <div class="file-name">
-              ${escapeHtml(file.name)}
-            </div>
-
-            <div class="file-size">
-              ${formatBytes(file.size)}
-            </div>
-
-          </div>
-
-          <button
-            class="remove-file"
-            data-index="${index}"
-          >
-            ✕
-          </button>
-          `;
-
-
-        item
-          .querySelector(
-            ".remove-file"
-          )
-          .addEventListener(
-            "click",
-            () => {
-
-              selectedFiles.splice(
-                index,
-                1
-              );
-
-
-              renderSelectedFiles();
-
-              updateSendButton();
-
-            }
-          );
-
-
-        container.appendChild(
-          item
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =========================================================
-     SEND FILES
-     ========================================================= */
-
-  sendBtn.addEventListener(
-    "click",
-    async () => {
-
-      if (
-        selectedFiles.length === 0
-      ) {
-
-        return;
-
-      }
-
-
-      const connection =
-        activeConnection;
-
-
-      if (
-        !connection ||
-        !connection.open
-      ) {
-
-        alert(
-          "Connect to someone first."
-        );
-
-        return;
-
-      }
-
-
-      sendBtn.disabled = true;
-
-
-      try {
-
-        const totalBytes =
-          selectedFiles.reduce(
-            (
-              total,
-              file
-            ) =>
-              total + file.size,
-            0
-          );
-
-
-        let totalSent = 0;
-
+        };
 
         progressFill.style.width =
           "0%";
 
-
         progressText.textContent =
-          "Starting transfer...";
+          "Receiving 0%";
+
+        return;
+      }
 
 
-        for (
-          const file of selectedFiles
-        ) {
+      /*
+        File chunks.
+      */
 
-          totalSent =
-            await sendSingleFile(
-              connection,
-              file,
-              totalSent,
-              totalBytes
-            );
+      if (
+        incoming &&
+        data instanceof ArrayBuffer
+      ) {
 
-        }
+        incoming.chunks.push(data);
 
+        incoming.received +=
+          data.byteLength;
+
+        const percent =
+          Math.min(
+            100,
+            Math.round(
+              incoming.received /
+              incoming.size *
+              100
+            )
+          );
 
         progressFill.style.width =
-          "100%";
-
-
-        progressText.textContent =
-          "✅ All files sent successfully!";
-
-
-      } catch (error) {
-
-        console.error(
-          "Transfer failed:",
-          error
-        );
-
+          percent + "%";
 
         progressText.textContent =
-          "❌ Transfer failed.";
+          "Receiving " + percent + "%";
 
-        alert(
-          "File transfer failed. Check the connection and try again."
-        );
 
-      }
-
-
-      updateSendButton();
-
-    }
-  );
-
-
-  /* =========================================================
-     SEND SINGLE FILE
-     ========================================================= */
-
-  async function sendSingleFile(
-    connection,
-    file,
-    totalSent,
-    totalBytes
-  ) {
-
-    if (!connection.open) {
-
-      throw new Error(
-        "Connection closed."
-      );
-
-    }
-
-
-    connection.send(
-      {
-        type: "file-start",
-
-        name: file.name,
-
-        size: file.size,
-
-        mime: file.type || "application/octet-stream"
-
-      }
-    );
-
-
-    await wait(80);
-
-
-    let offset = 0;
-
-
-    while (
-      offset <
-      file.size
-    ) {
-
-      if (!connection.open) {
-
-        throw new Error(
-          "Connection closed during transfer."
-        );
-
-      }
-
-
-      const slice =
-        file.slice(
-          offset,
-          offset + CHUNK_SIZE
-        );
-
-
-      const buffer =
-        await slice.arrayBuffer();
-
-
-      connection.send(
-        {
-          type: "file-chunk",
-
-          buffer: buffer
-        }
-      );
-
-
-      offset +=
-        buffer.byteLength;
-
-      totalSent +=
-        buffer.byteLength;
-
-
-      const percent =
-        totalBytes > 0
-          ? Math.round(
-              (totalSent /
-                totalBytes) *
-                100
-            )
-          : 0;
-
-
-      progressFill.style.width =
-        percent + "%";
-
-
-      progressText.textContent =
-        `Sending ${file.name} — ${percent}%`;
-
-
-      /*
-       * Small pause prevents the browser from
-       * flooding the DataConnection buffer.
-       */
-
-      await wait(2);
-
-    }
-
-
-    connection.send(
-      {
-        type: "file-end"
-      }
-    );
-
-
-    await wait(100);
-
-
-    return totalSent;
-
-  }
-
-
-  /* =========================================================
-     INCOMING DATA
-     ========================================================= */
-
-  function handleIncomingData(
-    data
-  ) {
-
-    if (!data) return;
-
-
-    if (
-      data.type ===
-      "file-start"
-    ) {
-
-      const id =
-        Date.now() +
-        "_" +
-        Math.random()
-          .toString(36)
-          .slice(2);
-
-
-      incomingTransfers[id] = {
-
-        id: id,
-
-        name: data.name,
-
-        size: data.size,
-
-        mime: data.mime,
-
-        chunks: [],
-
-        received: 0
-
-      };
-
-
-      connectionStatus.textContent =
-        "🟢 Receiving " +
-        data.name +
-        "...";
-
-
-      return;
-
-    }
-
-
-    if (
-      data.type ===
-      "file-chunk"
-    ) {
-
-      const keys =
-        Object.keys(
-          incomingTransfers
-        );
-
-
-      if (
-        keys.length === 0
-      ) {
-
-        return;
-
-      }
-
-
-      /*
-       * The newest active transfer
-       * receives the chunk.
-       */
-
-      const id =
-        keys[keys.length - 1];
-
-
-      const transfer =
-        incomingTransfers[id];
-
-
-      if (!transfer) return;
-
-
-      let buffer =
-        data.buffer;
-
-
-      if (
-        buffer instanceof ArrayBuffer
-      ) {
-
-        transfer.chunks.push(
-          buffer
-        );
-
-        transfer.received +=
-          buffer.byteLength;
-
-      }
-
-
-      const percent =
-        transfer.size > 0
-          ? Math.round(
-              (transfer.received /
-                transfer.size) *
-                100
-            )
-          : 0;
-
-
-      progressFill.style.width =
-        percent + "%";
-
-
-      progressText.textContent =
-        `Receiving ${transfer.name} — ${percent}%`;
-
-
-      return;
-
-    }
-
-
-    if (
-      data.type ===
-      "file-end"
-    ) {
-
-      const keys =
-        Object.keys(
-          incomingTransfers
-        );
-
-
-      if (
-        keys.length === 0
-      ) {
-
-        return;
-
-      }
-
-
-      const id =
-        keys[keys.length - 1];
-
-
-      const transfer =
-        incomingTransfers[id];
-
-
-      if (!transfer) return;
-
-
-      const blob =
-        new Blob(
-          transfer.chunks,
-          {
-            type:
-              transfer.mime ||
-              "application/octet-stream"
-          }
-        );
-
-
-      const receivedFile = {
-
-        id: transfer.id,
-
-        name: transfer.name,
-
-        size: transfer.size,
-
-        mime: transfer.mime,
-
-        blob: blob,
-
-        url:
-          URL.createObjectURL(
-            blob
-          ),
-
-        receivedAt: Date.now()
-
-      };
-
-
-      receivedFiles.push(
-        receivedFile
-      );
-
-
-      delete incomingTransfers[
-        id
-      ];
-
-
-      renderReceivedFiles();
-
-
-      progressFill.style.width =
-        "100%";
-
-
-      progressText.textContent =
-        "✅ File received: " +
-        transfer.name;
-
-
-      connectionStatus.textContent =
-        "🟢 File received successfully.";
-
-    }
-
-  }
-
-
-  /* =========================================================
-     RECEIVED FILES
-     ========================================================= */
-
-  function renderReceivedFiles() {
-
-    const container =
-      document.getElementById(
-        "receivedList"
-      );
-
-
-    container.innerHTML = "";
-
-
-    if (
-      receivedFiles.length === 0
-    ) {
-
-      container.innerHTML =
-        `
-        <div class="received-empty">
-          No files received yet.
-        </div>
-        `;
-
-      return;
-
-    }
-
-
-    receivedFiles.forEach(
-      (file) => {
-
-        const item =
-          document.createElement(
-            "div"
-          );
-
-
-        item.className =
-          "received-item";
-
-
-        item.innerHTML =
-          `
-          <div class="file-info">
-
-            <div class="file-name">
-              📄 ${escapeHtml(file.name)}
-            </div>
-
-            <div class="file-size">
-              ${formatBytes(file.size)}
-            </div>
-
-          </div>
-
-          <button
-            class="send-to-btn"
-          >
-            Download
-          </button>
-          `;
-
-
-        item
-          .querySelector("button")
-          .addEventListener(
-            "click",
-            () => {
-
-              downloadBlob(
-                file.blob,
-                file.name
-              );
-
-            }
-          );
-
-
-        container.appendChild(
-          item
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =========================================================
-     DOWNLOAD ALL ZIP
-     ========================================================= */
-
-  document
-    .getElementById("downloadZipBtn")
-    .addEventListener(
-      "click",
-      async () => {
+        /*
+          File complete.
+        */
 
         if (
-          receivedFiles.length === 0
+          incoming.received >=
+          incoming.size
         ) {
 
-          alert(
-            "No received files yet."
-          );
-
-          return;
-
-        }
-
-
-        const zip =
-          new JSZip();
-
-
-        receivedFiles.forEach(
-          (file) => {
-
-            zip.file(
-              file.name,
-              file.blob
-            );
-
-          }
-        );
-
-
-        try {
-
           const blob =
-            await zip.generateAsync(
+            new Blob(
+              incoming.chunks,
               {
-                type: "blob"
+                type:
+                  incoming.type ||
+                  "application/octet-stream"
               }
             );
 
+          receivedFileArray.push({
 
-          downloadBlob(
-            blob,
-            "received-files.zip"
-          );
+            name: incoming.name,
 
+            blob: blob,
 
-        } catch (error) {
+            size: incoming.size,
 
-          console.error(
-            error
-          );
+            type: incoming.type
 
-          alert(
-            "Could not create ZIP."
-          );
+          });
+
+          renderReceivedFiles();
+
+          progressFill.style.width =
+            "100%";
+
+          progressText.textContent =
+            "Transfer complete!";
+
+          incoming = null;
 
         }
 
       }
-    );
 
+    } catch (error) {
 
-  /* =========================================================
-     DOWNLOAD HELPER
-     ========================================================= */
-
-  function downloadBlob(
-    blob,
-    filename
-  ) {
-
-    const url =
-      URL.createObjectURL(
-        blob
+      console.error(
+        "Receive error:",
+        error
       );
 
+    }
 
-    const a =
-      document.createElement(
-        "a"
-      );
+  });
 
 
-    a.href = url;
+  connection.on("close", () => {
 
-    a.download =
-      filename;
+    connectionStatus.textContent =
+      "Friend disconnected.";
+
+  });
+
+}
 
 
-    document.body.appendChild(
-      a
+/* =====================================================
+   FIND FRIEND BY TRANSFER ID
+===================================================== */
+
+async function findUserByTransferId(
+  transferId
+) {
+
+  const snapshot =
+    await get(
+      ref(db, "users")
     );
 
+  if (!snapshot.exists())
+    return null;
 
-    a.click();
+  let found = null;
+
+  snapshot.forEach((child) => {
+
+    const data =
+      child.val();
+
+    if (
+      data.transferId &&
+      data.transferId.toUpperCase() ===
+      transferId.toUpperCase()
+    ) {
+
+      found = {
+
+        uid: child.key,
+
+        ...data
+
+      };
+
+    }
+
+  });
+
+  return found;
+
+}
 
 
-    a.remove();
+/* =====================================================
+   ADD FRIEND
+===================================================== */
 
+addFriendBtn.addEventListener(
+  "click",
+  async () => {
 
-    setTimeout(
-      () => {
-        URL.revokeObjectURL(
-          url
-        );
-      },
-      1000
-    );
-
-  }
-
-
-  /* =========================================================
-     FRIEND REQUESTS
-     ========================================================= */
-
-  document
-    .getElementById("addFriendBtn")
-    .addEventListener(
-      "click",
-      sendFriendRequest
-    );
-
-
-  async function sendFriendRequest() {
+    clearMessage(friendMessage);
 
     const transferId =
-      document
-        .getElementById(
-          "friendIdInput"
-        )
-        .value
-        .trim();
-
-
-    const message =
-      document
-        .getElementById(
-          "friendMessage"
-        );
-
+      friendIdInput.value.trim();
 
     if (!transferId) {
 
-      message.textContent =
-        "Enter a Transfer ID.";
+      showMessage(
+        friendMessage,
+        "Enter a Transfer ID.",
+        "error"
+      );
 
       return;
-
     }
-
 
     if (
-      cleanTransferId(
-        transferId
-      ) ===
-      cleanTransferId(
-        currentProfile.transferId
-      )
+      currentProfile &&
+      transferId.toUpperCase() ===
+      currentProfile.transferId.toUpperCase()
     ) {
 
-      message.textContent =
-        "You cannot add yourself.";
+      showMessage(
+        friendMessage,
+        "You cannot add yourself.",
+        "error"
+      );
 
       return;
-
     }
 
+    addFriendBtn.disabled = true;
+
+    addFriendBtn.textContent =
+      "Searching...";
 
     try {
 
-      const usersSnapshot =
-        await get(
-          ref(db, "users")
+      const friend =
+        await findUserByTransferId(
+          transferId
         );
 
+      if (!friend) {
 
-      if (
-        !usersSnapshot.exists()
-      ) {
-
-        message.textContent =
-          "User not found.";
+        showMessage(
+          friendMessage,
+          "User not found.",
+          "error"
+        );
 
         return;
-
       }
 
 
-      const users =
-        usersSnapshot.val();
+      /*
+        Check whether already friends.
+      */
 
-
-      let targetUid = null;
-
-      let targetUser = null;
-
-
-      for (
-        const uid in users
-      ) {
-
-        if (
-          cleanTransferId(
-            users[uid].transferId
-          ) ===
-          cleanTransferId(
-            transferId
+      const existing =
+        await get(
+          ref(
+            db,
+            "friends/" +
+            currentUser.uid +
+            "/" +
+            friend.uid
           )
-        ) {
+        );
 
-          targetUid = uid;
+      if (existing.exists()) {
 
-          targetUser =
-            users[uid];
-
-          break;
-
-        }
-
-      }
-
-
-      if (!targetUid) {
-
-        message.textContent =
-          "No user found with that Transfer ID.";
+        showMessage(
+          friendMessage,
+          "You are already friends.",
+          "error"
+        );
 
         return;
-
       }
 
 
-      const requestsRef =
+      /*
+        Send request.
+      */
+
+      await push(
         ref(
           db,
           "friendRequests/" +
-          targetUid
-        );
-
-
-      const request =
-        push(requestsRef);
-
-
-      await set(
-        request,
+          friend.uid
+        ),
         {
 
           fromUid:
@@ -2909,750 +1602,1147 @@
             currentProfile.transferId,
 
           createdAt:
-            Date.now()
+            serverTimestamp()
 
         }
       );
 
+      showMessage(
+        friendMessage,
+        "Friend request sent!",
+        "success"
+      );
 
-      message.textContent =
-        "✅ Friend request sent to " +
-        targetUser.name;
+      friendIdInput.value = "";
 
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        friendMessage,
+        firebaseError(error),
+        "error"
+      );
+
+    }
+
+    addFriendBtn.disabled = false;
+
+    addFriendBtn.textContent =
+      "Add Friend";
+
+  }
+);
+
+
+/* =====================================================
+   FRIEND REQUESTS
+===================================================== */
+
+function loadFriendRequests() {
+
+  if (!currentUser)
+    return;
+
+  const requestsRef =
+    ref(
+      db,
+      "friendRequests/" +
+      currentUser.uid
+    );
+
+  onValue(
+    requestsRef,
+    (snapshot) => {
+
+      requestsList.innerHTML = "";
+
+      if (!snapshot.exists()) {
+
+        requestsList.innerHTML =
+          "<p>No friend requests.</p>";
+
+        return;
+      }
+
+      snapshot.forEach((child) => {
+
+        const request =
+          child.val();
+
+        const item =
+          document.createElement("div");
+
+        item.className =
+          "friend-item";
+
+        item.innerHTML = `
+
+          <div>
+
+            <div class="friend-name">
+              ${escapeHtml(request.fromName || "Unknown")}
+            </div>
+
+            <div class="friend-id">
+              ${escapeHtml(request.fromTransferId || "")}
+            </div>
+
+          </div>
+
+          <div>
+
+            <button
+              class="small-btn accept-request"
+              data-key="${child.key}"
+            >
+              Accept
+            </button>
+
+            <button
+              class="remove-file reject-request"
+              data-key="${child.key}"
+            >
+              Reject
+            </button>
+
+          </div>
+
+        `;
+
+        requestsList.appendChild(item);
+
+      });
+
+
+      /*
+        Accept request.
+      */
 
       document
-        .getElementById(
-          "friendIdInput"
-        )
-        .value = "";
+        .querySelectorAll(".accept-request")
+        .forEach((button) => {
 
+          button.addEventListener(
+            "click",
+            () => {
 
-    } catch (error) {
-
-      console.error(
-        error
-      );
-
-
-      message.textContent =
-        "Could not send friend request.";
-
-    }
-
-  }
-
-
-  /* =========================================================
-     LISTEN FOR REQUESTS
-     ========================================================= */
-
-  function listenForFriendRequests() {
-
-    const requestRef =
-      ref(
-        db,
-        "friendRequests/" +
-        currentUser.uid
-      );
-
-
-    onValue(
-      requestRef,
-      (snapshot) => {
-
-        const list =
-          document.getElementById(
-            "requestsList"
-          );
-
-
-        list.innerHTML = "";
-
-
-        if (
-          !snapshot.exists()
-        ) {
-
-          list.innerHTML =
-            `
-            <div class="received-empty">
-              No friend requests.
-            </div>
-            `;
-
-          return;
-
-        }
-
-
-        const requests =
-          snapshot.val();
-
-
-        Object.entries(
-          requests
-        ).forEach(
-          ([requestId, request]) => {
-
-            const item =
-              document.createElement(
-                "div"
+              acceptRequest(
+                button.dataset.key
               );
 
-
-            item.className =
-              "request-item";
-
-
-            item.innerHTML =
-              `
-              <div>
-
-                <div class="person-name">
-                  ${escapeHtml(request.fromName)}
-                </div>
-
-                <div class="person-id">
-                  ${escapeHtml(request.fromTransferId)}
-                </div>
-
-              </div>
-
-              <div class="friend-actions">
-
-                <button
-                  class="accept-btn"
-                >
-                  Accept
-                </button>
-
-                <button
-                  class="reject-btn"
-                >
-                  Reject
-                </button>
-
-              </div>
-              `;
-
-
-            item
-              .querySelector(
-                ".accept-btn"
-              )
-              .addEventListener(
-                "click",
-                () => {
-
-                  acceptFriendRequest(
-                    requestId,
-                    request
-                  );
-
-                }
-              );
-
-
-            item
-              .querySelector(
-                ".reject-btn"
-              )
-              .addEventListener(
-                "click",
-                () => {
-
-                  rejectFriendRequest(
-                    requestId
-                  );
-
-                }
-              );
-
-
-            list.appendChild(
-              item
-            );
-
-          }
-        );
-
-      }
-    );
-
-  }
-
-
-  /* =========================================================
-     ACCEPT REQUEST
-     ========================================================= */
-
-  async function acceptFriendRequest(
-    requestId,
-    request
-  ) {
-
-    try {
-
-      const friendRef =
-        ref(
-          db,
-          "friends/" +
-          currentUser.uid +
-          "/" +
-          request.fromUid
-        );
-
-
-      await set(
-        friendRef,
-        {
-
-          name:
-            request.fromName,
-
-          transferId:
-            request.fromTransferId,
-
-          addedAt:
-            Date.now()
-
-        }
-      );
-
-
-      const otherFriendRef =
-        ref(
-          db,
-          "friends/" +
-          request.fromUid +
-          "/" +
-          currentUser.uid
-        );
-
-
-      await set(
-        otherFriendRef,
-        {
-
-          name:
-            currentProfile.name,
-
-          transferId:
-            currentProfile.transferId,
-
-          addedAt:
-            Date.now()
-
-        }
-      );
-
-
-      await remove(
-        ref(
-          db,
-          "friendRequests/" +
-          currentUser.uid +
-          "/" +
-          requestId
-        )
-      );
-
-
-    } catch (error) {
-
-      console.error(
-        error
-      );
-
-      alert(
-        "Could not accept request."
-      );
-
-    }
-
-  }
-
-
-  /* =========================================================
-     REJECT REQUEST
-     ========================================================= */
-
-  async function rejectFriendRequest(
-    requestId
-  ) {
-
-    try {
-
-      await remove(
-        ref(
-          db,
-          "friendRequests/" +
-          currentUser.uid +
-          "/" +
-          requestId
-        )
-      );
-
-    } catch (error) {
-
-      console.error(
-        error
-      );
-
-    }
-
-  }
-
-
-  /* =========================================================
-     LISTEN FOR FRIENDS
-     ========================================================= */
-
-  function listenForFriends() {
-
-    const friendsRef =
-      ref(
-        db,
-        "friends/" +
-        currentUser.uid
-      );
-
-
-    onValue(
-      friendsRef,
-      async (snapshot) => {
-
-        const list =
-          document.getElementById(
-            "friendsList"
-          );
-
-
-        list.innerHTML = "";
-
-
-        if (
-          !snapshot.exists()
-        ) {
-
-          list.innerHTML =
-            `
-            <div class="received-empty">
-              No friends yet.
-            </div>
-            `;
-
-          return;
-
-        }
-
-
-        const friends =
-          snapshot.val();
-
-
-        for (
-          const [uid, friend]
-          of Object.entries(friends)
-        ) {
-
-          let online =
-            false;
-
-
-          try {
-
-            const userSnapshot =
-              await get(
-                ref(
-                  db,
-                  "users/" + uid
-                )
-              );
-
-
-            if (
-              userSnapshot.exists()
-            ) {
-
-              online =
-                userSnapshot.val().online === true;
-
-            }
-
-          } catch (e) {
-
-            console.error(e);
-
-          }
-
-
-          const item =
-            document.createElement(
-              "div"
-            );
-
-
-          item.className =
-            "friend-item";
-
-
-          item.innerHTML =
-            `
-            <div>
-
-              <div class="person-name">
-
-                <span class="${
-                  online
-                    ? "online-dot"
-                    : "offline-dot"
-                }"></span>
-
-                ${escapeHtml(friend.name)}
-
-              </div>
-
-              <div class="person-id">
-                ${escapeHtml(friend.transferId)}
-              </div>
-
-            </div>
-
-            <div class="friend-actions">
-
-              <button
-                class="send-to-btn"
-              >
-                Send
-              </button>
-
-            </div>
-            `;
-
-
-          item
-            .querySelector(
-              ".send-to-btn"
-            )
-            .addEventListener(
-              "click",
-              () => {
-
-                document
-                  .getElementById(
-                    "transferIdInput"
-                  )
-                  .value =
-                  friend.transferId;
-
-
-                switchTab(
-                  "transferTab"
-                );
-
-
-                connectToAnyone();
-
-              }
-            );
-
-
-          list.appendChild(
-            item
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* =========================================================
-     PROFILE SAVE
-     ========================================================= */
-
-  document
-    .getElementById(
-      "saveProfileBtn"
-    )
-    .addEventListener(
-      "click",
-      async () => {
-
-        const newName =
-          document
-            .getElementById(
-              "profileNameInput"
-            )
-            .value
-            .trim();
-
-
-        if (!newName) {
-
-          alert(
-            "Enter your name."
-          );
-
-          return;
-
-        }
-
-
-        try {
-
-          await update(
-            ref(
-              db,
-              "users/" +
-              currentUser.uid
-            ),
-            {
-              name: newName
             }
           );
 
-
-          currentProfile.name =
-            newName;
+        });
 
 
-          updateProfileUI();
+      /*
+        Reject request.
+      */
 
+      document
+        .querySelectorAll(".reject-request")
+        .forEach((button) => {
 
-          alert(
-            "Profile saved."
+          button.addEventListener(
+            "click",
+            () => {
+
+              rejectRequest(
+                button.dataset.key
+              );
+
+            }
           );
 
-
-        } catch (error) {
-
-          console.error(
-            error
-          );
-
-          alert(
-            "Could not save profile."
-          );
-
-        }
-
-      }
-    );
-
-
-  /* =========================================================
-     TABS
-     ========================================================= */
-
-  document
-    .querySelectorAll(
-      ".nav-btn"
-    )
-    .forEach(
-      (button) => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            switchTab(
-              button.dataset.tab
-            );
-
-          }
-        );
-
-      }
-    );
-
-
-  function switchTab(
-    tabId
-  ) {
-
-    document
-      .querySelectorAll(
-        ".nav-btn"
-      )
-      .forEach(
-        (button) => {
-
-          button.classList.toggle(
-            "active",
-            button.dataset.tab ===
-              tabId
-          );
-
-        }
-      );
-
-
-    document
-      .querySelectorAll(
-        ".tab"
-      )
-      .forEach(
-        (tab) => {
-
-          tab.classList.toggle(
-            "active",
-            tab.id === tabId
-          );
-
-        }
-      );
-
-  }
-
-
-  /* =========================================================
-     HELPERS
-     ========================================================= */
-
-  function wait(ms) {
-
-    return new Promise(
-      resolve =>
-        setTimeout(
-          resolve,
-          ms
-        )
-    );
-
-  }
-
-
-  function formatBytes(
-    bytes
-  ) {
-
-    if (
-      bytes === 0
-    ) {
-
-      return "0 Bytes";
-
-    }
-
-
-    const sizes = [
-      "Bytes",
-      "KB",
-      "MB",
-      "GB",
-      "TB"
-    ];
-
-
-    const i =
-      Math.floor(
-        Math.log(bytes) /
-        Math.log(1024)
-      );
-
-
-    return (
-      parseFloat(
-        (
-          bytes /
-          Math.pow(
-            1024,
-            i
-          )
-        ).toFixed(2)
-      ) +
-      " " +
-      sizes[i]
-    );
-
-  }
-
-
-  function escapeHtml(
-    text
-  ) {
-
-    const div =
-      document.createElement(
-        "div"
-      );
-
-
-    div.textContent =
-      text;
-
-
-    return div.innerHTML;
-
-  }
-
-
-  function getFirebaseError(
-    error
-  ) {
-
-    switch (
-      error.code
-    ) {
-
-      case "auth/email-already-in-use":
-        return "This email is already registered.";
-
-      case "auth/invalid-email":
-        return "Invalid email address.";
-
-      case "auth/weak-password":
-        return "Password is too weak.";
-
-      case "auth/invalid-credential":
-        return "Incorrect email or password.";
-
-      case "auth/user-not-found":
-        return "No account found with this email.";
-
-      case "auth/wrong-password":
-        return "Incorrect password.";
-
-      default:
-        return error.message ||
-          "Something went wrong.";
-
-    }
-
-  }
-
-
-  /* =========================================================
-     CLEANUP WHEN PAGE IS CLOSED
-     ========================================================= */
-
-  window.addEventListener(
-    "beforeunload",
-    () => {
-
-      if (
-        currentUser
-      ) {
-
-        update(
-          ref(
-            db,
-            "users/" +
-            currentUser.uid
-          ),
-          {
-            online: false
-          }
-        );
-
-      }
+        });
 
     }
   );
+
+}
+
+
+/* =====================================================
+   ACCEPT REQUEST
+===================================================== */
+
+async function acceptRequest(key) {
+
+  try {
+
+    const requestSnapshot =
+      await get(
+        ref(
+          db,
+          "friendRequests/" +
+          currentUser.uid +
+          "/" +
+          key
+        )
+      );
+
+    if (!requestSnapshot.exists())
+      return;
+
+    const request =
+      requestSnapshot.val();
+
+    const friendUid =
+      request.fromUid;
+
+
+    await set(
+      ref(
+        db,
+        "friends/" +
+        currentUser.uid +
+        "/" +
+        friendUid
+      ),
+      true
+    );
+
+
+    await set(
+      ref(
+        db,
+        "friends/" +
+        friendUid +
+        "/" +
+        currentUser.uid
+      ),
+      true
+    );
+
+
+    await set(
+      ref(
+        db,
+        "friendRequests/" +
+        currentUser.uid +
+        "/" +
+        key
+      ),
+      null
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+}
+
+
+/* =====================================================
+   REJECT REQUEST
+===================================================== */
+
+async function rejectRequest(key) {
+
+  try {
+
+    await set(
+      ref(
+        db,
+        "friendRequests/" +
+        currentUser.uid +
+        "/" +
+        key
+      ),
+      null
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+}
+
+
+/* =====================================================
+   FRIENDS
+===================================================== */
+
+function loadFriends() {
+
+  if (!currentUser)
+    return;
+
+  const friendsRef =
+    ref(
+      db,
+      "friends/" +
+      currentUser.uid
+    );
+
+  onValue(
+    friendsRef,
+    async (snapshot) => {
+
+      friendsList.innerHTML = "";
+
+      if (!snapshot.exists()) {
+
+        friendsList.innerHTML =
+          "<p>No friends yet.</p>";
+
+        return;
+      }
+
+      const friendPromises = [];
+
+      snapshot.forEach((child) => {
+
+        friendPromises.push(
+          loadFriend(
+            child.key
+          )
+        );
+
+      });
+
+      const friends =
+        await Promise.all(
+          friendPromises
+        );
+
+      friends.forEach((friend) => {
+
+        if (!friend)
+          return;
+
+        const item =
+          document.createElement("div");
+
+        item.className =
+          "friend-item";
+
+        item.innerHTML = `
+
+          <div>
+
+            <div class="friend-name">
+              ${escapeHtml(friend.name || "Unknown")}
+            </div>
+
+            <div class="friend-id">
+              ${escapeHtml(friend.transferId || "")}
+            </div>
+
+            <div style="margin-top:5px;">
+              ${
+                friend.online
+                ? '<span class="online-dot">● Online</span>'
+                : '<span style="color:#94a3b8;">● Offline</span>'
+              }
+            </div>
+
+          </div>
+
+          <div>
+
+            <button
+              class="small-btn connect-friend"
+              data-peer="${escapeHtml(friend.transferId || "")}"
+            >
+              Connect
+            </button>
+
+            <button
+              class="remove-file remove-friend"
+              data-uid="${friend.uid}"
+            >
+              Remove
+            </button>
+
+          </div>
+
+        `;
+
+        friendsList.appendChild(item);
+
+      });
+
+
+      document
+        .querySelectorAll(".connect-friend")
+        .forEach((button) => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              connectToFriend(
+                button.dataset.peer
+              );
+
+            }
+          );
+
+        });
+
+
+      document
+        .querySelectorAll(".remove-friend")
+        .forEach((button) => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              removeFriend(
+                button.dataset.uid
+              );
+
+            }
+          );
+
+        });
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   LOAD FRIEND
+===================================================== */
+
+async function loadFriend(uid) {
+
+  const snapshot =
+    await get(
+      ref(
+        db,
+        "users/" +
+        uid
+      )
+    );
+
+  if (!snapshot.exists())
+    return null;
+
+  return {
+
+    uid: uid,
+
+    ...snapshot.val()
+
+  };
+
+}
+
+
+/* =====================================================
+   REMOVE FRIEND
+===================================================== */
+
+async function removeFriend(uid) {
+
+  const confirmRemove =
+    confirm(
+      "Remove this friend?"
+    );
+
+  if (!confirmRemove)
+    return;
+
+  try {
+
+    await set(
+      ref(
+        db,
+        "friends/" +
+        currentUser.uid +
+        "/" +
+        uid
+      ),
+      null
+    );
+
+    await set(
+      ref(
+        db,
+        "friends/" +
+        uid +
+        "/" +
+        currentUser.uid
+      ),
+      null
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+}
+
+
+/* =====================================================
+   CONNECT TO FRIEND
+===================================================== */
+
+function connectToFriend(
+  transferId
+) {
+
+  if (!peer) {
+
+    alert(
+      "Your peer connection is not ready yet."
+    );
+
+    return;
+
+  }
+
+  const peerId =
+    transferId
+      .replace(/[^a-zA-Z0-9-]/g, "")
+      .toLowerCase();
+
+  connectionStatus.textContent =
+    "Connecting to friend...";
+
+  const connection =
+    peer.connect(
+      peerId,
+      {
+        reliable: true
+      }
+    );
+
+  connection.on("open", () => {
+
+    connectedPeerId =
+      peerId;
+
+    connectionStatus.textContent =
+      "Connected to friend.";
+
+    /*
+      Store active connection.
+    */
+
+    window.activeConnection =
+      connection;
+
+  });
+
+
+  connection.on("error", (error) => {
+
+    console.error(error);
+
+    connectionStatus.textContent =
+      "Could not connect to friend.";
+
+  });
+
+
+  connection.on("close", () => {
+
+    connectionStatus.textContent =
+      "Friend disconnected.";
+
+    window.activeConnection =
+      null;
+
+  });
+
+}
+
+
+/* =====================================================
+   FILE SELECTION
+===================================================== */
+
+fileInput.addEventListener(
+  "change",
+  () => {
+
+    selectedFileArray =
+      Array.from(
+        fileInput.files
+      );
+
+    renderSelectedFiles();
+
+  }
+);
+
+
+/* =====================================================
+   RENDER SELECTED FILES
+===================================================== */
+
+function renderSelectedFiles() {
+
+  selectedFiles.innerHTML = "";
+
+  preview.innerHTML = "";
+
+  if (
+    selectedFileArray.length === 0
+  ) {
+
+    sendBtn.disabled = true;
+
+    return;
+
+  }
+
+  selectedFileArray.forEach(
+    (file, index) => {
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "file-item";
+
+      item.innerHTML = `
+
+        <div class="file-info">
+
+          <div class="file-name">
+            ${escapeHtml(file.name)}
+          </div>
+
+          <div class="file-size">
+            ${formatFileSize(file.size)}
+          </div>
+
+        </div>
+
+        <button
+          class="remove-file"
+          data-index="${index}"
+        >
+          Remove
+        </button>
+
+      `;
+
+      selectedFiles.appendChild(item);
+
+    }
+  );
+
+
+  document
+    .querySelectorAll(
+      "#selectedFiles .remove-file"
+    )
+    .forEach((button) => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const index =
+            Number(
+              button.dataset.index
+            );
+
+          selectedFileArray.splice(
+            index,
+            1
+          );
+
+          renderSelectedFiles();
+
+        }
+      );
+
+    });
+
+
+  /*
+    Image preview.
+  */
+
+  const firstImage =
+    selectedFileArray.find(
+      file =>
+        file.type.startsWith("image/")
+    );
+
+  if (firstImage) {
+
+    const url =
+      URL.createObjectURL(
+        firstImage
+      );
+
+    preview.innerHTML = `
+
+      <div>
+        Image Preview
+      </div>
+
+      <img src="${url}" alt="Preview">
+
+    `;
+
+  }
+
+  sendBtn.disabled =
+    selectedFileArray.length === 0;
+
+}
+
+
+/* =====================================================
+   SEND FILES
+===================================================== */
+
+sendBtn.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      selectedFileArray.length === 0
+    )
+      return;
+
+    const connection =
+      window.activeConnection;
+
+    if (
+      !connection ||
+      connection.open !== true
+    ) {
+
+      alert(
+        "Connect to a friend first."
+      );
+
+      return;
+
+    }
+
+    sendBtn.disabled = true;
+
+    try {
+
+      for (
+        const file of selectedFileArray
+      ) {
+
+        await sendSingleFile(
+          connection,
+          file
+        );
+
+      }
+
+      progressFill.style.width =
+        "100%";
+
+      progressText.textContent =
+        "All files sent successfully!";
+
+    } catch (error) {
+
+      console.error(error);
+
+      progressText.textContent =
+        "Transfer failed.";
+
+    }
+
+    sendBtn.disabled = false;
+
+  }
+);
+
+
+/* =====================================================
+   SEND SINGLE FILE
+===================================================== */
+
+async function sendSingleFile(
+  connection,
+  file
+) {
+
+  connection.send({
+
+    type: "file-start",
+
+    name: file.name,
+
+    size: file.size,
+
+    fileType: file.type
+
+  });
+
+
+  let offset = 0;
+
+
+  while (
+    offset < file.size
+  ) {
+
+    const chunk =
+      file.slice(
+        offset,
+        offset + CHUNK_SIZE
+      );
+
+    const buffer =
+      await chunk.arrayBuffer();
+
+    connection.send(buffer);
+
+    offset +=
+      buffer.byteLength;
+
+    const percent =
+      Math.min(
+        100,
+        Math.round(
+          offset /
+          file.size *
+          100
+        )
+      );
+
+    progressFill.style.width =
+      percent + "%";
+
+    progressText.textContent =
+      "Sending " +
+      file.name +
+      " — " +
+      percent +
+      "%";
+
+    /*
+      Give the browser time between chunks.
+    */
+
+    await new Promise(
+      resolve =>
+        setTimeout(
+          resolve,
+          2
+        )
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   RECEIVED FILES
+===================================================== */
+
+function renderReceivedFiles() {
+
+  receivedFiles.innerHTML = "";
+
+  if (
+    receivedFileArray.length === 0
+  ) {
+
+    receivedFiles.innerHTML =
+      "<p>No received files yet.</p>";
+
+    downloadZipBtn.style.display =
+      "none";
+
+    return;
+
+  }
+
+
+  receivedFileArray.forEach(
+    (file, index) => {
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "received-item";
+
+      item.innerHTML = `
+
+        <strong>
+          ${escapeHtml(file.name)}
+        </strong>
+
+        <div style="color:#a5b4fc;">
+          ${formatFileSize(file.size)}
+        </div>
+
+        <button
+          data-index="${index}"
+          class="download-single"
+        >
+          Download
+        </button>
+
+      `;
+
+      receivedFiles.appendChild(item);
+
+    }
+  );
+
+
+  downloadZipBtn.style.display =
+    "block";
+
+
+  document
+    .querySelectorAll(".download-single")
+    .forEach((button) => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const index =
+            Number(
+              button.dataset.index
+            );
+
+          downloadFile(
+            receivedFileArray[index]
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =====================================================
+   DOWNLOAD SINGLE FILE
+===================================================== */
+
+function downloadFile(file) {
+
+  const url =
+    URL.createObjectURL(
+      file.blob
+    );
+
+  const a =
+    document.createElement("a");
+
+  a.href = url;
+
+  a.download =
+    file.name;
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  a.remove();
+
+  setTimeout(() => {
+
+    URL.revokeObjectURL(url);
+
+  }, 1000);
+
+}
+
+
+/* =====================================================
+   DOWNLOAD ZIP
+===================================================== */
+
+downloadZipBtn.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      receivedFileArray.length === 0
+    )
+      return;
+
+    downloadZipBtn.disabled =
+      true;
+
+    downloadZipBtn.textContent =
+      "Creating ZIP...";
+
+    try {
+
+      const zip =
+        new JSZip();
+
+      receivedFileArray.forEach(
+        (file) => {
+
+          zip.file(
+            file.name,
+            file.blob
+          );
+
+        }
+      );
+
+      const blob =
+        await zip.generateAsync({
+          type: "blob"
+        });
+
+      const url =
+        URL.createObjectURL(
+          blob
+        );
+
+      const a =
+        document.createElement("a");
+
+      a.href = url;
+
+      a.download =
+        "received-files.zip";
+
+      document.body.appendChild(a);
+
+      a.click();
+
+      a.remove();
+
+      setTimeout(() => {
+
+        URL.revokeObjectURL(url);
+
+      }, 1000);
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Could not create ZIP."
+      );
+
+    }
+
+    downloadZipBtn.disabled =
+      false;
+
+    downloadZipBtn.textContent =
+      "Download ZIP";
+
+  }
+);
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+const sections = {
+
+  home: document.getElementById(
+    "homeSection"
+  ),
+
+  friends: document.getElementById(
+    "friendsSection"
+  ),
+
+  transfer: document.getElementById(
+    "transferSection"
+  )
+
+};
+
+
+const tabs = {
+
+  home: document.getElementById(
+    "homeTab"
+  ),
+
+  friends: document.getElementById(
+    "friendsTab"
+  ),
+
+  transfer: document.getElementById(
+    "transferTab"
+  )
+
+};
+
+
+function showSection(name) {
+
+  Object.values(sections)
+    .forEach(section => {
+
+      section.classList.add(
+        "hidden"
+      );
+
+    });
+
+  Object.values(tabs)
+    .forEach(tab => {
+
+      tab.classList.remove(
+        "active"
+      );
+
+    });
+
+  sections[name]
+    .classList.remove(
+      "hidden"
+    );
+
+  tabs[name]
+    .classList.add(
+      "active"
+    );
+
+}
+
+
+tabs.home.addEventListener(
+  "click",
+  () => showSection("home")
+);
+
+tabs.friends.addEventListener(
+  "click",
+  () => showSection("friends")
+);
+
+tabs.transfer.addEventListener(
+  "click",
+  () => showSection("transfer")
+);
+
+
+/* =====================================================
+   END
+===================================================== */
 
 </script>
 
