@@ -1,2877 +1,796 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7109188480790495"
+     crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StudyHub</title>
-
+<link rel="stylesheet" href="community.css">
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,sans-serif;
-}
-
-body{
-    background:#f4f7fb;
-    color:#172033;
-    min-height:100vh;
-}
-
-button{
-    border:0;
-    cursor:pointer;
-}
-
-.hidden{
-    display:none!important;
-}
-
-/* ================= AUTH ================= */
-
-#authScreen{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    background:
-        radial-gradient(circle at top left,#dbeafe,transparent 35%),
-        radial-gradient(circle at bottom right,#e9d5ff,transparent 35%),
-        #f8fafc;
-}
-
-.auth-card{
-    width:100%;
-    max-width:450px;
-    background:white;
-    padding:35px;
-    border-radius:25px;
-    box-shadow:0 20px 60px rgba(0,0,0,.12);
-}
-
-.logo{
-    text-align:center;
-    font-size:36px;
-    font-weight:800;
-    margin-bottom:8px;
-}
-
-.logo span{
-    color:#6366f1;
-}
-
-.subtitle{
-    text-align:center;
-    color:#64748b;
-    margin-bottom:28px;
-}
-
-.auth-card h2{
-    margin-bottom:20px;
-}
-
-.input-group{
-    margin-bottom:15px;
-}
-
-.input-group label{
-    display:block;
-    margin-bottom:7px;
-    font-weight:600;
-    font-size:14px;
-}
-
-.input-group input,
-.input-group select{
-    width:100%;
-    padding:13px 15px;
-    border:1px solid #dbe2ea;
-    border-radius:12px;
-    outline:none;
-    font-size:15px;
-    background:white;
-}
-
-.input-group input:focus,
-.input-group select:focus{
-    border-color:#6366f1;
-}
-
-.primary-btn{
-    width:100%;
-    padding:14px;
-    background:#6366f1;
-    color:white;
-    border-radius:12px;
-    font-size:16px;
-    font-weight:bold;
-    margin-top:5px;
-}
-
-.primary-btn:hover{
-    background:#4f46e5;
-}
-
-.switch-text{
-    text-align:center;
-    margin-top:20px;
-    color:#64748b;
-}
-
-.switch-text button{
-    background:none;
-    color:#6366f1;
-    font-weight:bold;
-}
-
-.error{
-    margin-top:15px;
-    padding:11px;
-    border-radius:10px;
-    background:#fee2e2;
-    color:#b91c1c;
-    font-size:14px;
-}
-
-.success{
-    margin-top:15px;
-    padding:11px;
-    border-radius:10px;
-    background:#dcfce7;
-    color:#15803d;
-    font-size:14px;
-}
-
-/* ================= APP ================= */
-
-#app{
-    display:flex;
-    min-height:100vh;
-}
-
-.sidebar{
-    width:250px;
-    background:#111827;
-    color:white;
-    padding:25px 18px;
-    position:fixed;
-    height:100vh;
-    left:0;
-    top:0;
-}
-
-.sidebar-logo{
-    font-size:25px;
-    font-weight:800;
-    margin-bottom:35px;
-    padding-left:10px;
-}
-
-.sidebar-logo span{
-    color:#818cf8;
-}
-
-.nav-btn{
-    width:100%;
-    background:transparent;
-    color:#cbd5e1;
-    padding:13px;
-    border-radius:11px;
-    text-align:left;
-    margin-bottom:7px;
-    font-size:15px;
-}
-
-.nav-btn:hover,
-.nav-btn.active{
-    background:#6366f1;
-    color:white;
-}
-
-.logout-btn{
-    position:absolute;
-    bottom:25px;
-    left:18px;
-    width:calc(100% - 36px);
-    padding:12px;
-    background:#ef4444;
-    color:white;
-    border-radius:11px;
-    font-weight:bold;
-}
-
-.main{
-    margin-left:250px;
-    width:calc(100% - 250px);
-    padding:30px;
-}
-
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:30px;
-}
-
-.topbar h1{
-    font-size:30px;
-}
-
-.user-badge{
-    background:white;
-    padding:10px 15px;
-    border-radius:12px;
-    box-shadow:0 5px 20px rgba(0,0,0,.06);
-    font-weight:bold;
-}
-
-.page{
-    display:none;
-}
-
-.page.active{
-    display:block;
-}
-
-/* ================= CARDS ================= */
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:18px;
-}
-
-.card{
-    background:white;
-    padding:22px;
-    border-radius:18px;
-    box-shadow:0 5px 25px rgba(0,0,0,.06);
-}
-
-.stat-number{
-    font-size:30px;
-    font-weight:800;
-    margin-top:8px;
-}
-
-.stat-label{
-    color:#64748b;
-}
-
-.section{
-    margin-top:25px;
-}
-
-.section h2{
-    margin-bottom:15px;
-}
-
-.subject-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:18px;
-}
-
-.subject{
-    background:white;
-    padding:20px;
-    border-radius:18px;
-    box-shadow:0 5px 25px rgba(0,0,0,.06);
-    transition:.2s;
-}
-
-.subject:hover{
-    transform:translateY(-3px);
-}
-
-.subject-icon{
-    font-size:30px;
-    margin-bottom:10px;
-}
-
-.subject p{
-    color:#64748b;
-    margin-top:7px;
-}
-
-.progress{
-    width:100%;
-    height:9px;
-    background:#e5e7eb;
-    border-radius:20px;
-    margin-top:15px;
-    overflow:hidden;
-}
-
-.progress-bar{
-    height:100%;
-    background:#6366f1;
-}
-
-/* ================= TASKS ================= */
-
-.task-form{
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-}
-
-.task-form input{
-    flex:1;
-    padding:13px;
-    border:1px solid #ddd;
-    border-radius:10px;
-}
-
-.task-list{
-    display:grid;
-    gap:10px;
-}
-
-.task{
-    background:white;
-    padding:16px;
-    border-radius:13px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    box-shadow:0 4px 15px rgba(0,0,0,.05);
-}
-
-.task.done span{
-    text-decoration:line-through;
-    color:#94a3b8;
-}
-
-/* ================= FRIENDS ================= */
-
-.friend-search{
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-}
-
-.friend-search input{
-    flex:1;
-    padding:14px;
-    border:1px solid #dbe2ea;
-    border-radius:12px;
-    outline:none;
-}
-
-.search-btn{
-    background:#6366f1;
-    color:white;
-    padding:0 22px;
-    border-radius:12px;
-    font-weight:bold;
-}
-
-.search-result{
-    margin-top:10px;
-}
-
-.person-card{
-    background:white;
-    padding:18px;
-    border-radius:15px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    margin-bottom:10px;
-    box-shadow:0 4px 15px rgba(0,0,0,.05);
-}
-
-.person-info{
-    display:flex;
-    align-items:center;
-    gap:13px;
-}
-
-.avatar{
-    width:45px;
-    height:45px;
-    border-radius:50%;
-    background:#6366f1;
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-    font-size:18px;
-}
-
-.person-name{
-    font-weight:bold;
-}
-
-.person-email{
-    color:#64748b;
-    font-size:13px;
-    margin-top:4px;
-}
-
-.small-btn{
-    padding:9px 14px;
-    border-radius:9px;
-    font-weight:bold;
-    background:#6366f1;
-    color:white;
-}
-
-.accept-btn{
-    background:#16a34a;
-}
-
-.reject-btn{
-    background:#ef4444;
-    margin-left:5px;
-}
-
-.remove-btn{
-    background:#ef4444;
-}
-
-.friend-section{
-    margin-top:25px;
-}
-
-.friend-section h2{
-    margin-bottom:12px;
-}
-
-.empty{
-    color:#64748b;
-    padding:15px;
-    background:white;
-    border-radius:12px;
-}
-
-/* ================= TIMER ================= */
-
-.timer{
-    text-align:center;
-    max-width:600px;
-    margin:30px auto;
-}
-
-.timer-display{
-    font-size:90px;
-    font-weight:800;
-    margin:30px 0;
-}
-
-.timer button{
-    padding:12px 20px;
-    border-radius:10px;
-    margin:5px;
-    background:#6366f1;
-    color:white;
-    font-weight:bold;
-}
-
-/* ================= PROFILE ================= */
-
-.profile-card{
-    max-width:650px;
-}
-
-.profile-row{
-    padding:15px 0;
-    border-bottom:1px solid #e5e7eb;
-}
-
-.profile-row:last-child{
-    border-bottom:none;
-}
-
-.profile-label{
-    color:#64748b;
-    font-size:13px;
-    margin-bottom:5px;
-}
-
-.profile-value{
-    font-size:17px;
-    font-weight:bold;
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media(max-width:900px){
-
-    .grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .subject-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-}
-
-@media(max-width:700px){
-
-    .sidebar{
-        width:70px;
-        padding:15px 8px;
-    }
-
-    .sidebar-logo{
-        font-size:0;
-        text-align:center;
-    }
-
-    .sidebar-logo span{
-        font-size:20px;
-    }
-
-    .nav-btn{
-        text-align:center;
-        font-size:0;
-    }
-
-    .nav-btn::first-letter{
-        font-size:20px;
-    }
-
-    .logout-btn{
-        font-size:0;
-    }
-
-    .main{
-        margin-left:70px;
-        width:calc(100% - 70px);
-        padding:18px;
-    }
-
-    .grid,
-    .subject-grid{
-        grid-template-columns:1fr;
-    }
-
-    .friend-search{
-        flex-direction:column;
-    }
-
-    .search-btn{
-        padding:13px;
-    }
-
-    .person-card{
-        align-items:flex-start;
-        flex-direction:column;
-    }
-
-    .timer-display{
-        font-size:60px;
-    }
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+body{background:#f4f7fb;color:#172033}
+button{cursor:pointer;border:0}
+.hidden{display:none!important}
+input,select{font-size:15px}
+#authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#667eea,#764ba2)}
+.auth-card{width:100%;max-width:430px;background:white;border-radius:22px;padding:30px;box-shadow:0 20px 60px #0003}
+.logo{text-align:center;font-size:34px;font-weight:800;margin-bottom:8px}
+.subtitle{text-align:center;color:#687386;margin-bottom:25px}
+.auth-card input,.auth-card select{width:100%;padding:13px 15px;border:1px solid #d8deea;border-radius:12px;margin-bottom:12px;outline:none}
+.auth-card input:focus,.auth-card select:focus{border-color:#667eea}
+.primary-btn,.google-btn,.secondary-btn{width:100%;padding:13px;border-radius:12px;font-weight:700;margin-bottom:10px}
+.primary-btn{background:#667eea;color:white}
+.google-btn{background:white;color:#222;border:1px solid #ddd}
+.secondary-btn{background:#eef1f7;color:#374151}
+.auth-switch{text-align:center;margin-top:12px;color:#667386;font-size:14px}
+.auth-switch button{background:none;color:#667eea;font-weight:700}
+.auth-error{color:#dc2626;background:#fff1f2;padding:10px;border-radius:10px;margin-bottom:12px;font-size:14px;overflow-wrap:anywhere}
+.auth-note{font-size:12px;color:#687386;margin:0 0 12px;line-height:1.5}
+#recaptcha-container{margin:8px 0 12px;overflow-x:auto}
+#app{min-height:100vh}
+.topbar{height:70px;background:white;border-bottom:1px solid #e4e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 25px;position:sticky;top:0;z-index:20}
+.brand{font-size:25px;font-weight:800;color:#667eea}
+.user-mini{display:flex;align-items:center;gap:10px}
+.avatar{width:42px;height:42px;flex-shrink:0;border-radius:50%;background:#667eea;color:white;display:flex;align-items:center;justify-content:center;font-weight:800}
+.logout-btn{padding:9px 14px;border-radius:10px;background:#fee2e2;color:#b91c1c;font-weight:700}
+.layout{display:flex;min-height:calc(100vh - 70px)}
+.sidebar{width:230px;flex-shrink:0;background:white;border-right:1px solid #e4e8f0;padding:20px 12px}
+.nav-btn{width:100%;text-align:left;padding:13px 15px;border-radius:11px;background:transparent;color:#596579;font-size:15px;font-weight:700;margin-bottom:5px}
+.nav-btn:hover,.nav-btn.active{background:#eef0ff;color:#5966d8}
+.source-code-link{display:flex;align-items:center;gap:10px;padding:13px 15px;margin-top:20px;border-top:1px solid #e4e8f0;color:#5966d8;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px}
+.source-code-link:hover{background:#eef0ff}
+.source-code-link svg{width:22px;height:22px;flex-shrink:0}
+.main{flex:1;padding:28px;min-width:0;max-width:1300px}
+.page{display:none}.page.active{display:block}
+.page-title{font-size:28px;margin-bottom:7px}
+.page-subtitle{color:#738096;margin-bottom:25px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.stat-card{background:white;padding:22px;border-radius:17px;box-shadow:0 4px 15px #1e28500d}
+.stat-card h3{color:#7a8597;font-size:14px;margin-bottom:8px}
+.stat-card strong{font-size:30px}
+.subject-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.subject-card{background:white;border-radius:17px;padding:25px;box-shadow:0 4px 15px #1e28500d;font-weight:700}
+.task-form,.friend-search{background:white;padding:20px;border-radius:17px;margin-bottom:20px}
+.task-form input,.task-form select{padding:12px;border:1px solid #dce1eb;border-radius:10px;margin:0 7px 8px 0}
+.task-list,.people{display:flex;flex-direction:column;gap:10px}
+.task{background:white;padding:17px;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.task.done{opacity:.6;text-decoration:line-through}
+.delete-task{background:#fee2e2;color:#b91c1c;padding:7px 10px;border-radius:8px}
+.search-row{display:flex;gap:10px}
+.search-row input{flex:1;min-width:0;padding:13px 15px;border:1px solid #dce1eb;border-radius:11px}
+.search-row button{padding:13px 20px;background:#667eea;color:white;border-radius:11px;font-weight:700}
+.section{margin-top:25px}.section h2{margin-bottom:12px}
+.person-card{background:white;padding:15px;border-radius:15px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.person-info{display:flex;align-items:center;gap:12px;min-width:0}
+.person-name{font-weight:800;margin-bottom:4px;overflow-wrap:anywhere}
+.person-email{color:#7a8597;font-size:13px;margin-top:2px;overflow-wrap:anywhere}
+.small-btn{padding:9px 13px;border-radius:9px;background:#667eea;color:white;font-weight:700;margin:2px}
+.chat-btn,.accept-btn{background:#10b981}
+.pending-btn{background:#e5e7eb;color:#555}
+.danger-btn{background:#fee2e2;color:#b91c1c}
+.empty{background:white;padding:25px;text-align:center;color:#788398;border-radius:14px}
+.error{background:#fff1f2;color:#b91c1c;padding:15px;border-radius:12px;overflow-wrap:anywhere}
+.chat-header{background:#667eea;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center}
+.chat-header button{background:#ffffff33;color:white;width:32px;height:32px;border-radius:8px}
+.messages{flex:1;padding:15px;overflow-y:auto;background:#f5f7fb}
+.message{max-width:78%;padding:10px 13px;border-radius:14px;margin-bottom:9px;line-height:1.4;overflow-wrap:anywhere}
+.message.mine{margin-left:auto;background:#667eea;color:white;border-bottom-right-radius:4px}
+.message.theirs{background:white;border:1px solid #e5e8ef;border-bottom-left-radius:4px}
+.profile-card{background:white;border-radius:18px;padding:25px;max-width:600px}
+.profile-row{padding:13px 0;border-bottom:1px solid #edf0f5;overflow-wrap:anywhere}
+.profile-row span{color:#788398;display:block;font-size:13px;margin-bottom:4px}
+.timer-card{background:white;border-radius:20px;padding:40px;text-align:center;max-width:500px}
+.timer{font-size:clamp(30px,8vw,65px);font-weight:800;margin:25px 0}
+.timer-duration-form{margin-top:20px;text-align:left}
+.timer-duration-form label{display:block;font-size:14px;font-weight:700;margin-bottom:8px}
+.timer-duration-fields{display:flex;flex-wrap:wrap;gap:8px}
+.timer-duration-fields input{flex:1 1 90px;min-width:0;width:100%;padding:12px;border:1px solid #dce1eb;border-radius:10px}
+.timer-duration-fields button{flex:1 1 120px;padding:12px;border-radius:10px;background:#eef0ff;color:#5966d8;font-weight:700}
+.timer-duration-form p{font-size:12px;color:#738096;line-height:1.5;margin-top:8px}
+.timer-status{font-size:13px;line-height:1.5;color:#687386;margin-top:15px}
+.timer-status.error{background:transparent;padding:0;color:#b91c1c}
+.timer-buttons{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.timer-buttons button{padding:12px 20px;border-radius:10px;background:#667eea;color:white;font-weight:700}
+@media(max-width:800px){
+.sidebar{width:70px;padding:10px 7px}
+.source-code-link{justify-content:center;padding:13px 5px}.source-code-link span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.nav-btn{font-size:0;text-align:center;padding:13px 5px}
+.nav-btn::first-letter{font-size:20px}
+.main{padding:18px}
+.stats{grid-template-columns:1fr}
+.topbar{padding:0 14px}
+.brand{font-size:20px}
+.user-mini{gap:6px}.user-mini #topName{max-width:75px;overflow:hidden;text-overflow:ellipsis}
+.person-card{align-items:flex-start;flex-direction:column}
+.task{align-items:flex-start;flex-direction:column}
 }
 </style>
 </head>
-
 <body>
 
-<!-- =====================================================
-     AUTH SCREEN
-===================================================== -->
-
 <div id="authScreen">
-
 <div class="auth-card">
+<div class="logo">📚 StudyHub</div>
+<div class="subtitle">Your student study space</div>
+<div id="authError" aria-live="polite"></div>
 
-<div class="logo">
-Study<span>Hub</span>
+<div id="loginForm">
+<input id="loginEmail" type="email" placeholder="Email" autocomplete="email">
+<input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+<button class="primary-btn" onclick="loginEmail()">Login with Email</button>
+<button class="google-btn" onclick="loginGoogle()">🔵 Continue with Google</button>
+<button class="secondary-btn" onclick="showPhone('login')">📱 Login with Phone OTP</button>
+<div class="auth-switch">Don't have an account? <button onclick="showSignup()">Create account</button></div>
 </div>
 
-<div class="subtitle">
-Your personal student dashboard
-</div>
-
-
-<!-- LOGIN -->
-
-<div id="loginBox">
-
-<h2>Welcome back 👋</h2>
-
-<form id="loginForm">
-
-<div class="input-group">
-<label>Email</label>
-<input
-type="email"
-id="loginEmail"
-placeholder="you@example.com"
-required>
-</div>
-
-<div class="input-group">
-<label>Password</label>
-<input
-type="password"
-id="loginPassword"
-placeholder="Your password"
-required>
-</div>
-
-<button class="primary-btn" type="submit">
-Login
-</button>
-
-</form>
-
-<div id="loginMessage"></div>
-
-<div class="switch-text">
-Don't have an account?
-
-<button type="button" onclick="showSignup()">
-Create one
-</button>
-</div>
-
-</div>
-
-
-<!-- SIGNUP -->
-
-<div id="signupBox" class="hidden">
-
-<h2>Create your account 🚀</h2>
-
-<form id="signupForm">
-
-<div class="input-group">
-
-<label>Your name</label>
-
-<input
-type="text"
-id="signupName"
-placeholder="Your name"
-required>
-
-</div>
-
-
-<div class="input-group">
-
-<label>Class</label>
-
-<select id="signupClass" required>
-
-<option value="">
-Select your class
-</option>
-
-<option value="Below Class 9">
-Below Class 9
-</option>
-
-<option value="Class 9">
-Class 9
-</option>
-
-<option value="Class 10">
-Class 10
-</option>
-
-<option value="Class 11">
-Class 11
-</option>
-
-<option value="Class 12">
-Class 12
-</option>
-
+<div id="signupForm" class="hidden">
+<input id="signupName" type="text" placeholder="Full name" autocomplete="name">
+<select id="signupClass">
+<option value="">Select class</option>
+<option>Below Class 9</option><option>Class 9</option><option>Class 10</option>
+<option>Class 11</option><option>Class 12</option><option>Other</option>
 </select>
-
+<input id="signupEmail" type="email" placeholder="Email" autocomplete="email">
+<input id="signupPassword" type="password" placeholder="Password (at least 6 characters)" autocomplete="new-password">
+<input id="signupConfirm" type="password" placeholder="Confirm password" autocomplete="new-password">
+<button class="primary-btn" onclick="signupEmail()">Create Account with Email</button>
+<button class="google-btn" onclick="loginGoogle(true)">🔵 Sign up with Google</button>
+<button class="secondary-btn" onclick="showPhone('signup')">📱 Sign up with Phone OTP</button>
+<div class="auth-switch">Already have an account? <button onclick="showLogin()">Login</button></div>
 </div>
 
-
-<div class="input-group">
-
-<label>Email</label>
-
-<input
-type="email"
-id="signupEmail"
-placeholder="you@example.com"
-required>
-
+<div id="phoneForm" class="hidden">
+<p class="auth-note">Enter your phone number in international format, for example +923001234567. Firebase will send an SMS verification code.</p>
+<div id="phoneSignupDetails">
+<input id="phoneName" type="text" placeholder="Full name" autocomplete="name">
+<select id="phoneClass">
+<option value="">Select class</option>
+<option>Below Class 9</option><option>Class 9</option><option>Class 10</option>
+<option>Class 11</option><option>Class 12</option><option>Other</option>
+</select>
 </div>
-
-
-<div class="input-group">
-
-<label>Password</label>
-
-<input
-type="password"
-id="signupPassword"
-placeholder="At least 6 characters"
-minlength="6"
-required>
-
+<input id="phoneNumber" type="tel" placeholder="Phone number, e.g. +923001234567" autocomplete="tel">
+<div id="recaptcha-container"></div>
+<button id="sendOtpBtn" class="primary-btn" onclick="sendPhoneOtp()">Send verification code</button>
+<div id="otpArea" class="hidden">
+<input id="phoneOtp" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="Enter SMS verification code">
+<button class="primary-btn" onclick="verifyPhoneOtp()">Verify code and continue</button>
 </div>
-
-
-<div class="input-group">
-
-<label>Confirm password</label>
-
-<input
-type="password"
-id="signupConfirm"
-placeholder="Repeat password"
-minlength="6"
-required>
-
-</div>
-
-
-<button
-class="primary-btn"
-type="submit">
-
-Create Account
-
-</button>
-
-</form>
-
-<div id="signupMessage"></div>
-
-<div class="switch-text">
-
-Already have an account?
-
-<button
-type="button"
-onclick="showLogin()">
-
-Login
-
-</button>
-
-</div>
-
-</div>
-
+<button class="secondary-btn" onclick="resetPhoneForm()">Reset phone verification</button>
+<div class="auth-switch"><button onclick="showLogin()">Back to login</button> · <button onclick="showSignup()">Email signup</button></div>
 </div>
 </div>
-
-
-<!-- =====================================================
-     MAIN APP
-===================================================== -->
+</div>
 
 <div id="app" class="hidden">
-
-<aside class="sidebar">
-
-<div class="sidebar-logo">
-Study<span>Hub</span>
+<div class="topbar">
+<div class="brand">📚 StudyHub</div>
+<div class="user-mini"><div class="avatar" id="topAvatar">S</div><span id="topName">Student</span><button class="logout-btn" onclick="logout()">Logout</button></div>
 </div>
-
-<button
-class="nav-btn active"
-onclick="showPage('dashboard',this)">
-🏠 Dashboard
-</button>
-
-<button
-class="nav-btn"
-onclick="showPage('subjects',this)">
-📚 Subjects
-</button>
-
-<button
-class="nav-btn"
-onclick="showPage('tasks',this)">
-✅ Tasks
-</button>
-
-<button
-class="nav-btn"
-onclick="showPage('friends',this)">
-👥 Friends
-</button>
-
-<button
-class="nav-btn"
-onclick="showPage('focus',this)">
-⏱️ Focus
-</button>
-
-<button
-class="nav-btn"
-onclick="showPage('profile',this)">
-👤 Profile
-</button>
-
-<button
-class="logout-btn"
-onclick="logout()">
-Logout
-</button>
-
+<div class="layout">
+<aside class="sidebar">
+<button class="nav-btn active" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
+<button class="nav-btn" onclick="showPage('subjects',this)">📚 Subjects</button>
+<button class="nav-btn" onclick="showPage('tasks',this)">✅ Tasks</button>
+<button class="nav-btn" onclick="showPage('friends',this)">👥 Friends</button>
+<button class="nav-btn" data-page="chats" onclick="showPage('chats',this)"><span class="nav-icon" aria-hidden="true">&#9993;</span><span>Chats</span></button>
+<button class="nav-btn" data-page="notifications" onclick="showPage('notifications',this)"><span class="nav-icon" aria-hidden="true">&#9673;</span><span>Notifications</span><span id="notificationBadge" class="notification-badge hidden" aria-label="Unread notifications">0</span></button>
+<button class="nav-btn" data-page="notes" onclick="showPage('notes',this)"><span class="nav-icon" aria-hidden="true">&#9636;</span><span>Notes &amp; Posts</span></button>
+<button class="nav-btn" onclick="showPage('focus',this)">⏱️ Focus</button>
+<button class="nav-btn" onclick="showPage('profile',this)">👤 Profile</button>
+<a class="source-code-link" href="code.html" title="Copy complete website code"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-12-2 18"/></svg><span>Copy Code</span></a>
 </aside>
-
-
 <main class="main">
 
-<div class="topbar">
-
-<div>
-<h1 id="pageTitle">
-Dashboard
-</h1>
+<section id="dashboard" class="page active">
+<h1 class="page-title">Welcome to StudyHub 👋</h1>
+<p class="page-subtitle">Study smarter. Stay organized. Connect with classmates.</p>
+<div class="stats">
+<div class="stat-card"><h3>Tasks</h3><strong id="taskCount">0</strong></div>
+<div class="stat-card"><h3>Friends</h3><strong id="friendCount">0</strong></div>
+<div class="stat-card"><h3>Focus Minutes</h3><strong id="focusCount">0</strong></div>
 </div>
-
-<div
-class="user-badge"
-id="userBadge">
-Student
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     DASHBOARD
-===================================================== -->
-
-<section
-id="dashboard"
-class="page active">
-
-<div class="grid">
-
-<div class="card">
-
-<div class="stat-label">
-Tasks
-</div>
-
-<div
-class="stat-number"
-id="taskCount">
-0
-</div>
-
-</div>
-
-
-<div class="card">
-
-<div class="stat-label">
-Completed
-</div>
-
-<div
-class="stat-number"
-id="completedCount">
-0
-</div>
-
-</div>
-
-
-<div class="card">
-
-<div class="stat-label">
-Subjects
-</div>
-
-<div
-class="stat-number"
-id="subjectCount">
-0
-</div>
-
-</div>
-
-
-<div class="card">
-
-<div class="stat-label">
-Class
-</div>
-
-<div
-class="stat-number"
-id="classNumber"
-style="font-size:20px">
--
-</div>
-
-</div>
-
-</div>
-
-
-<div class="section">
-
-<h2>
-Your Subjects 📚
-</h2>
-
-<div
-id="dashboardSubjects"
-class="subject-grid">
-</div>
-
-</div>
-
 </section>
 
-
-<!-- =====================================================
-     SUBJECTS
-===================================================== -->
-
-<section
-id="subjects"
-class="page">
-
-<div class="section">
-
-<h2 id="subjectsHeading">
-Your Subjects
-</h2>
-
-<div
-id="allSubjects"
-class="subject-grid">
-</div>
-
-</div>
-
+<section id="subjects" class="page">
+<h1 class="page-title">Subjects</h1><p class="page-subtitle">Your study subjects</p>
+<div id="subjectGrid" class="subject-grid"></div>
 </section>
 
+<section id="tasks" class="page">
+<h1 class="page-title">Tasks</h1><p class="page-subtitle">Manage your study work</p>
+<div class="task-form">
+<input id="taskInput" type="text" placeholder="Enter a task...">
+<select id="taskSubject">
+<option>General</option><option>Mathematics</option><option>English</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>Urdu</option><option>Islamiat</option><option>Computer</option>
+</select>
+<button class="small-btn" onclick="addTask()">+ Add Task</button>
+</div>
+<div id="taskList" class="task-list"></div>
+</section>
 
-<!-- =====================================================
-     TASKS
-===================================================== -->
+<section id="friends" class="page">
+<h1 class="page-title">Friends</h1><p class="page-subtitle">Find classmates. Open Chats to message friends and share study files.</p>
+<div class="friend-search"><div class="search-row">
+<input id="friendSearchInput" type="text" placeholder="Search by name, email or phone..." onkeydown="if(event.key==='Enter')searchStudents()">
+<button onclick="searchStudents()">Search</button>
+</div></div>
+<div class="section"><h2>Search Results</h2><div id="searchResults" class="people"><div class="empty">Search for a student.</div></div></div>
+<div class="section"><h2>Friend Requests</h2><div id="requestsList" class="people"><div class="empty">No pending requests.</div></div></div>
+<div class="section"><h2>My Friends</h2><div id="friendsList" class="people"><div class="empty">You don't have any friends yet.</div></div></div>
+</section>
 
-<section
-id="tasks"
-class="page">
-
-<div class="card">
-
-<h2>
-Add a task
-</h2>
-
-<form
-id="taskForm"
-class="task-form">
-
-<input
-type="text"
-id="taskInput"
-placeholder="e.g. Revise Mathematics"
-required>
-
-<button
-class="primary-btn"
-style="width:auto">
-
-Add
-
-</button>
-
+<section id="chats" class="page">
+<div class="community-heading"><div><h1 class="page-title">Chats</h1><p class="page-subtitle">A space for your study conversations and shared files.</p></div><span class="community-label">FRIENDS ONLY</span></div>
+<div class="chat-workspace">
+<aside class="conversation-sidebar"><h2>Your friends</h2><div id="chatFriends"><div class="empty">Add classmates in Friends to start a conversation.</div></div></aside>
+<div class="conversation-panel">
+<div id="chatWelcome" class="conversation-welcome"><span class="welcome-mark" aria-hidden="true">&#9993;</span><h2>Keep the conversation going</h2><p>Select a friend to send a message, compare notes, or share a file.</p><button class="small-btn" onclick="showPage('friends')">Find friends</button></div>
+<div id="chatBox" class="conversation-content hidden">
+<div class="chat-header"><div><strong id="chatName">Chat</strong><small>Private conversation</small></div><button type="button" onclick="closeChat()" aria-label="Close conversation">&#10005;</button></div>
+<div id="messages" class="messages" aria-label="Conversation messages" aria-live="polite"></div>
+<div id="chatStatus" class="community-status" role="status"></div>
+<form id="chatForm" class="chat-composer" onsubmit="sendMessage(event)">
+<div id="selectedFile" class="selected-file hidden"><span id="selectedFileName"></span><button type="button" onclick="clearChatFile()" aria-label="Remove attachment">&#10005;</button></div>
+<div class="composer-row"><label class="attach-btn" for="chatFile" title="Attach a study file"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 13l7-7a3 3 0 014 4l-9 9a5 5 0 01-7-7l9-9"/></svg><span class="sr-only">Attach a file</span></label><input id="chatFile" class="sr-only" type="file" accept=".pdf,.txt,.md,.csv,.png,.jpg,.jpeg,.webp,.gif,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip" onchange="selectChatFile()"><input id="messageInput" type="text" maxlength="4000" placeholder="Write to your friend..." aria-label="Message" autocomplete="off"><button id="sendMessageBtn" type="submit">Send</button></div>
+<p class="file-hint">Documents, images, or ZIP files · up to 3 MB</p>
 </form>
-
 </div>
-
-
-<div class="section">
-
-<h2>
-Your Tasks
-</h2>
-
-<div
-id="taskList"
-class="task-list">
 </div>
-
 </div>
-
 </section>
 
-
-<!-- =====================================================
-     FRIENDS
-===================================================== -->
-
-<section
-id="friends"
-class="page">
-
-<div class="card">
-
-<h2>
-Find Students 🔎
-</h2>
-
-<p style="color:#64748b;margin:8px 0 18px">
-Search by student's name or email.
-</p>
-
-<div class="friend-search">
-
-<input
-type="text"
-id="friendSearchInput"
-placeholder="Search name or email...">
-
-<button
-class="search-btn"
-onclick="searchStudents()">
-
-Search
-
-</button>
-
-</div>
-
-<div id="searchResults"></div>
-
-</div>
-
-
-<div class="friend-section">
-
-<h2>
-📩 Friend Requests
-</h2>
-
-<div id="requestsList"></div>
-
-</div>
-
-
-<div class="friend-section">
-
-<h2>
-👥 My Friends
-</h2>
-
-<div id="friendsList"></div>
-
-</div>
-
+<section id="notifications" class="page">
+<div class="community-heading"><div><h1 class="page-title">Notifications</h1><p class="page-subtitle">New messages and files from your friends, in one place.</p></div><button id="markAllReadBtn" class="small-btn" onclick="markAllNotificationsRead()">Mark all as read</button></div>
+<div id="notificationStatus" class="community-status" role="status"></div>
+<div id="notificationsList" class="notification-list"><div class="empty">Loading notifications...</div></div>
 </section>
 
-
-<!-- =====================================================
-     FOCUS
-===================================================== -->
-
-<section
-id="focus"
-class="page">
-
-<div class="card timer">
-
-<h2>
-Focus Timer
-</h2>
-
-<p>
-Stay focused. You've got this. 💪
-</p>
-
-<div
-class="timer-display"
-id="timerDisplay">
-25:00
+<section id="notes" class="page">
+<div class="community-heading"><div><h1 class="page-title">Notes &amp; Posts</h1><p class="page-subtitle">Share what you know. Learn something from your classmates.</p></div><span class="community-label">COMMUNITY BOARD</span></div>
+<div class="notes-workspace">
+<form id="postForm" class="post-composer" onsubmit="publishPost(event)"><h2>Share with StudyHub</h2><p>Post study notes, a helpful tip, or a question. Every signed-in student can read and contribute.</p><label for="postTitle">Title</label><input id="postTitle" required maxlength="120" placeholder="What are you sharing?"><label for="postSubject">Subject</label><select id="postSubject"><option>General</option><option>Mathematics</option><option>English</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>Urdu</option><option>Islamiat</option><option>Computer</option><option>Sindhi</option><option>Pakistan Studies</option></select><label for="postContent">Your notes or post</label><textarea id="postContent" required maxlength="12000" rows="9" placeholder="Write your notes, explain an idea, or ask the community..."></textarea><p class="file-hint">Visible to all StudyHub students. Do not share private information.</p><div id="postStatus" class="community-status" role="status"></div><button id="publishPostBtn" class="primary-btn" type="submit">Publish post</button></form>
+<div class="notes-feed"><div class="feed-heading"><h2>From the community</h2><button class="secondary-btn" onclick="refreshPosts()">Refresh</button></div><div id="postsStatus" class="community-status" role="status"></div><div id="postsList" class="posts-list"><div class="empty">Loading community posts...</div></div></div>
 </div>
-
-<button onclick="startTimer()">
-Start
-</button>
-
-<button onclick="pauseTimer()">
-Pause
-</button>
-
-<button onclick="resetTimer()">
-Reset
-</button>
-
-</div>
-
 </section>
 
+<section id="focus" class="page">
+<h1 class="page-title">Focus Timer</h1><p class="page-subtitle">Concentrate on your studies.</p>
+<div class="timer-card"><h2>Focus Session</h2>
+<form class="timer-duration-form" onsubmit="setTimerDuration(event)" novalidate>
+<label for="timerMinutes">Session length (minutes)</label>
+<div class="timer-duration-fields"><input id="timerMinutes" type="number" min="1" max="1440" step="1" value="25" required aria-describedby="timerDurationHelp timerStatus"><button id="setTimerDurationBtn" type="submit">Set duration</button></div>
+<p id="timerDurationHelp">Choose 1–1440 minutes. Set duration restarts the countdown; pause first to change it.</p>
+</form>
+<div id="timer" class="timer" role="timer" aria-label="Time remaining">25:00</div>
+<div class="timer-buttons"><button onclick="startTimer()">Start</button><button onclick="pauseTimer()">Pause</button><button onclick="resetTimer()">Reset</button></div>
+<p id="timerStatus" class="timer-status" role="status" aria-live="polite"></p>
+</div></section>
 
-<!-- =====================================================
-     PROFILE
-===================================================== -->
-
-<section
-id="profile"
-class="page">
-
-<div class="card profile-card">
-
-<h2>
-Your Profile 👤
-</h2>
-
-
-<div class="profile-row">
-
-<div class="profile-label">
-Name
-</div>
-
-<div
-class="profile-value"
-id="profileName">
--
-</div>
-
-</div>
-
-
-<div class="profile-row">
-
-<div class="profile-label">
-Email
-</div>
-
-<div
-class="profile-value"
-id="profileEmail">
--
-</div>
-
-</div>
-
-
-<div class="profile-row">
-
-<div class="profile-label">
-Class
-</div>
-
-<div
-class="profile-value"
-id="profileClass">
--
-</div>
-
-</div>
-
-
-<div class="profile-row">
-
-<div class="profile-label">
-Friends
-</div>
-
-<div
-class="profile-value"
-id="profileFriendCount">
-0
-</div>
-
-</div>
-
-
-<div class="profile-row">
-
-<div class="profile-label">
-User ID
-</div>
-
-<div
-class="profile-value"
-id="profileUid"
-style="font-size:12px;word-break:break-all">
--
-</div>
-
-</div>
-
-</div>
-
-</section>
-
+<section id="profile" class="page">
+<h1 class="page-title">Profile</h1><p class="page-subtitle">Your StudyHub profile</p>
+<div class="profile-card">
+<div class="profile-row"><span>Name</span><strong id="profileName">—</strong></div>
+<div class="profile-row"><span>Email</span><strong id="profileEmail">—</strong></div>
+<div class="profile-row"><span>Phone</span><strong id="profilePhone">—</strong></div>
+<div class="profile-row"><span>Class</span><strong id="profileClass">—</strong></div>
+</div></section>
 </main>
-
 </div>
-
-
-<!-- =====================================================
-     FIREBASE
-===================================================== -->
+</div>
 
 <script type="module">
-
+import { startCommunity, stopCommunity, updateChatFriends, openConversation, closeConversation, sendChatMessage, communityPageChanged } from "./community.js";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 import {
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-
-
+ getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,
+ onAuthStateChanged,signOut,updateProfile,GoogleAuthProvider,
+ signInWithPopup,RecaptchaVerifier,signInWithPhoneNumber
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 import {
-getAuth,
-createUserWithEmailAndPassword,
-signInWithEmailAndPassword,
-onAuthStateChanged,
-signOut,
-updateProfile
-}
-from
-"https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+ getFirestore,doc,setDoc,getDoc,collection,query,where,getDocs,
+ updateDoc,deleteDoc,onSnapshot,serverTimestamp,orderBy,limit
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-
-import {
-getFirestore,
-doc,
-setDoc,
-getDoc,
-collection,
-query,
-where,
-getDocs,
-addDoc,
-updateDoc,
-deleteDoc,
-onSnapshot,
-serverTimestamp
-}
-from
-"https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-
-
-/* =====================================================
-   FIREBASE CONFIG
-===================================================== */
-
-const firebaseConfig = {
-
-apiKey:
-"AIzaSyCEFgHDRoDFZ6IZco7iWloLvNCsL3SYckw",
-
-authDomain:
-"data-transfer-63111.firebaseapp.com",
-
-databaseURL:
-"https://data-transfer-63111-default-rtdb.firebaseio.com",
-
-projectId:
-"data-transfer-63111",
-
-storageBucket:
-"data-transfer-63111.firebasestorage.app",
-
-messagingSenderId:
-"1031425742783",
-
-appId:
-"1:1031425742783:web:b6d7753fa2e2fa212cb30a",
-
-measurementId:
-"G-DNXM9KZKGM"
-
+const firebaseConfig={
+ apiKey:"YOUR_FIREBASE_API_KEY",
+ authDomain:"YOUR_FIREBASE_AUTH_DOMAIN",
+ projectId:"YOUR_FIREBASE_PROJECT_ID",
+ storageBucket:"YOUR_FIREBASE_STORAGE_BUCKET",
+ messagingSenderId:"YOUR_FIREBASE_MESSAGING_SENDER_ID",
+ appId:"YOUR_FIREBASE_APP_ID",
+ measurementId:"YOUR_FIREBASE_MEASUREMENT_ID"
 };
 
-
-const app =
-initializeApp(firebaseConfig);
-
-const auth =
-getAuth(app);
-
-const db =
-getFirestore(app);
-
-
-/* =====================================================
-   SUBJECTS
-===================================================== */
-
-const subjectsByClass = {
-
-"Below Class 9":[
-
-["Science","🔬","General Science"],
-["English","🇬🇧","English Language"],
-["Mathematics","📐","Mathematics"],
-["Urdu","📖","Urdu Language"],
-["Pakistan Studies","🇵🇰","Pakistan Studies"],
-["Computer","💻","Computer Science"],
-["Sindhi","📝","Sindhi Language"],
-["Islamiat","☪️","Islamic Studies"]
-
-],
-
-"Class 9":[
-
-["English","🇬🇧","English"],
-["Urdu","📖","Urdu"],
-["Mathematics","📐","Mathematics"],
-["Physics","⚡","Physics"],
-["Chemistry","🧪","Chemistry"],
-["Biology","🧬","Biology"],
-["Islamiat","☪️","Islamiat"],
-["Pakistan Studies","🇵🇰","Pakistan Studies"]
-
-],
-
-"Class 10":[
-
-["English","🇬🇧","English"],
-["Urdu","📖","Urdu"],
-["Mathematics","📐","Mathematics"],
-["Physics","⚡","Physics"],
-["Chemistry","🧪","Chemistry"],
-["Biology","🧬","Biology"],
-["Islamiat","☪️","Islamiat"],
-["Pakistan Studies","🇵🇰","Pakistan Studies"]
-
-],
-
-"Class 11":[
-
-["English","🇬🇧","English"],
-["Urdu","📖","Urdu"],
-["Mathematics","📐","Mathematics"],
-["Physics","⚡","Physics"],
-["Chemistry","🧪","Chemistry"],
-["Biology","🧬","Biology"],
-["Islamiat","☪️","Islamiat"],
-["Pakistan Studies","🇵🇰","Pakistan Studies"]
-
-],
-
-"Class 12":[
-
-["English","🇬🇧","English"],
-["Urdu","📖","Urdu"],
-["Mathematics","📐","Mathematics"],
-["Physics","⚡","Physics"],
-["Chemistry","🧪","Chemistry"],
-["Biology","🧬","Biology"],
-["Islamiat","☪️","Islamiat"],
-["Pakistan Studies","🇵🇰","Pakistan Studies"]
-
-]
-
-};
-
-
-/* =====================================================
-   AUTH UI
-===================================================== */
-
-const authScreen =
-document.getElementById("authScreen");
-
-const appScreen =
-document.getElementById("app");
-
-const loginBox =
-document.getElementById("loginBox");
-
-const signupBox =
-document.getElementById("signupBox");
-
-const loginForm =
-document.getElementById("loginForm");
-
-const signupForm =
-document.getElementById("signupForm");
-
-const loginMessage =
-document.getElementById("loginMessage");
-
-const signupMessage =
-document.getElementById("signupMessage");
-
-
-window.showLogin=function(){
-
-loginBox.classList.remove("hidden");
-
-signupBox.classList.add("hidden");
-
-loginMessage.innerHTML="";
-
-signupMessage.innerHTML="";
-
-};
-
-
-window.showSignup=function(){
-
-loginBox.classList.add("hidden");
-
-signupBox.classList.remove("hidden");
-
-loginMessage.innerHTML="";
-
-signupMessage.innerHTML="";
-
-};
-
-
-/* =====================================================
-   ERROR HANDLER
-===================================================== */
-
-function firebaseError(error){
-
-console.error(error);
-
-const code=error.code || "";
-
-if(code.includes("invalid-email"))
-return "❌ Invalid email address.";
-
-if(code.includes("email-already-in-use"))
-return "❌ This email already has an account.";
-
-if(code.includes("weak-password"))
-return "❌ Password must be at least 6 characters.";
-
-if(code.includes("user-not-found"))
-return "❌ No account exists with this email.";
-
-if(code.includes("wrong-password"))
-return "❌ Incorrect password.";
-
-if(code.includes("invalid-credential"))
-return "❌ Email or password is incorrect.";
-
-if(code.includes("operation-not-allowed"))
-return "❌ Email/Password login is not enabled in Firebase.";
-
-if(code.includes("network-request-failed"))
-return "❌ Network error. Check your internet.";
-
-if(code.includes("api-key-not-valid"))
-return "❌ Firebase API key is not valid.";
-
-if(code.includes("permission-denied"))
-return "❌ Firestore permission denied. Check your Firestore Rules.";
-
-return "❌ "+(error.message || "Something went wrong.");
-
-}
-
-
-/* =====================================================
-   SIGN UP
-===================================================== */
-
-signupForm.addEventListener(
-"submit",
-async function(e){
-
-e.preventDefault();
-
-const name =
-document.getElementById("signupName")
-.value.trim();
-
-const studentClass =
-document.getElementById("signupClass")
-.value;
-
-const email =
-document.getElementById("signupEmail")
-.value.trim()
-.toLowerCase();
-
-const password =
-document.getElementById("signupPassword")
-.value;
-
-const confirm =
-document.getElementById("signupConfirm")
-.value;
-
-
-if(password!==confirm){
-
-signupMessage.innerHTML=`
-<div class="error">
-❌ Passwords do not match.
-</div>`;
-
-return;
-
-}
-
-
-try{
-
-signupMessage.innerHTML=`
-<div class="success">
-Creating your account...
-</div>`;
-
-
-const credential =
-await createUserWithEmailAndPassword(
-auth,
-email,
-password
-);
-
-
-const user =
-credential.user;
-
-
-await updateProfile(
-user,
-{
-displayName:name
-}
-);
-
-
-await setDoc(
-doc(db,"users",user.uid),
-{
-
-uid:user.uid,
-
-name:name,
-
-nameLower:name.toLowerCase(),
-
-email:email,
-
-class:studentClass,
-
-createdAt:serverTimestamp()
-
-}
-);
-
-
-signupMessage.innerHTML=`
-<div class="success">
-✅ Account created! Opening StudyHub...
-</div>`;
-
-
-/*
-Firebase automatically signs
-the user in.
-*/
-
-}
-
-catch(error){
-
-signupMessage.innerHTML=`
-<div class="error">
-${firebaseError(error)}
-</div>`;
-
-}
-
-});
-
-
-/* =====================================================
-   LOGIN
-===================================================== */
-
-loginForm.addEventListener(
-"submit",
-async function(e){
-
-e.preventDefault();
-
-const email =
-document.getElementById("loginEmail")
-.value.trim()
-.toLowerCase();
-
-const password =
-document.getElementById("loginPassword")
-.value;
-
-
-loginMessage.innerHTML=`
-<div class="success">
-Logging in...
-</div>`;
-
-
-try{
-
-await signInWithEmailAndPassword(
-auth,
-email,
-password
-);
-
-}
-
-catch(error){
-
-loginMessage.innerHTML=`
-<div class="error">
-${firebaseError(error)}
-</div>`;
-
-}
-
-});
-
-
-/* =====================================================
-   AUTH STATE
-===================================================== */
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
 let unsubscribeRequests=null;
 let unsubscribeFriends=null;
+let friendsListenerVersion=0;
+let timerDurationSeconds=25*60;
+let timerSeconds=timerDurationSeconds;
+let timerInterval=null;
+let timerRunning=false;
+let recaptchaVerifier=null;
+let confirmationResult=null;
+let phoneMode="login";
+let phoneSignupProfile={name:"",studentClass:""};
 
-onAuthStateChanged(
-auth,
-async function(user){
-
-if(!user){
-
-authScreen.classList.remove("hidden");
-
-appScreen.classList.add("hidden");
-
-if(unsubscribeRequests)
-unsubscribeRequests();
-
-if(unsubscribeFriends)
-unsubscribeFriends();
-
-return;
-
+function el(id){return document.getElementById(id)}
+function escapeHTML(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+}
+function showAuthError(message){el("authError").innerHTML=`<div class="auth-error">${escapeHTML(message)}</div>`}
+function clearAuthError(){el("authError").innerHTML=""}
+function firebaseError(error){
+ const code=error?.code||"";
+ const messages={
+ "auth/invalid-credential":"Incorrect email or password.",
+ "auth/invalid-login-credentials":"Incorrect email or password.",
+ "auth/email-already-in-use":"This email is already registered.",
+ "auth/weak-password":"Password must be at least 6 characters.",
+ "auth/invalid-email":"Please enter a valid email.",
+ "auth/popup-closed-by-user":"Google login was cancelled.",
+ "auth/popup-blocked":"Your browser blocked the Google login popup. Allow popups and try again.",
+ "auth/unauthorized-domain":"This website domain is not authorized in Firebase Authentication settings.",
+ "auth/operation-not-allowed":"This sign-in method is not enabled in Firebase Authentication.",
+ "auth/api-key-not-valid.-please-pass-a-valid-api-key.":"The Firebase API key is invalid. Check your web app configuration.",
+ "auth/invalid-phone-number":"Enter a valid phone number with its country code, such as +923001234567.",
+ "auth/missing-phone-number":"Enter your phone number.",
+ "auth/invalid-verification-code":"The SMS verification code is incorrect.",
+ "auth/code-expired":"The SMS verification code has expired. Send a new code.",
+ "auth/too-many-requests":"Too many attempts. Wait a while and try again.",
+ "auth/captcha-check-failed":"reCAPTCHA verification failed. Reset phone verification and try again.",
+ "permission-denied":"Firestore permission denied. Check your Firestore security rules.",
+ "unavailable":"Firebase is temporarily unavailable. Check your connection and try again."
+ };
+ return messages[code]||error?.message||"Something went wrong.";
 }
 
+window.showSignup=()=>{clearAuthError();el("loginForm").classList.add("hidden");el("phoneForm").classList.add("hidden");el("signupForm").classList.remove("hidden")};
+window.showLogin=()=>{clearAuthError();el("signupForm").classList.add("hidden");el("phoneForm").classList.add("hidden");el("loginForm").classList.remove("hidden")};
 
-authScreen.classList.add("hidden");
-
-appScreen.classList.remove("hidden");
-
-
-const name =
-user.displayName ||
-user.email.split("@")[0];
-
-
-document.getElementById("userBadge")
-.textContent="👋 "+name;
-
-document.getElementById("profileName")
-.textContent=name;
-
-document.getElementById("profileEmail")
-.textContent=user.email;
-
-document.getElementById("profileUid")
-.textContent=user.uid;
-
-
-try{
-
-const userSnap =
-await getDoc(
-doc(db,"users",user.uid)
-);
-
-
-if(userSnap.exists()){
-
-const data=userSnap.data();
-
-document.getElementById("classNumber")
-.textContent=data.class || "-";
-
-document.getElementById("profileClass")
-.textContent=data.class || "-";
-
-renderSubjects(data.class);
-
-}
-
-}
-catch(error){
-
-console.error(error);
-
-}
-
-
-loadTasks();
-
-listenToRequests();
-
-listenToFriends();
-
-}
-);
-
-
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-window.logout=async function(){
-
-await signOut(auth);
-
+window.loginEmail=async()=>{
+ clearAuthError();
+ const email=el("loginEmail").value.trim().toLowerCase();
+ const password=el("loginPassword").value;
+ if(!email||!password){showAuthError("Enter your email and password.");return}
+ try{await signInWithEmailAndPassword(auth,email,password)}
+ catch(e){console.error(e);showAuthError(firebaseError(e))}
 };
 
-
-/* =====================================================
-   NAVIGATION
-===================================================== */
-
-window.showPage=function(page,button){
-
-document
-.querySelectorAll(".page")
-.forEach(p=>
-p.classList.remove("active")
-);
-
-
-document
-.querySelectorAll(".nav-btn")
-.forEach(b=>
-b.classList.remove("active")
-);
-
-
-document
-.getElementById(page)
-.classList.add("active");
-
-
-if(button)
-button.classList.add("active");
-
-
-const titles={
-
-dashboard:"Dashboard",
-
-subjects:"Subjects",
-
-tasks:"Tasks",
-
-friends:"Friends",
-
-focus:"Focus",
-
-profile:"Profile"
-
+window.signupEmail=async()=>{
+ clearAuthError();
+ const name=el("signupName").value.trim();
+ const studentClass=el("signupClass").value;
+ const email=el("signupEmail").value.trim().toLowerCase();
+ const password=el("signupPassword").value;
+ const confirm=el("signupConfirm").value;
+ if(!name||!studentClass||!email||!password){showAuthError("Complete all fields.");return}
+ if(password.length<6){showAuthError("Password must be at least 6 characters.");return}
+ if(password!==confirm){showAuthError("Passwords do not match.");return}
+ try{
+  const credential=await createUserWithEmailAndPassword(auth,email,password);
+  await updateProfile(credential.user,{displayName:name});
+  await ensureUserDocument(credential.user,{name,class:studentClass});
+ }catch(e){console.error(e);showAuthError(firebaseError(e))}
 };
 
-
-document.getElementById("pageTitle")
-.textContent=titles[page];
-
+window.loginGoogle=async()=>{
+ clearAuthError();
+ try{
+  const result=await signInWithPopup(auth,new GoogleAuthProvider());
+  await ensureUserDocument(result.user);
+ }catch(e){console.error(e);showAuthError(firebaseError(e))}
 };
 
+async function ensureUserDocument(user,extraData={}){
+ const ref=doc(db,"users",user.uid);
+ const snap=await getDoc(ref);
+ const old=snap.exists()?snap.data():{};
+ const name=String(extraData.name||old.name||user.displayName||"Student").trim();
+ const studentClass=extraData.class||old.class||"";
+ await setDoc(ref,{
+  uid:user.uid,
+  name,
+  nameLower:name.toLowerCase(),
+  email:user.email||old.email||"",
+  phone:user.phoneNumber||extraData.phone||old.phone||"",
+  class:studentClass,
+  createdAt:old.createdAt||serverTimestamp()
+ },{merge:true});
+}
 
-/* =====================================================
-   SUBJECTS
-===================================================== */
+window.showPhone=(mode)=>{
+ clearAuthError();
+ phoneMode=mode;
+ el("loginForm").classList.add("hidden");
+ el("signupForm").classList.add("hidden");
+ el("phoneForm").classList.remove("hidden");
+ el("phoneSignupDetails").classList.toggle("hidden",mode!=="signup");
+ el("otpArea").classList.add("hidden");
+ el("sendOtpBtn").classList.remove("hidden");
+ el("phoneOtp").value="";
+};
 
-function renderSubjects(studentClass){
+function clearRecaptcha(){
+ if(recaptchaVerifier){
+  try{recaptchaVerifier.clear()}catch(e){console.warn("reCAPTCHA cleanup:",e)}
+  recaptchaVerifier=null;
+ }
+ el("recaptcha-container").innerHTML="";
+ confirmationResult=null;
+}
 
-const subjects =
-subjectsByClass[studentClass] || [];
+window.resetPhoneForm=()=>{
+ clearRecaptcha();
+ el("otpArea").classList.add("hidden");
+ el("sendOtpBtn").classList.remove("hidden");
+ el("phoneOtp").value="";
+ clearAuthError();
+};
 
-const dashboard =
-document.getElementById(
-"dashboardSubjects"
-);
+window.sendPhoneOtp=async()=>{
+ clearAuthError();
+ const phone=el("phoneNumber").value.trim();
+ if(!/^\+[1-9]\d{7,14}$/.test(phone)){
+  showAuthError("Use international format, e.g. +923001234567.");
+  return;
+ }
+ if(phoneMode==="signup"){
+  const name=el("phoneName").value.trim();
+  const studentClass=el("phoneClass").value;
+  if(!name||!studentClass){showAuthError("Enter your name and select your class.");return}
+  phoneSignupProfile={name,studentClass};
+ }
+ try{
+  clearRecaptcha();
+  recaptchaVerifier=new RecaptchaVerifier(auth,el("recaptcha-container"),{size:"normal"});
+  await recaptchaVerifier.render();
+  confirmationResult=await signInWithPhoneNumber(auth,phone,recaptchaVerifier);
+  el("otpArea").classList.remove("hidden");
+  el("sendOtpBtn").classList.add("hidden");
+  showAuthError("Verification code sent. Check your SMS messages.");
+ }catch(e){
+  console.error(e);
+  showAuthError(firebaseError(e));
+  if(recaptchaVerifier){
+   try{recaptchaVerifier.clear()}catch{}
+   recaptchaVerifier=null;
+  }
+ }
+};
 
-const all =
-document.getElementById(
-"allSubjects"
-);
+window.verifyPhoneOtp=async()=>{
+ clearAuthError();
+ const code=el("phoneOtp").value.trim();
+ if(!confirmationResult){showAuthError("Request a verification code first.");return}
+ if(!code){showAuthError("Enter the SMS verification code.");return}
+ try{
+  const result=await confirmationResult.confirm(code);
+  await ensureUserDocument(result.user,phoneMode==="signup"?{
+   name:phoneSignupProfile.name,
+   class:phoneSignupProfile.studentClass,
+   phone:result.user.phoneNumber||el("phoneNumber").value.trim()
+  }:{phone:result.user.phoneNumber||el("phoneNumber").value.trim()});
+  clearRecaptcha();
+ }catch(e){console.error(e);showAuthError(firebaseError(e))}
+};
 
-
-dashboard.innerHTML="";
-
-all.innerHTML="";
-
-
-document.getElementById(
-"subjectCount"
-).textContent=subjects.length;
-
-
-subjects.forEach(
-(subject,index)=>{
-
-const progress =
-60 + ((index*7)%35);
-
-
-const html=`
-
-<div class="subject">
-
-<div class="subject-icon">
-${subject[1]}
-</div>
-
-<h3>
-${subject[0]}
-</h3>
-
-<p>
-${subject[2]}
-</p>
-
-<div class="progress">
-
-<div
-class="progress-bar"
-style="width:${progress}%">
-</div>
-
-</div>
-
-</div>
-
-`;
-
-
-dashboard.insertAdjacentHTML(
-"beforeend",
-html
-);
-
-all.insertAdjacentHTML(
-"beforeend",
-html
-);
-
+onAuthStateChanged(auth,async user=>{
+ if(user){
+  el("authScreen").classList.add("hidden");
+  el("app").classList.remove("hidden");
+  try{
+   await ensureUserDocument(user);
+   await loadProfile();
+   loadTasks();
+   loadSubjects();
+   updateFocusCount();
+   startFriendListeners();
+   startCommunity({
+    getUser:()=>auth.currentUser,
+    getToken:()=>auth.currentUser.getIdToken(),
+    legacyMessages:async friendUid=>{
+     const history=await getDocs(query(collection(db,"chats",createChatId(auth.currentUser.uid,friendUid),"messages"),orderBy("createdAt","desc"),limit(200)));
+     return history.docs.map(message=>({id:"legacy_"+message.id,...message.data(),createdAt:message.data().createdAt?.toDate?.()?.toISOString()||null})).reverse();
+    }
+   });
+  }catch(e){
+   console.error("App initialization error:",e);
+   alert("StudyHub could not load some data: "+firebaseError(e));
+  }
+ }else{
+  el("authScreen").classList.remove("hidden");
+  el("app").classList.add("hidden");
+  stopFriendListeners();
+  stopCommunity();
+ }
 });
 
-
-document.getElementById(
-"subjectsHeading"
-).textContent=
-studentClass+" Subjects 📚";
-
-}
-
-
-/* =====================================================
-   TASKS
-===================================================== */
-
-let tasks=[];
-
-
-document
-.getElementById("taskForm")
-.addEventListener(
-"submit",
-function(e){
-
-e.preventDefault();
-
-const input =
-document.getElementById(
-"taskInput"
-);
-
-const text =
-input.value.trim();
-
-if(!text)return;
-
-
-tasks.push({
-
-id:Date.now(),
-
-text:text,
-
-done:false
-
-});
-
-
-input.value="";
-
-saveTasks();
-
-renderTasks();
-
-}
-);
-
-
-function saveTasks(){
-
-const user=auth.currentUser;
-
-if(!user)return;
-
-localStorage.setItem(
-"studyhub_tasks_"+user.uid,
-JSON.stringify(tasks)
-);
-
-updateTaskStats();
-
-}
-
-
-function loadTasks(){
-
-const user=auth.currentUser;
-
-if(!user)return;
-
-const saved=
-localStorage.getItem(
-"studyhub_tasks_"+user.uid
-);
-
-tasks=
-saved ? JSON.parse(saved) : [];
-
-renderTasks();
-
-}
-
-
-function renderTasks(){
-
-const list=
-document.getElementById(
-"taskList"
-);
-
-list.innerHTML="";
-
-
-if(tasks.length===0){
-
-list.innerHTML=`
-<div class="empty">
-No tasks yet. Add your first task! 🚀
-</div>
-`;
-
-updateTaskStats();
-
-return;
-
-}
-
-
-tasks.forEach(task=>{
-
-const div=
-document.createElement("div");
-
-div.className=
-"task "+(task.done?"done":"");
-
-
-div.innerHTML=`
-
-<input
-type="checkbox"
-${task.done?"checked":""}
-onchange="toggleTask(${task.id})">
-
-<span>
-${escapeHTML(task.text)}
-</span>
-
-`;
-
-list.appendChild(div);
-
-});
-
-
-updateTaskStats();
-
-}
-
-
-window.toggleTask=function(id){
-
-const task=
-tasks.find(t=>t.id===id);
-
-if(!task)return;
-
-task.done=!task.done;
-
-saveTasks();
-
-renderTasks();
-
+window.logout=async()=>{
+ try{await signOut(auth)}catch(e){console.error(e);alert(firebaseError(e))}
 };
 
-
-function updateTaskStats(){
-
-document.getElementById(
-"taskCount"
-).textContent=tasks.length;
-
-document.getElementById(
-"completedCount"
-).textContent=
-tasks.filter(t=>t.done).length;
-
-}
-
-
-function escapeHTML(str){
-
-return str
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
-
-}
-
-
-/* =====================================================
-   SEARCH STUDENTS
-===================================================== */
-
-window.searchStudents=async function(){
-
-const input=
-document.getElementById(
-"friendSearchInput"
-);
-
-const term=
-input.value.trim().toLowerCase();
-
-const results=
-document.getElementById(
-"searchResults"
-);
-
-
-if(!term){
-
-results.innerHTML=`
-<div class="empty">
-Type a name or email to search.
-</div>
-`;
-
-return;
-
-}
-
-
-const user=auth.currentUser;
-
-if(!user)return;
-
-
-results.innerHTML=`
-<div class="empty">
-🔎 Searching...
-</div>
-`;
-
-
-try{
-
-/*
-We search both email and name.
-*/
-
-const emailQuery=query(
-collection(db,"users"),
-where("email","==",term)
-);
-
-const nameQuery=query(
-collection(db,"users"),
-where("nameLower","==",term)
-);
-
-
-const [emailSnap,nameSnap]=
-await Promise.all([
-getDocs(emailQuery),
-getDocs(nameQuery)
-]);
-
-
-const found=new Map();
-
-
-emailSnap.forEach(
-d=>found.set(d.id,d.data())
-);
-
-nameSnap.forEach(
-d=>found.set(d.id,d.data())
-);
-
-
-found.delete(user.uid);
-
-
-if(found.size===0){
-
-results.innerHTML=`
-<div class="empty">
-No student found. Try the exact name or email.
-</div>
-`;
-
-return;
-
-}
-
-
-results.innerHTML="";
-
-
-found.forEach(
-student=>{
-
-const div=
-document.createElement("div");
-
-div.className="person-card";
-
-
-const initial=
-(student.name || "S")
-.charAt(0)
-.toUpperCase();
-
-
-div.innerHTML=`
-
-<div class="person-info">
-
-<div class="avatar">
-${initial}
-</div>
-
-<div>
-
-<div class="person-name">
-${escapeHTML(student.name)}
-</div>
-
-<div class="person-email">
-${escapeHTML(student.email)}
-</div>
-
-<div class="person-email">
-${escapeHTML(student.class || "Student")}
-</div>
-
-</div>
-
-</div>
-
-<button
-class="small-btn"
-onclick="sendFriendRequest('${student.uid}')">
-
-➕ Add Friend
-
-</button>
-
-`;
-
-
-results.appendChild(div);
-
-});
-
-}
-
-catch(error){
-
-console.error(error);
-
-results.innerHTML=`
-<div class="error">
-${firebaseError(error)}
-</div>
-`;
-
-}
-
+window.showPage=(pageId,button)=>{
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ el(pageId)?.classList.add("active");
+ document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+ const selected=button||Array.from(document.querySelectorAll(".nav-btn")).find(item=>item.dataset.page===pageId||item.getAttribute("onclick")?.includes(`'${pageId}'`));
+ if(selected)selected.classList.add("active");
+ communityPageChanged(pageId);
 };
 
-
-/* =====================================================
-   SEND FRIEND REQUEST
-===================================================== */
-
-window.sendFriendRequest=async function(toUid){
-
-const user=auth.currentUser;
-
-if(!user)return;
-
-if(toUid===user.uid)return;
-
-
-const requestId=
-user.uid+"_"+toUid;
-
-
-try{
-
-const existing=
-await getDoc(
-doc(
-db,
-"friendRequests",
-requestId
-)
-);
-
-
-if(existing.exists()){
-
-alert("Friend request already exists.");
-
-return;
-
+async function loadProfile(){
+ const user=auth.currentUser;if(!user)return;
+ const snap=await getDoc(doc(db,"users",user.uid));
+ const d=snap.exists()?snap.data():{};
+ el("topName").textContent=d.name||user.displayName||"Student";
+ el("topAvatar").textContent=(d.name||user.displayName||"S").charAt(0).toUpperCase();
+ el("profileName").textContent=d.name||user.displayName||"—";
+ el("profileEmail").textContent=d.email||user.email||"—";
+ el("profilePhone").textContent=d.phone||user.phoneNumber||"—";
+ el("profileClass").textContent=d.class||"Not selected";
 }
 
-
-/*
-Check reverse request.
-*/
-
-const reverseId=
-toUid+"_"+user.uid;
-
-const reverse=
-await getDoc(
-doc(
-db,
-"friendRequests",
-reverseId
-)
-);
-
-
-if(reverse.exists()){
-
-alert(
-"This student has already sent you a request. Check Friend Requests."
-);
-
-return;
-
+function loadSubjects(){
+ const subjects=["📐 Mathematics","📖 English","🔬 Physics","🧪 Chemistry","🧬 Biology","📝 Urdu","☪️ Islamiat","💻 Computer","🌐 Sindhi","📚 Pakistan Studies"];
+ el("subjectGrid").innerHTML=subjects.map(s=>`<div class="subject-card">${s}</div>`).join("");
 }
 
-
-await setDoc(
-doc(
-db,
-"friendRequests",
-requestId
-),
-{
-
-fromUid:user.uid,
-
-toUid:toUid,
-
-status:"pending",
-
-createdAt:serverTimestamp()
-
+function taskKey(){return auth.currentUser?`studyhub_tasks_${auth.currentUser.uid}`:"studyhub_tasks"}
+function getTasks(){try{return JSON.parse(localStorage.getItem(taskKey())||"[]")}catch{return []}}
+function saveTasks(tasks){localStorage.setItem(taskKey(),JSON.stringify(tasks))}
+function loadTasks(){renderTasks(getTasks())}
+function renderTasks(tasks){
+ el("taskCount").textContent=tasks.length;
+ if(!tasks.length){el("taskList").innerHTML='<div class="empty">No tasks yet.</div>';return}
+ el("taskList").innerHTML=tasks.map((t,i)=>`
+ <div class="task ${t.done?"done":""}">
+  <div><strong>${escapeHTML(t.text)}</strong><div class="person-email">${escapeHTML(t.subject)}</div></div>
+  <div><button class="small-btn" onclick="toggleTask(${i})">${t.done?"Undo":"Done"}</button><button class="delete-task" onclick="deleteTask(${i})">Delete</button></div>
+ </div>`).join("");
 }
-);
+window.addTask=()=>{
+ const input=el("taskInput"),text=input.value.trim();
+ if(!text)return;
+ const tasks=getTasks();tasks.push({text,subject:el("taskSubject").value,done:false});
+ saveTasks(tasks);input.value="";renderTasks(tasks);
+};
+window.toggleTask=i=>{const t=getTasks();if(!t[i])return;t[i].done=!t[i].done;saveTasks(t);renderTasks(t)};
+window.deleteTask=i=>{const t=getTasks();t.splice(i,1);saveTasks(t);renderTasks(t)};
 
-
-alert("✅ Friend request sent!");
-
+function createFriendshipId(a,b){return [a,b].sort().join("_")}
+async function getFriendStatus(myUid,otherUid){
+ const f=await getDoc(doc(db,"friendships",createFriendshipId(myUid,otherUid)));
+ if(f.exists())return "friends";
+ const outgoing=await getDoc(doc(db,"friendRequests",`${myUid}_${otherUid}`));
+ if(outgoing.exists()&&outgoing.data().status==="pending")return "outgoing";
+ const incoming=await getDoc(doc(db,"friendRequests",`${otherUid}_${myUid}`));
+ if(incoming.exists()&&incoming.data().status==="pending")return "incoming";
+ return "none";
 }
 
-catch(error){
-
-alert(firebaseError(error));
-
-}
-
+window.searchStudents=async()=>{
+ const term=el("friendSearchInput").value.trim().toLowerCase();
+ const results=el("searchResults");
+ if(!term){results.innerHTML='<div class="empty">Type a name, email or phone number to search.</div>';return}
+ const user=auth.currentUser;
+ if(!user){results.innerHTML='<div class="error">You are not logged in.</div>';return}
+ results.innerHTML='<div class="empty">🔎 Searching students...</div>';
+ try{
+  const snap=await getDocs(collection(db,"users"));
+  const students=[];
+  snap.forEach(s=>{
+   if(s.id===user.uid)return;
+   const d=s.data();
+   const name=String(d.name||"").trim();
+   const email=String(d.email||"").trim();
+   const phone=String(d.phone||"").trim();
+   const haystack=[name,d.nameLower||"",email,phone].join(" ").toLowerCase();
+   if(haystack.includes(term))students.push({uid:d.uid||s.id,name:name||"Student",email,phone,class:d.class||""});
+  });
+  if(!students.length){results.innerHTML='<div class="empty">❌ No student found. The other student must have created a StudyHub account in this Firebase project.</div>';return}
+  results.innerHTML="";
+  for(const student of students){
+   const status=await getFriendStatus(user.uid,student.uid);
+   const div=document.createElement("div");div.className="person-card";
+   const info=document.createElement("div");info.className="person-info";
+   const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=student.name.charAt(0).toUpperCase();
+   const details=document.createElement("div");
+   const name=document.createElement("div");name.className="person-name";name.textContent=student.name;
+   const email=document.createElement("div");email.className="person-email";email.textContent=student.email||student.phone||"";
+   const cls=document.createElement("div");cls.className="person-email";cls.textContent=student.class||"Class not selected";
+   details.append(name,email,cls);info.append(avatar,details);
+   const actions=document.createElement("div");
+   const btn=document.createElement("button");btn.className="small-btn";
+   if(status==="friends"){btn.classList.add("chat-btn");btn.textContent="💬 Chat";btn.onclick=()=>openChat(student.uid)}
+   else if(status==="outgoing"){btn.classList.add("pending-btn");btn.textContent="⏳ Request Sent";btn.disabled=true}
+   else if(status==="incoming"){btn.classList.add("accept-btn");btn.textContent="✅ Accept Request";btn.onclick=()=>acceptIncomingByUser(student.uid)}
+   else{btn.textContent="➕ Add Friend";btn.onclick=()=>sendFriendRequest(student.uid)}
+   actions.appendChild(btn);div.append(info,actions);results.appendChild(div);
+  }
+ }catch(e){console.error("Student search error:",e);results.innerHTML=`<div class="error">❌ ${escapeHTML(firebaseError(e))}</div>`}
 };
 
+window.sendFriendRequest=async toUid=>{
+ const user=auth.currentUser;if(!user||user.uid===toUid)return;
+ try{
+  const existing=await getFriendStatus(user.uid,toUid);
+  if(existing!=="none"){alert(existing==="friends"?"You are already friends.":"A request already exists.");return}
+  await setDoc(doc(db,"friendRequests",`${user.uid}_${toUid}`),{fromUid:user.uid,toUid,status:"pending",createdAt:serverTimestamp()});
+  alert("Friend request sent!");
+  await searchStudents();
+ }catch(e){console.error(e);alert(firebaseError(e))}
+};
 
-/* =====================================================
-   LISTEN FOR REQUESTS
-===================================================== */
+function startFriendListeners(){if(!auth.currentUser)return;listenToRequests();listenToFriends()}
+function stopFriendListeners(){
+ friendsListenerVersion++;
+ if(unsubscribeRequests){unsubscribeRequests();unsubscribeRequests=null}
+ if(unsubscribeFriends){unsubscribeFriends();unsubscribeFriends=null}
+}
 
 function listenToRequests(){
-
-if(unsubscribeRequests)
-unsubscribeRequests();
-
-
-const user=auth.currentUser;
-
-if(!user)return;
-
-
-const q=query(
-collection(db,"friendRequests"),
-where("toUid","==",user.uid),
-where("status","==","pending")
-);
-
-
-unsubscribeRequests=
-onSnapshot(
-q,
-async snapshot=>{
-
-const container=
-document.getElementById(
-"requestsList"
-);
-
-container.innerHTML="";
-
-
-if(snapshot.empty){
-
-container.innerHTML=`
-<div class="empty">
-No new friend requests.
-</div>
-`;
-
-return;
-
+ const user=auth.currentUser;if(!user)return;
+ if(unsubscribeRequests)unsubscribeRequests();
+ const q=query(collection(db,"friendRequests"),where("toUid","==",user.uid),where("status","==","pending"));
+ unsubscribeRequests=onSnapshot(q,async snap=>{
+  const list=el("requestsList");
+  if(snap.empty){list.innerHTML='<div class="empty">No pending requests.</div>';return}
+  list.innerHTML="";
+  for(const request of snap.docs){
+   const d=request.data();
+   try{
+    const userSnap=await getDoc(doc(db,"users",d.fromUid));
+    const sender=userSnap.exists()?userSnap.data():{name:"Student"};
+    const card=document.createElement("div");card.className="person-card";
+    const info=document.createElement("div");info.className="person-info";
+    const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=(sender.name||"S").charAt(0).toUpperCase();
+    const details=document.createElement("div");
+    const name=document.createElement("div");name.className="person-name";name.textContent=sender.name||"Student";
+    const contact=document.createElement("div");contact.className="person-email";contact.textContent=sender.email||sender.phone||"";
+    details.append(name,contact);info.append(avatar,details);
+    const actions=document.createElement("div");
+    const accept=document.createElement("button");accept.className="small-btn accept-btn";accept.textContent="Accept";accept.onclick=()=>acceptRequest(request.id,d.fromUid);
+    const reject=document.createElement("button");reject.className="small-btn danger-btn";reject.textContent="Reject";reject.onclick=()=>rejectRequest(request.id);
+    actions.append(accept,reject);card.append(info,actions);list.appendChild(card);
+   }catch(e){console.error(e)}
+  }
+ },e=>{console.error("Request listener:",e);el("requestsList").innerHTML=`<div class="error">${escapeHTML(firebaseError(e))}</div>`});
 }
 
-
-for(const requestDoc of snapshot.docs){
-
-const request=
-requestDoc.data();
-
-
-let person={};
-
-try{
-
-const personSnap=
-await getDoc(
-doc(
-db,
-"users",
-request.fromUid
-)
-);
-
-if(personSnap.exists())
-person=personSnap.data();
-
-}
-catch(e){
-console.error(e);
-}
-
-
-const div=
-document.createElement("div");
-
-div.className="person-card";
-
-
-const initial=
-(person.name || "S")
-.charAt(0)
-.toUpperCase();
-
-
-div.innerHTML=`
-
-<div class="person-info">
-
-<div class="avatar">
-${initial}
-</div>
-
-<div>
-
-<div class="person-name">
-${escapeHTML(person.name || "Student")}
-</div>
-
-<div class="person-email">
-${escapeHTML(person.email || "")}
-</div>
-
-</div>
-
-</div>
-
-
-<div>
-
-<button
-class="small-btn accept-btn"
-onclick="acceptRequest('${requestDoc.id}','${request.fromUid}')">
-
-✅ Accept
-
-</button>
-
-<button
-class="small-btn reject-btn"
-onclick="rejectRequest('${requestDoc.id}')">
-
-❌ Reject
-
-</button>
-
-</div>
-
-`;
-
-
-container.appendChild(div);
-
-}
-
-},
-error=>{
-
-console.error(error);
-
-document.getElementById(
-"requestsList"
-).innerHTML=`
-<div class="error">
-${firebaseError(error)}
-</div>
-`;
-
-}
-);
-
-}
-
-
-/* =====================================================
-   ACCEPT REQUEST
-===================================================== */
-
-window.acceptRequest=
-async function(requestId,fromUid){
-
-const user=auth.currentUser;
-
-if(!user)return;
-
-
-try{
-
-const friendshipId=
-createFriendshipId(
-user.uid,
-fromUid
-);
-
-
-await setDoc(
-doc(
-db,
-"friendships",
-friendshipId
-),
-{
-
-users:[
-user.uid,
-fromUid
-],
-
-createdAt:serverTimestamp()
-
-}
-);
-
-
-await updateDoc(
-doc(
-db,
-"friendRequests",
-requestId
-),
-{
-
-status:"accepted"
-
-}
-);
-
-
-alert("🎉 You are now friends!");
-
-}
-
-catch(error){
-
-alert(firebaseError(error));
-
-}
-
+window.acceptRequest=async(requestId,fromUid)=>{
+ const user=auth.currentUser;if(!user)return;
+ try{
+  await setDoc(doc(db,"friendships",createFriendshipId(user.uid,fromUid)),{users:[user.uid,fromUid],createdAt:serverTimestamp()},{merge:true});
+  await updateDoc(doc(db,"friendRequests",requestId),{status:"accepted"});
+  await searchStudentsIfVisible();
+ }catch(e){console.error(e);alert(firebaseError(e))}
 };
-
-
-/* =====================================================
-   REJECT REQUEST
-===================================================== */
-
-window.rejectRequest=
-async function(requestId){
-
-try{
-
-await deleteDoc(
-doc(
-db,
-"friendRequests",
-requestId
-)
-);
-
-}
-catch(error){
-
-alert(firebaseError(error));
-
-}
-
+window.acceptIncomingByUser=async fromUid=>acceptRequest(`${fromUid}_${auth.currentUser.uid}`,fromUid);
+window.rejectRequest=async requestId=>{
+ try{await deleteDoc(doc(db,"friendRequests",requestId))}catch(e){console.error(e);alert(firebaseError(e))}
 };
-
-
-/* =====================================================
-   FRIENDSHIP ID
-===================================================== */
-
-function createFriendshipId(a,b){
-
-return [a,b].sort().join("_");
-
-}
-
-
-/* =====================================================
-   LISTEN FOR FRIENDS
-===================================================== */
+async function searchStudentsIfVisible(){if(!el("friends").classList.contains("active"))return; if(el("friendSearchInput").value.trim())await searchStudents()}
 
 function listenToFriends(){
-
-if(unsubscribeFriends)
-unsubscribeFriends();
-
-
-const user=auth.currentUser;
-
-if(!user)return;
-
-
-const q=query(
-collection(db,"friendships"),
-where("users","array-contains",user.uid)
-);
-
-
-unsubscribeFriends=
-onSnapshot(
-q,
-async snapshot=>{
-
-const container=
-document.getElementById(
-"friendsList"
-);
-
-container.innerHTML="";
-
-
-document.getElementById(
-"profileFriendCount"
-).textContent=
-snapshot.size;
-
-
-if(snapshot.empty){
-
-container.innerHTML=`
-<div class="empty">
-You don't have any friends yet.
-Search for a student above to add one! 👥
-</div>
-`;
-
-return;
-
+ const user=auth.currentUser;if(!user)return;
+ if(unsubscribeFriends)unsubscribeFriends();
+ const q=query(collection(db,"friendships"),where("users","array-contains",user.uid));
+ unsubscribeFriends=onSnapshot(q,async snap=>{
+  const version=++friendsListenerVersion;
+  if(auth.currentUser?.uid!==user.uid)return;
+  const list=el("friendsList");el("friendCount").textContent=snap.size;
+  if(snap.empty){list.innerHTML='<div class="empty">You don\'t have any friends yet.</div>';updateChatFriends([]);return}
+  const cards=document.createDocumentFragment();
+  const chatFriends=[];
+  for(const f of snap.docs){
+   const d=f.data();const otherUid=(d.users||[]).find(uid=>uid!==user.uid);if(!otherUid)continue;
+   try{
+    const s=await getDoc(doc(db,"users",otherUid));const friend=s.exists()?s.data():{name:"Student"};
+    if(version!==friendsListenerVersion||auth.currentUser?.uid!==user.uid)return;
+    chatFriends.push({uid:otherUid,name:friend.name||"Student"});
+    const card=document.createElement("div");card.className="person-card";
+    const info=document.createElement("div");info.className="person-info";
+    const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=(friend.name||"S").charAt(0).toUpperCase();
+    const details=document.createElement("div");
+    const name=document.createElement("div");name.className="person-name";name.textContent=friend.name||"Student";
+    const contact=document.createElement("div");contact.className="person-email";contact.textContent=friend.email||friend.phone||"";
+    details.append(name,contact);info.append(avatar,details);
+    const actions=document.createElement("div");
+    const chat=document.createElement("button");chat.className="small-btn chat-btn";chat.textContent="💬 Chat";chat.onclick=()=>openChat(otherUid);
+    actions.append(chat);card.append(info,actions);cards.appendChild(card);
+   }catch(e){console.error(e)}
+  }
+  if(version!==friendsListenerVersion||auth.currentUser?.uid!==user.uid)return;
+  list.replaceChildren(cards);
+  updateChatFriends(chatFriends);
+ },e=>{console.error("Friends listener:",e);el("friendsList").innerHTML=`<div class="error">${escapeHTML(firebaseError(e))}</div>`});
 }
 
-
-for(const friendDoc of snapshot.docs){
-
-const friendship=
-friendDoc.data();
-
-
-const friendUid=
-friendship.users.find(
-id=>id!==user.uid
-);
-
-
-if(!friendUid)continue;
-
-
-let person={};
-
-try{
-
-const personSnap=
-await getDoc(
-doc(db,"users",friendUid)
-);
-
-if(personSnap.exists())
-person=personSnap.data();
-
-}
-catch(e){
-
-console.error(e);
-
-}
-
-
-const div=
-document.createElement("div");
-
-div.className="person-card";
-
-
-const initial=
-(person.name || "S")
-.charAt(0)
-.toUpperCase();
-
-
-div.innerHTML=`
-
-<div class="person-info">
-
-<div
-class="avatar">
-${initial}
-</div>
-
-<div>
-
-<div class="person-name">
-${escapeHTML(person.name || "Student")}
-</div>
-
-<div class="person-email">
-${escapeHTML(person.email || "")}
-</div>
-
-<div class="person-email">
-${escapeHTML(person.class || "")}
-</div>
-
-</div>
-
-</div>
-
-<button
-class="small-btn remove-btn"
-onclick="removeFriend('${friendshipDoc.id}')">
-
-Remove
-
-</button>
-
-`;
-
-
-container.appendChild(div);
-
-}
-
-},
-error=>{
-
-console.error(error);
-
-document.getElementById(
-"friendsList"
-).innerHTML=`
-<div class="error">
-${firebaseError(error)}
-</div>
-`;
-
-}
-);
-
-}
-
-
-/* =====================================================
-   REMOVE FRIEND
-===================================================== */
-
-window.removeFriend=
-async function(friendshipId){
-
-if(!confirm(
-"Are you sure you want to remove this friend?"
-))return;
-
-
-try{
-
-await deleteDoc(
-doc(
-db,
-"friendships",
-friendshipId
-)
-);
-
-}
-catch(error){
-
-alert(firebaseError(error));
-
-}
-
+function createChatId(a,b){return [a,b].sort().join("_")}
+window.openChat=async friendUid=>{
+ showPage("chats");
+ await openConversation(friendUid);
 };
-
-
-/* =====================================================
-   TIMER
-===================================================== */
-
-let seconds=25*60;
-
-let timer=null;
-
+window.closeChat=()=>{
+ closeConversation();
+};
+window.sendMessage=async event=>{
+ await sendChatMessage(event);
+};
 
 function updateTimer(){
-
-const minutes=
-Math.floor(seconds/60);
-
-const secs=
-seconds%60;
-
-
-document.getElementById(
-"timerDisplay"
-).textContent=
-String(minutes).padStart(2,"0")
-+":"
-+String(secs).padStart(2,"0");
-
+ const m=String(Math.floor(timerSeconds/60)).padStart(2,"0");
+ const s=String(timerSeconds%60).padStart(2,"0");
+ el("timer").textContent=`${m}:${s}`;
 }
-
-
-window.startTimer=function(){
-
-if(timer)return;
-
-
-timer=setInterval(()=>{
-
-if(seconds>0){
-
-seconds--;
-
-updateTimer();
-
+function updateTimerControls(){
+ el("timerMinutes").disabled=timerRunning;
+ el("setTimerDurationBtn").disabled=timerRunning;
 }
-else{
-
-clearInterval(timer);
-
-timer=null;
-
-alert(
-"🎉 Focus session complete!"
-);
-
+function showTimerStatus(message,isError=false){
+ el("timerStatus").textContent=message;
+ el("timerStatus").classList.toggle("error",isError);
+ el("timerMinutes").setAttribute("aria-invalid",String(isError));
 }
-
-},1000);
-
+window.setTimerDuration=event=>{
+ event?.preventDefault();
+ if(timerRunning){showTimerStatus("Pause the timer before changing its duration.");return}
+ const minutes=Number(el("timerMinutes").value);
+ if(!Number.isInteger(minutes)||minutes<1||minutes>1440){
+  showTimerStatus("Enter a whole number between 1 and 1440 minutes.",true);return;
+ }
+ clearInterval(timerInterval);timerInterval=null;
+ timerDurationSeconds=minutes*60;timerSeconds=timerDurationSeconds;
+ el("timerMinutes").value=String(minutes);
+ updateTimer();updateTimerControls();
+ showTimerStatus(`Session set to ${minutes} ${minutes===1?"minute":"minutes"}. Press Start when ready.`);
 };
-
-
-window.pauseTimer=function(){
-
-clearInterval(timer);
-
-timer=null;
-
+function updateFocusCount(){
+ if(!auth.currentUser)return;
+ const seconds=Number(localStorage.getItem(`focus_${auth.currentUser.uid}`)||0);
+ el("focusCount").textContent=Math.floor(seconds/60);
+}
+window.startTimer=()=>{
+ if(timerRunning)return;
+ if(el("timerMinutes").value!==String(timerDurationSeconds/60)){
+  setTimerDuration();
+  if(el("timerMinutes").getAttribute("aria-invalid")==="true")return;
+ }
+ if(timerSeconds<=0)timerSeconds=timerDurationSeconds;
+ timerRunning=true;updateTimer();updateTimerControls();
+ showTimerStatus("Focus session in progress.");
+ timerInterval=setInterval(()=>{
+  timerSeconds--;updateTimer();
+  if(auth.currentUser){
+   const key=`focus_${auth.currentUser.uid}`;
+   const used=Number(localStorage.getItem(key)||0)+1;
+   localStorage.setItem(key,String(used));
+   if(used%60===0)updateFocusCount();
+  }
+  if(timerSeconds<=0){
+   clearInterval(timerInterval);timerInterval=null;timerRunning=false;
+   updateTimerControls();showTimerStatus("Focus session complete.");
+   alert("Focus session complete! 🎉");
+  }
+ },1000);
 };
-
-
-window.resetTimer=function(){
-
-clearInterval(timer);
-
-timer=null;
-
-seconds=25*60;
-
+window.pauseTimer=()=>{
+ clearInterval(timerInterval);timerInterval=null;timerRunning=false;updateFocusCount();updateTimerControls();
+ showTimerStatus("Paused. Press Start to continue, or set a new duration.");
+};
+window.resetTimer=()=>{
+ clearInterval(timerInterval);timerInterval=null;timerRunning=false;timerSeconds=timerDurationSeconds;
+ el("timerMinutes").value=String(timerDurationSeconds/60);
+ updateTimer();updateTimerControls();showTimerStatus("Timer reset to your selected session length.");
+};
 updateTimer();
-
-};
-
-
-updateTimer();
-
 </script>
-
 </body>
 </html>
